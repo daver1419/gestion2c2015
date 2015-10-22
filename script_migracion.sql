@@ -456,15 +456,11 @@ INSERT INTO [NORMALIZADOS].[Compra](
 	[Medio_Pago]
 	)
 (
-SELECT A.Pasaje_FechaCompra, CLI.Id, 1 -- Pago en efectivo porque no aclara otra cosa..
+SELECT DISTINCT A.Pasaje_FechaCompra, CLI.Id, 1 -- Pago en efectivo porque no aclara otra cosa..
 FROM gd_esquema.Maestra A
-JOIN gd_esquema.Maestra B
-ON A.Pasaje_Codigo != B.Pasaje_Codigo AND A.Pasaje_FechaCompra = B.Pasaje_FechaCompra
-AND A.Cli_Dni = B.Cli_Dni
+-- Una compra por pasajes distintos que tengan distinta fecha de compra y distinto cliente.
 JOIN [NORMALIZADOS].[Cliente] CLI
-ON CLI.Apellido = A.Cli_Apellido AND CLI.Dni = A.Cli_Dni AND CLI.Nombre = A.Cli_Nombre
-WHERE A.Pasaje_Codigo != 0 AND B.Pasaje_Codigo != 0
-GROUP BY A.Pasaje_FechaCompra, CLI.Id
+ON CLI.Apellido = A.Cli_Apellido AND CLI.Dni = A.Cli_Dni AND CLI.Nombre = A.Cli_Nombre AND A.Pasaje_Codigo != 0
 )
 GO
 
@@ -479,23 +475,19 @@ INSERT INTO [NORMALIZADOS].[Pasaje](
 	[Butaca]
 	)
 (
-SELECT M.Pasaje_Codigo, M.Pasaje_Precio, CLI.Id, V.Id, C.PNR, B.Id
+SELECT M.Pasaje_Codigo, M.Pasaje_Precio, CLI.Id, V.Id, C.PNR, (SELECT B.Id
+																	FROM [NORMALIZADOS].[Butaca] B
+																	WHERE B.Numero = M.Butaca_Nro AND B.Aeronave = A.Numero
+																)
 FROM gd_esquema.Maestra M
 JOIN [NORMALIZADOS].[Cliente] CLI
-ON CLI.Apellido = M.Cli_Apellido AND CLI.Dni = M.Cli_Dni AND CLI.Nombre = M.Cli_Nombre
+ON CLI.Apellido = M.Cli_Apellido AND CLI.Dni = M.Cli_Dni AND CLI.Nombre = M.Cli_Nombre AND M.Pasaje_Codigo != 0
 JOIN [NORMALIZADOS].[Compra] C
-ON C.Comprador = CLI.Id AND C.Fecha = M.Pasaje_FechaCompra
+ON C.Fecha = M.Pasaje_FechaCompra AND C.Comprador = CLI.Id
 JOIN [NORMALIZADOS].[Aeronave] A
 ON A.Matricula = M.Aeronave_Matricula
-JOIN [NORMALIZADOS].[Servicio] S
-ON S.Descripcion = M.Tipo_Servicio
 JOIN [NORMALIZADOS].[Viaje] V
-ON V.Aeronave = A.Numero AND V.Ruta_Aerea = M.Ruta_Codigo AND V.Servicio = S.Id
-JOIN [NORMALIZADOS].[Tipo_Butaca] TB
-ON TB.Descripcion = M.Butaca_Tipo
-JOIN [NORMALIZADOS].[Butaca] B
-ON B.Aeronave = A.Numero AND B.Numero = M.Butaca_Nro AND B.Piso = M.Butaca_Piso AND B.Tipo_Butaca = TB.Id
-WHERE M.Pasaje_Codigo != 0
+ON V.Aeronave = A.Numero AND V.Fecha_Salida = M.FechaSalida AND V.Ruta_Aerea = M.Ruta_Codigo
 )
 GO
 SET IDENTITY_INSERT [NORMALIZADOS].[Pasaje] OFF;
@@ -667,8 +659,8 @@ BEGIN
 						AND P.Cancelacion IS NULL  --No fue cancelado
 						AND P.Viaje = V.Id
 						AND V.Fecha_Llegada IS NOT NULL --La llegada del viaje fue registrada 
-						AND V.Fecha_Llegada <= @Fecha --El viaje se realizó antes de la fecha
-						AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No está vencido
+						AND V.Fecha_Llegada <= @Fecha --El viaje se realizÃ³ antes de la fecha
+						AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No estÃ¡ vencido
 			UNION ALL
 					SELECT E.Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(E.Precio),0)
 					FROM NORMALIZADOS.Encomienda E 
@@ -677,7 +669,7 @@ BEGIN
 						AND E.Cancelacion IS NULL  --No fue cancelado
 						AND E.Viaje = V.Id
 						AND V.Fecha_Llegada IS NOT NULL --La llegada del viaje fue registrada 
-						AND V.Fecha_Llegada <= @Fecha --El viaje ya se realizó 
+						AND V.Fecha_Llegada <= @Fecha --El viaje ya se realizÃ³ 
 						AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No esta vencido
 			) P
 		
@@ -876,7 +868,7 @@ END
 GO
 
 ------------------------------------------------------------------
--- Las llegadas se registran durante el día pero se ingresan al
+-- Las llegadas se registran durante el dÃ­a pero se ingresan al
 -- sistema todas juntas.
 ------------------------------------------------------------------
 CREATE TYPE [NORMALIZADOS].[Tipo_Arrivos] AS TABLE
@@ -903,9 +895,9 @@ BEGIN
 
 		--Obtengo el viaje de la aeronave.
 		SELECT TOP 1 @Viaje= Id FROM NORMALIZADOS.Viaje 
-		WHERE Fecha_Salida < @FechaArrivo --La aeronave ya partió.
-			 AND Fecha_Llegada IS NULL --Aun no se registró un arrivó. 
-			 AND Aeronave=@Aeronave --Era la aeronave que arrivó.
+		WHERE Fecha_Salida < @FechaArrivo --La aeronave ya partiÃ³.
+			 AND Fecha_Llegada IS NULL --Aun no se registrÃ³ un arrivÃ³. 
+			 AND Aeronave=@Aeronave --Era la aeronave que arrivÃ³.
 		ORDER BY Fecha_Salida
 	
 		--Registro el arrivo.
@@ -1035,7 +1027,7 @@ BEGIN
 						P.Cancelacion IS NULL
 						AND P.Viaje = V.Id
 						AND  V.Fecha_Llegada IS NOT NULL AND V.Fecha_Llegada <= @Fecha
-						AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No venció
+						AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No venciÃ³
 			UNION ALL
 					SELECT E.Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(E.Precio),0)
 					FROM NORMALIZADOS.Encomienda E 
@@ -1043,7 +1035,7 @@ BEGIN
 						E.Cancelacion IS NULL  
 						AND E.Viaje = V.Id
 						AND  V.Fecha_Llegada IS NOT NULL AND V.Fecha_Llegada <= @Fecha 
-						AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No venció
+						AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No venciÃ³
 			) P
 		JOIN NORMALIZADOS.Cliente C ON C.Id = P.Cliente
 		GROUP BY C.Dni, C.Apellido, C.Nombre
@@ -1201,5 +1193,3 @@ AS
 	SET	Habilitado =1,Intentos =0
 
 GO
-
-
