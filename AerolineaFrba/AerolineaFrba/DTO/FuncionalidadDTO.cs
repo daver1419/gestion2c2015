@@ -11,8 +11,8 @@ namespace AerolineaFrba.DTO
         public enum Funcionalidad
         {
             ABM_ROL,
-	        //ABM_USUARIO,
-	        //ABM_CLIENTE,
+	        ABM_USUARIO,
+	        ABM_CLIENTE,
 	        ABM_CIUDAD,
 	        ABM_RUTA_AEREA,
 	        ABM_AERONAVE,

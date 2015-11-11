@@ -11,7 +11,7 @@ namespace AerolineaFrba.DAO
 {
     public static class FuncionalidadDAO
     {
-        public static List<FuncionalidadDTO> readerToListFunc(SqlDataReader dataReader)
+        private static List<FuncionalidadDTO> readerToListFunc(SqlDataReader dataReader)
         {
             List<FuncionalidadDTO> listaFunc = new List<FuncionalidadDTO>();
             if (dataReader.HasRows)

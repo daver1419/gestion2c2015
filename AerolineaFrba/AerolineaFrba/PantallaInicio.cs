@@ -135,7 +135,7 @@ namespace AerolineaFrba
                     case FuncionalidadDTO.Funcionalidad.ABM_AERONAVE:
 
 
-                        new Abm_Aeronave.Form1() { Icon = this.Icon, StartPosition = FormStartPosition.CenterParent }.ShowDialog(this);
+                        new Abm_Aeronave.Indice() { Icon = this.Icon, StartPosition = FormStartPosition.CenterParent }.ShowDialog(this);
 
                         break;
 
@@ -195,7 +195,6 @@ namespace AerolineaFrba
         {
             if (e.KeyData == Keys.Enter)
             {
-                Sesion.Start(comboBoxRoles.SelectedItem as RolDTO);
                 abrirFormularioSeleccionado();
             }
         }
