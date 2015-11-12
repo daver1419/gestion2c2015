@@ -44,17 +44,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Abm Aeronave\Alta.cs">
+    <Compile Include="Abm Aeronave\AltaAeronave.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Abm Aeronave\Alta.Designer.cs">
-      <DependentUpon>Alta.cs</DependentUpon>
+    <Compile Include="Abm Aeronave\AltaAeronave.Designer.cs">
+      <DependentUpon>AltaAeronave.cs</DependentUpon>
     </Compile>
-    <Compile Include="Abm Aeronave\Indice.cs">
+    <Compile Include="Abm Aeronave\IndiceAeronave.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Abm Aeronave\Indice.Designer.cs">
-      <DependentUpon>Indice.cs</DependentUpon>
+    <Compile Include="Abm Aeronave\IndiceAeronave.Designer.cs">
+      <DependentUpon>IndiceAeronave.cs</DependentUpon>
     </Compile>
     <Compile Include="Abm Ciudad\Form1.cs">
       <SubType>Form</SubType>
@@ -62,11 +62,29 @@
     <Compile Include="Abm Ciudad\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Abm Rol\Form1.cs">
+    <Compile Include="Abm Rol\AltaRol.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Abm Rol\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Abm Rol\AltaRol.Designer.cs">
+      <DependentUpon>AltaRol.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Rol\ListadoRoles.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Rol\ListadoRoles.Designer.cs">
+      <DependentUpon>ListadoRoles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Rol\ModificarRol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Rol\ModificarRol.Designer.cs">
+      <DependentUpon>ModificarRol.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Rol\IndiceRol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Rol\IndiceRol.Designer.cs">
+      <DependentUpon>IndiceRol.cs</DependentUpon>
     </Compile>
     <Compile Include="Abm Ruta\Form1.cs">
       <SubType>Form</SubType>
@@ -94,6 +112,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="DAO\AeronaveDAO.cs" />
+    <Compile Include="DAO\RolxFuncDAO.cs" />
     <Compile Include="DAO\TipoServicioDAO.cs" />
     <Compile Include="DAO\FabricanteDAO.cs" />
     <Compile Include="DAO\FuncionalidadDAO.cs" />
@@ -105,6 +124,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="DTO\AeronaveDTO.cs" />
+    <Compile Include="DTO\RolxFuncDTO.cs" />
     <Compile Include="DTO\TipoServicioDTO.cs" />
     <Compile Include="DTO\FabricanteDTO.cs" />
     <Compile Include="DTO\FuncionalidadDTO.cs" />
@@ -150,11 +170,23 @@
     <Compile Include="Registro Llegada Destino\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Abm Aeronave\Alta.resx">
-      <DependentUpon>Alta.cs</DependentUpon>
+    <EmbeddedResource Include="Abm Aeronave\AltaAeronave.resx">
+      <DependentUpon>AltaAeronave.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Abm Aeronave\Indice.resx">
-      <DependentUpon>Indice.cs</DependentUpon>
+    <EmbeddedResource Include="Abm Aeronave\IndiceAeronave.resx">
+      <DependentUpon>IndiceAeronave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Rol\AltaRol.resx">
+      <DependentUpon>AltaRol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Rol\ListadoRoles.resx">
+      <DependentUpon>ListadoRoles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Rol\ModificarRol.resx">
+      <DependentUpon>ModificarRol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Rol\IndiceRol.resx">
+      <DependentUpon>IndiceRol.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login\FormLogin.resx">
       <DependentUpon>FormLogin.cs</DependentUpon>

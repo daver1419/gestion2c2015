@@ -10,16 +10,16 @@ using System.Windows.Forms;
 
 namespace AerolineaFrba.Abm_Aeronave
 {
-    public partial class Indice : Form
+    public partial class IndiceAeronave : Form
     {
-        public Indice()
+        public IndiceAeronave()
         {
             InitializeComponent();
         }
 
         private void altaButton_Click(object sender, EventArgs e)
         {
-            new Alta() { Icon = this.Icon }.ShowDialog(this);
+            new AltaAeronave() { Icon = this.Icon }.ShowDialog(this);
         }
     }
 }

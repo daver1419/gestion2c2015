@@ -42,5 +42,34 @@ namespace AerolineaFrba.DAO
                 }
             }
         }
+
+        public static List<FuncionalidadDTO> SelectAll()
+        {
+            SqlConnection conn = Conexion.Conexion.obtenerConexion();
+            SqlCommand com = new SqlCommand("SELECT F.Id, Descripcion FROM [NORMALIZADOS].Funcionalidad F", conn);
+            return readerToListFunc(com.ExecuteReader());
+        }
+
+        public static void InsertarFuncionalidades(List<FuncionalidadDTO> func, int rolId)
+        {
+            SqlConnection conn = Conexion.Conexion.obtenerConexion();
+            foreach (FuncionalidadDTO fun in func)
+            {
+                SqlCommand com = new SqlCommand(string.Format("INSERT INTO [NORMALIZADOS].RolxFuncionalidad(Rol, Funcionalidad) VALUES ('{0}', '{1}')", rolId, fun.IdFuncionalidad), conn);
+                com.ExecuteNonQuery();
+            }
+            conn.Close();
+        }
+
+        public static void RemoverFuncionalidades(List<FuncionalidadDTO> func, int rolId)
+        {
+            SqlConnection conn = Conexion.Conexion.obtenerConexion();
+            foreach (FuncionalidadDTO fun in func)
+            {
+                SqlCommand com = new SqlCommand(string.Format("DELETE FROM [NORMALIZADOS].RolxFuncionalidad WHERE Funcionalidad = '{0}' AND Rol = '{1}'", fun.IdFuncionalidad, rolId), conn);
+                com.ExecuteNonQuery();
+            }
+            conn.Close();
+        }
     }
 }

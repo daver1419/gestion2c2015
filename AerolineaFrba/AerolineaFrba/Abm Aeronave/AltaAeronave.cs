@@ -12,11 +12,11 @@ using AerolineaFrba.DTO;
 
 namespace AerolineaFrba.Abm_Aeronave
 {
-    public partial class Alta : Form
+    public partial class AltaAeronave : Form
     {
         private AeronaveDTO Aeronave;
 
-        public Alta()
+        public AltaAeronave()
         {
             InitializeComponent();
         }

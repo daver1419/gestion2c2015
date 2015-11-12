@@ -116,7 +116,7 @@ namespace AerolineaFrba
                     */
                     case FuncionalidadDTO.Funcionalidad.ABM_ROL:
 
-                        new Abm_Rol.Form1(){ Icon = this.Icon, StartPosition = FormStartPosition.CenterParent }.ShowDialog(this);
+                        new Abm_Rol.IndiceRol(){ Icon = this.Icon, StartPosition = FormStartPosition.CenterParent }.ShowDialog(this);
 
                         break;
 
@@ -135,7 +135,7 @@ namespace AerolineaFrba
                     case FuncionalidadDTO.Funcionalidad.ABM_AERONAVE:
 
 
-                        new Abm_Aeronave.Indice() { Icon = this.Icon, StartPosition = FormStartPosition.CenterParent }.ShowDialog(this);
+                        new Abm_Aeronave.IndiceAeronave() { Icon = this.Icon, StartPosition = FormStartPosition.CenterParent }.ShowDialog(this);
 
                         break;
 

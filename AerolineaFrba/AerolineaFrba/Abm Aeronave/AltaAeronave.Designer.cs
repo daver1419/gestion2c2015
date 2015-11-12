@@ -1,6 +1,6 @@
 ﻿namespace AerolineaFrba.Abm_Aeronave
 {
-    partial class Alta
+    partial class AltaAeronave
     {
         /// <summary>
         /// Required designer variable.
@@ -173,7 +173,7 @@
             this.Guardar.UseVisualStyleBackColor = true;
             this.Guardar.Click += new System.EventHandler(this.Guardar_Click);
             // 
-            // Alta
+            // AltaAeronave
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -193,8 +193,8 @@
             this.Controls.Add(this.Modelo);
             this.Controls.Add(this.FechaAlta);
             this.Controls.Add(this.DateAlta);
-            this.Name = "Alta";
-            this.Text = "Alta de aeronave";
+            this.Name = "AltaAeronave";
+            this.Text = "Alta de Aeronave";
             this.Load += new System.EventHandler(this.Alta_Load);
             ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).EndInit();
             this.ResumeLayout(false);
