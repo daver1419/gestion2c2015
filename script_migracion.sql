@@ -552,6 +552,20 @@ WHERE M.Paquete_Codigo != 0
 )
 GO
 
+DROP INDEX [NORMALIZADOS].[Compra].ix_compra_pasajecodigo
+GO
+
+DROP INDEX [NORMALIZADOS].[Compra].ix_compra_paquetecodigo
+GO
+
+ALTER TABLE [NORMALIZADOS].[Compra]
+DROP COLUMN Pasaje_Codigo
+GO
+
+ALTER TABLE [NORMALIZADOS].[Compra]
+DROP COLUMN Paquete_Codigo
+GO
+
 /*****************************************************************
 							DETALLE_CANCELACION
 ******************************************************************/
