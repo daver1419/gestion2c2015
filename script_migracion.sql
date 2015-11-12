@@ -428,24 +428,29 @@ GO
 ******************************************************************/
 
 CREATE TABLE [NORMALIZADOS].[Compra](
-	[PNR] [int] PRIMARY KEY IDENTITY (0,1),
+	[Id] [int] PRIMARY KEY IDENTITY (0,1),
+	[PNR] [int],
 	[Fecha] [datetime] NOT NULL,
 	[Comprador] [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Cliente] (Id) NOT NULL,
-	[Medio_Pago] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Tipo_Pago](Id) NOT NULL
+	[Medio_Pago] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Tipo_Pago](Id) NOT NULL,
+	[Pasaje_Codigo] [numeric](18,0),
+	[Paquete_Codigo] [numeric](18,0),
+	[Viaje] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Viaje] (Id) NOT NULL
 	)
 GO
-
+CREATE NONCLUSTERED INDEX ix_compra_paquetecodigo ON [Normalizados].[Compra]([Paquete_Codigo])
+GO
+CREATE NONCLUSTERED INDEX ix_compra_pasajecodigo ON [Normalizados].[Compra]([Pasaje_Codigo])
 /***********************************************
 					PASAJE
 ***********************************************/
 
 CREATE TABLE [NORMALIZADOS].[Pasaje](
 	[Id] [int] PRIMARY KEY IDENTITY(0,1),
-	--[Codigo] [numeric](18,0) NOT NULL,
+	[Codigo] [numeric](18,0),
 	[Precio]  [numeric](18,2) NOT NULL,
 	[Pasajero] [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Cliente] (Id) NOT NULL,
-	[Viaje] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Viaje] (Id) NOT NULL,
-	[Compra] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Compra] (PNR) NOT NULL,
+	[Compra] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Compra] (Id) NOT NULL,
 	[Butaca] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Butaca] (Id) NOT NULL
 	)
 GO
@@ -453,57 +458,112 @@ GO
 INSERT INTO [NORMALIZADOS].[Compra](
 	[Fecha],
 	[Comprador],
-	[Medio_Pago]
+	[Medio_Pago],
+	[Pasaje_Codigo],
+	[Viaje]
 	)
 (
-SELECT DISTINCT A.Pasaje_FechaCompra, CLI.Id, 1 -- Pago en efectivo porque no aclara otra cosa..
-FROM gd_esquema.Maestra A
--- Una compra por pasajes distintos que tengan distinta fecha de compra y distinto cliente.
-JOIN [NORMALIZADOS].[Cliente] CLI
-ON CLI.Apellido = A.Cli_Apellido AND CLI.Dni = A.Cli_Dni AND CLI.Nombre = A.Cli_Nombre AND A.Pasaje_Codigo != 0
+	SELECT M.Pasaje_FechaCompra, CLI.Id, 1, M.Pasaje_Codigo,V.Id -- Pago en efectivo porque no aclara otra cosa..
+	FROM gd_esquema.Maestra M
+	JOIN [NORMALIZADOS].[Cliente] CLI
+	ON CLI.Apellido = M.Cli_Apellido AND CLI.Dni = M.Cli_Dni AND CLI.Nombre = M.Cli_Nombre
+	JOIN [NORMALIZADOS].[Aeronave] A
+	ON A.Matricula = M.Aeronave_Matricula
+	JOIN [NORMALIZADOS].[Viaje] V
+	ON V.Aeronave = A.Numero AND V.Fecha_Salida = M.FechaSalida AND V.Ruta_Aerea = M.Ruta_Codigo
+	WHERE M.Pasaje_Codigo != 0
+
 )
 GO
 
-SET IDENTITY_INSERT [NORMALIZADOS].[Pasaje] ON;
-
 INSERT INTO [NORMALIZADOS].[Pasaje](
-	[Id],
+	[Codigo],
 	[Precio],
 	[Pasajero],
-	[Viaje],
 	[Compra],
 	[Butaca]
 	)
 (
-SELECT M.Pasaje_Codigo, M.Pasaje_Precio, CLI.Id, V.Id, C.PNR, (SELECT B.Id
-																	FROM [NORMALIZADOS].[Butaca] B
-																	WHERE B.Numero = M.Butaca_Nro AND B.Aeronave = A.Numero
-																)
+SELECT M.Pasaje_Codigo, M.Pasaje_Precio, CLI.Id, C.Id, B.Id
 FROM gd_esquema.Maestra M
 JOIN [NORMALIZADOS].[Cliente] CLI
-ON CLI.Apellido = M.Cli_Apellido AND CLI.Dni = M.Cli_Dni AND CLI.Nombre = M.Cli_Nombre AND M.Pasaje_Codigo != 0
+ON CLI.Apellido = M.Cli_Apellido AND CLI.Dni = M.Cli_Dni AND CLI.Nombre = M.Cli_Nombre
 JOIN [NORMALIZADOS].[Compra] C
-ON C.Fecha = M.Pasaje_FechaCompra AND C.Comprador = CLI.Id
+ON C.Pasaje_Codigo = M.Pasaje_Codigo
 JOIN [NORMALIZADOS].[Aeronave] A
 ON A.Matricula = M.Aeronave_Matricula
-JOIN [NORMALIZADOS].[Viaje] V
-ON V.Aeronave = A.Numero AND V.Fecha_Salida = M.FechaSalida AND V.Ruta_Aerea = M.Ruta_Codigo
+JOIN [NORMALIZADOS].[Butaca] B
+ON B.Numero = M.Butaca_Nro AND B.Aeronave = A.Numero
+WHERE M.Pasaje_Codigo != 0
 )
 GO
-SET IDENTITY_INSERT [NORMALIZADOS].[Pasaje] OFF;
 
 /***********************************************
 					ENCOMIENDA
 ***********************************************/
+
 CREATE TABLE [NORMALIZADOS].[Encomienda](
 	[Id] [int] PRIMARY KEY IDENTITY(0,1),
-	[Codigo] [numeric](18,0) NOT NULL,
+	[Codigo] [numeric](18,0),
 	[Precio]  [numeric](18,2) NOT NULL,
 	[Kg] [numeric](18,0) NOT NULL,
 	[Cliente] [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Cliente] (Id) NOT NULL,
-	[Viaje] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Viaje] (Id) NOT NULL,
-	[Compra] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Compra] (PNR) NOT NULL,
+	[Compra] [int] NOT NULL,
 )
+GO
+
+INSERT INTO [NORMALIZADOS].[Compra](
+	[Fecha],
+	[Comprador],
+	[Medio_Pago],
+	[Paquete_Codigo],
+	[Viaje]
+	)
+(
+SELECT M.Paquete_FechaCompra, CLI.Id, 1, M.Paquete_Codigo,V.Id -- Pago en efectivo porque no aclara otra cosa..
+FROM gd_esquema.Maestra M
+JOIN [NORMALIZADOS].[Cliente] CLI
+ON CLI.Apellido = M.Cli_Apellido AND CLI.Dni = M.Cli_Dni AND CLI.Nombre = M.Cli_Nombre
+JOIN [NORMALIZADOS].[Aeronave] A
+ON A.Matricula = M.Aeronave_Matricula
+JOIN [NORMALIZADOS].[Viaje] V
+ON V.Aeronave = A.Numero AND V.Fecha_Salida = M.FechaSalida AND V.Ruta_Aerea = M.Ruta_Codigo
+WHERE M.Paquete_Codigo != 0
+)
+GO
+
+INSERT INTO [NORMALIZADOS].[Encomienda](
+	[Codigo],
+	[Precio],
+	[Cliente],
+	[Compra],
+	[Kg]
+	)
+(
+SELECT M.Paquete_Codigo, M.Paquete_Precio, CLI.Id, C.Id, M.Paquete_KG
+FROM gd_esquema.Maestra M
+JOIN [NORMALIZADOS].[Cliente] CLI
+ON CLI.Apellido = M.Cli_Apellido AND CLI.Dni = M.Cli_Dni AND CLI.Nombre = M.Cli_Nombre
+JOIN [NORMALIZADOS].[Compra] C
+ON C.Paquete_Codigo = M.Paquete_Codigo
+JOIN [NORMALIZADOS].[Aeronave] A
+ON A.Matricula = M.Aeronave_Matricula
+WHERE M.Paquete_Codigo != 0
+)
+GO
+
+DROP INDEX [NORMALIZADOS].[Compra].ix_compra_pasajecodigo
+GO
+
+DROP INDEX [NORMALIZADOS].[Compra].ix_compra_paquetecodigo
+GO
+
+ALTER TABLE [NORMALIZADOS].[Compra]
+DROP COLUMN Pasaje_Codigo
+GO
+
+ALTER TABLE [NORMALIZADOS].[Compra]
+DROP COLUMN Paquete_Codigo
 GO
 
 /*****************************************************************
@@ -514,7 +574,7 @@ CREATE TABLE [NORMALIZADOS].[Detalle_Cancelacion](
 	[Id] [int] PRIMARY KEY IDENTITY (0,1),
 	[Fecha] [datetime] NOT NULL,
 	[Motivo] [nvarchar](255),
-	[Compra] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].Compra(PNR) NOT NULL
+	[Compra] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].Compra(Id) NOT NULL
 	)
 GO
 
@@ -1192,4 +1252,18 @@ AS
 	UPDATE [NORMALIZADOS].Usuario 
 	SET	Habilitado =1,Intentos =0
 
+GO
+
+--------------------------------------------------------------------------------
+--				SP Aeronaves
+--------------------------------------------------------------------------------
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Alta_Aeronave](@matricula nvarchar(255), @modelo nvarchar(255), @kg_disponibles numeric(18,0), 
+@fabricante int, @tipo_servicio int, @fecha_alta varchar(50))
+AS BEGIN
+	INSERT INTO [NORMALIZADOS].[Aeronave](Matricula, Modelo, KG_Disponibles, Fabricante, Tipo_Servicio, Fecha_Alta)
+	VALUES (UPPER(@matricula), UPPER(@modelo), @kg_disponibles, @fabricante, @tipo_servicio, convert(datetime, @fecha_alta,109))
+	declare @id int
+	set @id = SCOPE_IDENTITY()
+END
 GO
