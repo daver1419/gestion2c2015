@@ -38,10 +38,14 @@ namespace AerolineaFrba.Abm_Aeronave
             DateAlta.Value = DateTime.Now;
             ComboFabricante.SelectedIndex = -1;
             ComboTipoServicio.SelectedIndex = -1;
+            Aeronave.ListaButacas.Clear();
+            ButacaNumeric.Value = Aeronave.ListaButacas.Count;
+            errorProvider1.Clear();
         }
 
         private void Guardar_Click(object sender, EventArgs e)
         {
+            if (validar()) return;
             Aeronave.Fabricante = ((FabricanteDTO)ComboFabricante.SelectedValue);
             Aeronave.TipoServicio = ((TipoServicioDTO)ComboTipoServicio.SelectedValue);
             Aeronave.FechaAlta = DateAlta.Value;
@@ -49,8 +53,72 @@ namespace AerolineaFrba.Abm_Aeronave
             Aeronave.Matricula = TextMatricula.Text;
             Aeronave.Modelo = TextModelo.Text;
 
-            AeronaveDAO.AltaAeronave(Aeronave);
+            if (AeronaveDAO.AltaAeronave(Aeronave))
+            {
+                MessageBox.Show("Los datos se guardaron con exito");
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Error al guardar los datos. Se hará un rollback de la transacción.");
+            }
+
+            this.Close();
         }
 
+        private void ButacaButton_Click(object sender, EventArgs e)
+        {
+            AgregarButaca vent = new AgregarButaca();
+            vent.ShowDialog(this);
+        }
+
+        public void Agregar_Butaca(ButacaDTO unaButaca)
+        {
+            Aeronave.ListaButacas.Add(unaButaca);
+            ButacaNumeric.Value = Aeronave.ListaButacas.Count;
+            errorProvider1.Clear();
+        }
+
+        public bool Tiene_Butaca(ButacaDTO unaButaca)
+        {
+            return Aeronave.ListaButacas.Contains(unaButaca);
+        }
+
+        private bool validar()
+        {
+            errorProvider1.Clear();
+            bool ret = false;
+            if (DateAlta.Value < DateTime.Now)
+            {
+                errorProvider1.SetError(DateAlta, "La fecha debe ser posterior al momento de ser ingresada.");
+                ret = true;
+            }
+            if (this.ComboFabricante.SelectedIndex == -1)
+            {
+                errorProvider1.SetError(ComboFabricante, "Debe seleccionar un fabricante.");
+                ret = true;
+            }
+            if (this.TextModelo.Text == "")
+            {
+                errorProvider1.SetError(TextModelo, "Debe ingresar un modelo");
+                ret = true;
+            }
+            if (this.TextMatricula.Text == "")
+            {
+                errorProvider1.SetError(TextMatricula, "Debe ingresar una matricula");
+                ret = true;
+            }
+            if (this.ComboTipoServicio.SelectedIndex == -1)
+            {
+                errorProvider1.SetError(ComboTipoServicio, "Debe seleccionar un tipo de servicio.");
+                ret = true;
+            }
+            if (this.ButacaNumeric.Value == 0)
+            {
+                errorProvider1.SetError(ButacaNumeric, "Debe ingresar butacas.");
+                ret = true;
+            }
+            return ret;
+        }
     }
 }

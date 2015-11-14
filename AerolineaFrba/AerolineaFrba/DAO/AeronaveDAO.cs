@@ -11,20 +11,50 @@ namespace AerolineaFrba.DAO
 {
     class AeronaveDAO
     {
-        public static void AltaAeronave(AeronaveDTO Aeronave)
+        public static bool AltaAeronave(AeronaveDTO Aeronave)
         {
-            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            int ret = 0;
+
+            SqlConnection conn = Conexion.Conexion.obtenerConexion();
+
+            using (SqlTransaction tran = conn.BeginTransaction())
             {
-                SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Alta_Aeronave]", conn);
-                com.CommandType = CommandType.StoredProcedure;
-                com.Parameters.AddWithValue("@matricula", Aeronave.Matricula);
-                com.Parameters.AddWithValue("@modelo", Aeronave.Modelo);
-                com.Parameters.AddWithValue("@kg_disponibles", Aeronave.KG);
-                com.Parameters.AddWithValue("@fecha_alta", Aeronave.FechaAlta.ToString());
-                com.Parameters.AddWithValue("@fabricante", Aeronave.Fabricante.IdFabricante);
-                com.Parameters.AddWithValue("@tipo_servicio", Aeronave.TipoServicio.IdTipoServicio);
-                com.ExecuteNonQuery();
+                try
+                {
+                    SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Alta_Aeronave]", conn);
+                    com.CommandType = CommandType.StoredProcedure;
+                    com.Transaction = tran;
+                    com.Parameters.AddWithValue("@matricula", Aeronave.Matricula);
+                    com.Parameters.AddWithValue("@modelo", Aeronave.Modelo);
+                    com.Parameters.AddWithValue("@kg_disponibles", Aeronave.KG);
+                    com.Parameters.AddWithValue("@fecha_alta", Aeronave.FechaAlta);
+                    com.Parameters.AddWithValue("@fabricante", Aeronave.Fabricante.IdFabricante);
+                    com.Parameters.AddWithValue("@tipo_servicio", Aeronave.TipoServicio.IdTipoServicio);
+                    com.Parameters.AddWithValue("@cant_butacas", Aeronave.ListaButacas.Count);
+                    com.Parameters.Add("@Id", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    com.ExecuteNonQuery();
+                    Aeronave.Numero = Convert.ToInt32(com.Parameters["@Id"].Value);
+
+                    foreach (ButacaDTO unaButaca in Aeronave.ListaButacas)
+                    {
+                        unaButaca.Aeronave = Aeronave.Numero;
+                        ButacaDAO.AltaButaca(unaButaca, conn, tran);
+                    }
+                    tran.Commit();
+                    ret = 1;
+                }
+                catch
+                {
+                    tran.Rollback();
+                    ret = 0;
+                }
+                finally
+                {
+                    conn.Close();
+                    conn.Dispose();
+                }
             }
+            return ret > 0;
         }
     }
 }

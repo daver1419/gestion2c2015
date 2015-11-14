@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.DateAlta = new System.Windows.Forms.DateTimePicker();
             this.FechaAlta = new System.Windows.Forms.Label();
             this.Modelo = new System.Windows.Forms.Label();
@@ -43,12 +44,19 @@
             this.NumericKG = new System.Windows.Forms.NumericUpDown();
             this.Limpiar = new System.Windows.Forms.Button();
             this.Guardar = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.ButacaNumeric = new System.Windows.Forms.NumericUpDown();
+            this.ButacaButton = new System.Windows.Forms.Button();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).BeginInit();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ButacaNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // DateAlta
             // 
-            this.DateAlta.Location = new System.Drawing.Point(141, 25);
+            this.DateAlta.Location = new System.Drawing.Point(129, 20);
             this.DateAlta.Name = "DateAlta";
             this.DateAlta.Size = new System.Drawing.Size(200, 20);
             this.DateAlta.TabIndex = 0;
@@ -56,7 +64,7 @@
             // FechaAlta
             // 
             this.FechaAlta.AutoSize = true;
-            this.FechaAlta.Location = new System.Drawing.Point(23, 25);
+            this.FechaAlta.Location = new System.Drawing.Point(11, 26);
             this.FechaAlta.Name = "FechaAlta";
             this.FechaAlta.Size = new System.Drawing.Size(73, 13);
             this.FechaAlta.TabIndex = 1;
@@ -110,7 +118,7 @@
             // Butacas
             // 
             this.Butacas.AutoSize = true;
-            this.Butacas.Location = new System.Drawing.Point(23, 211);
+            this.Butacas.Location = new System.Drawing.Point(11, 225);
             this.Butacas.Name = "Butacas";
             this.Butacas.Size = new System.Drawing.Size(46, 13);
             this.Butacas.TabIndex = 7;
@@ -155,7 +163,7 @@
             // 
             // Limpiar
             // 
-            this.Limpiar.Location = new System.Drawing.Point(141, 292);
+            this.Limpiar.Location = new System.Drawing.Point(26, 315);
             this.Limpiar.Name = "Limpiar";
             this.Limpiar.Size = new System.Drawing.Size(75, 23);
             this.Limpiar.TabIndex = 13;
@@ -165,13 +173,49 @@
             // 
             // Guardar
             // 
-            this.Guardar.Location = new System.Drawing.Point(266, 292);
+            this.Guardar.Location = new System.Drawing.Point(266, 315);
             this.Guardar.Name = "Guardar";
             this.Guardar.Size = new System.Drawing.Size(75, 23);
             this.Guardar.TabIndex = 14;
             this.Guardar.Text = "Guardar";
             this.Guardar.UseVisualStyleBackColor = true;
             this.Guardar.Click += new System.EventHandler(this.Guardar_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.ButacaButton);
+            this.groupBox1.Controls.Add(this.ButacaNumeric);
+            this.groupBox1.Controls.Add(this.Butacas);
+            this.groupBox1.Controls.Add(this.FechaAlta);
+            this.groupBox1.Controls.Add(this.DateAlta);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(340, 274);
+            this.groupBox1.TabIndex = 15;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Datos Aeronave";
+            // 
+            // ButacaNumeric
+            // 
+            this.ButacaNumeric.Enabled = false;
+            this.ButacaNumeric.Location = new System.Drawing.Point(254, 223);
+            this.ButacaNumeric.Name = "ButacaNumeric";
+            this.ButacaNumeric.Size = new System.Drawing.Size(75, 20);
+            this.ButacaNumeric.TabIndex = 16;
+            // 
+            // ButacaButton
+            // 
+            this.ButacaButton.Location = new System.Drawing.Point(129, 220);
+            this.ButacaButton.Name = "ButacaButton";
+            this.ButacaButton.Size = new System.Drawing.Size(96, 23);
+            this.ButacaButton.TabIndex = 16;
+            this.ButacaButton.Text = "Agregar Butaca";
+            this.ButacaButton.UseVisualStyleBackColor = true;
+            this.ButacaButton.Click += new System.EventHandler(this.ButacaButton_Click);
+            // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
             // 
             // AltaAeronave
             // 
@@ -185,18 +229,20 @@
             this.Controls.Add(this.TextMatricula);
             this.Controls.Add(this.TextModelo);
             this.Controls.Add(this.ComboFabricante);
-            this.Controls.Add(this.Butacas);
             this.Controls.Add(this.KG);
             this.Controls.Add(this.TipoServicio);
             this.Controls.Add(this.Matricula);
             this.Controls.Add(this.Fabricante);
             this.Controls.Add(this.Modelo);
-            this.Controls.Add(this.FechaAlta);
-            this.Controls.Add(this.DateAlta);
+            this.Controls.Add(this.groupBox1);
             this.Name = "AltaAeronave";
             this.Text = "Alta de Aeronave";
             this.Load += new System.EventHandler(this.Alta_Load);
             ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ButacaNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -219,5 +265,9 @@
         private System.Windows.Forms.NumericUpDown NumericKG;
         private System.Windows.Forms.Button Limpiar;
         private System.Windows.Forms.Button Guardar;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button ButacaButton;
+        private System.Windows.Forms.NumericUpDown ButacaNumeric;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
     }
 }

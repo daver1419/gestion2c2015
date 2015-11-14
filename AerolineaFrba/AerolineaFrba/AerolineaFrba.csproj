@@ -50,6 +50,12 @@
     <Compile Include="Abm Aeronave\AltaAeronave.Designer.cs">
       <DependentUpon>AltaAeronave.cs</DependentUpon>
     </Compile>
+    <Compile Include="Abm Aeronave\AgregarButaca.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Aeronave\AgregarButaca.Designer.cs">
+      <DependentUpon>AgregarButaca.cs</DependentUpon>
+    </Compile>
     <Compile Include="Abm Aeronave\IndiceAeronave.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -112,6 +118,8 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="DAO\AeronaveDAO.cs" />
+    <Compile Include="DAO\ButacaDAO.cs" />
+    <Compile Include="DAO\TipoButacaDAO.cs" />
     <Compile Include="DAO\RolxFuncDAO.cs" />
     <Compile Include="DAO\TipoServicioDAO.cs" />
     <Compile Include="DAO\FabricanteDAO.cs" />
@@ -124,6 +132,8 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="DTO\AeronaveDTO.cs" />
+    <Compile Include="DTO\ButacaDTO.cs" />
+    <Compile Include="DTO\TipoButacaDTO.cs" />
     <Compile Include="DTO\RolxFuncDTO.cs" />
     <Compile Include="DTO\TipoServicioDTO.cs" />
     <Compile Include="DTO\FabricanteDTO.cs" />
@@ -170,6 +180,9 @@
     <Compile Include="Registro Llegada Destino\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Abm Aeronave\AgregarButaca.resx">
+      <DependentUpon>AgregarButaca.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Abm Aeronave\AltaAeronave.resx">
       <DependentUpon>AltaAeronave.cs</DependentUpon>
     </EmbeddedResource>
