@@ -1258,12 +1258,21 @@ GO
 --				SP Aeronaves
 --------------------------------------------------------------------------------
 
-CREATE PROCEDURE [NORMALIZADOS].[SP_Alta_Aeronave](@matricula nvarchar(255), @modelo nvarchar(255), @kg_disponibles numeric(18,0), 
-@fabricante int, @tipo_servicio int, @fecha_alta varchar(50))
+CREATE PROCEDURE [NORMALIZADOS].[SP_Alta_Aeronave](@Matricula nvarchar(255), @Modelo nvarchar(255), @Kg_Disponibles numeric(18,0), 
+@Fabricante int, @Tipo_Servicio int, @Fecha_Alta datetime, @Cant_Butacas int, @Id int OUTPUT)
 AS BEGIN
-	INSERT INTO [NORMALIZADOS].[Aeronave](Matricula, Modelo, KG_Disponibles, Fabricante, Tipo_Servicio, Fecha_Alta)
-	VALUES (UPPER(@matricula), UPPER(@modelo), @kg_disponibles, @fabricante, @tipo_servicio, convert(datetime, @fecha_alta,109))
-	declare @id int
-	set @id = SCOPE_IDENTITY()
+	INSERT INTO [NORMALIZADOS].[Aeronave](Matricula, Modelo, KG_Disponibles, Fabricante, Tipo_Servicio, Fecha_Alta, Cantidad_Butacas)
+	VALUES (UPPER(@Matricula), UPPER(@Modelo), @Kg_Disponibles, @Fabricante, @Tipo_Servicio, @Fecha_Alta, @Cant_Butacas)
+	set @Id = SCOPE_IDENTITY()
+END
+GO
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Alta_Butaca](@Aeronave int, @Numero numeric(18,0), @Piso numeric(18,0), 
+@Tipo_Butaca int)
+AS BEGIN
+	INSERT INTO [NORMALIZADOS].[Butaca](Numero, Piso, Tipo_Butaca, Aeronave)
+	VALUES (@Numero, @Piso, @Tipo_Butaca, @Aeronave)
+	declare @Id int
+	set @Id = SCOPE_IDENTITY()
 END
 GO
