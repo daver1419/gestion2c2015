@@ -52,6 +52,7 @@
             this.ModificacionButton.TabIndex = 1;
             this.ModificacionButton.Text = "Modificar Aeronave";
             this.ModificacionButton.UseVisualStyleBackColor = true;
+            this.ModificacionButton.Click += new System.EventHandler(this.ModificacionButton_Click);
             // 
             // BajaButton
             // 

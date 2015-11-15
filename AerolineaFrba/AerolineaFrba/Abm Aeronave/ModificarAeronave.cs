@@ -7,36 +7,44 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AerolineaFrba.DAO;
 using AerolineaFrba.DTO;
+using AerolineaFrba.DAO;
 using System.Text.RegularExpressions;
 
 namespace AerolineaFrba.Abm_Aeronave
 {
-    public partial class AltaAeronave : Form
+    public partial class ModificarAeronave : Form
     {
         private AeronaveDTO Aeronave;
+        private List<ButacaDTO> butacasNuevas = new List<ButacaDTO>();
+        private List<ButacaDTO> butacasModificadas = new List<ButacaDTO>();
 
-        public AltaAeronave()
+        public ModificarAeronave(AeronaveDTO unaAeronave)
         {
             InitializeComponent();
+            this.Aeronave = unaAeronave;
         }
 
-        private void Alta_Load(object sender, EventArgs e)
+        private void ModificarAeronave_Load(object sender, EventArgs e)
         {
             Aeronave = new AeronaveDTO();
             ComboFabricante.DataSource = FabricanteDAO.selectAll();
             ComboFabricante.SelectedIndex = -1;
             ComboTipoServicio.DataSource = TipoServicioDAO.selectAll();
             ComboTipoServicio.SelectedIndex = -1;
+            TextMatricula.Text = Aeronave.Matricula;
+            TextModelo.Text = Aeronave.Modelo;
+            NumericKG.Value = Aeronave.KG;
+            DateAlta.Value = Aeronave.FechaAlta;
+            ButacaNumeric.Value = Aeronave.ListaButacas.Count;
         }
 
         private void Limpiar_Click(object sender, EventArgs e)
         {
-            TextMatricula.Text = "";
-            TextModelo.Text = "";
-            NumericKG.Value = 0;
-            DateAlta.Value = DateTime.Now;
+            TextMatricula.Text = Aeronave.Matricula;
+            TextModelo.Text = Aeronave.Modelo;
+            NumericKG.Value = Aeronave.KG;
+            DateAlta.Value = Aeronave.FechaAlta;
             ComboFabricante.SelectedIndex = -1;
             ComboTipoServicio.SelectedIndex = -1;
             Aeronave.ListaButacas.Clear();
@@ -54,7 +62,7 @@ namespace AerolineaFrba.Abm_Aeronave
             Aeronave.Matricula = TextMatricula.Text;
             Aeronave.Modelo = TextModelo.Text;
 
-            if (AeronaveDAO.AltaAeronave(Aeronave))
+            if (AeronaveDAO.AltaAeronave(Aeronave)) //Cambiar por modificar aeronave
             {
                 MessageBox.Show("Los datos se guardaron con exito");
                 this.Close();
@@ -69,14 +77,41 @@ namespace AerolineaFrba.Abm_Aeronave
 
         private void ButacaButton_Click(object sender, EventArgs e)
         {
-            AgregarButaca vent = new AgregarButaca();
+            ListadoButacas vent = new ListadoButacas();
             vent.ShowDialog(this);
         }
 
-        public void Agregar_Butaca(ButacaDTO unaButaca)
+        // estaba pensando en algo así para manejar las butacas que vamos a agregar eliminar o modificar.
+        public void Cambiar_Butaca(ButacaDTO unaButaca)
         {
-            Aeronave.ListaButacas.Add(unaButaca);
+            if (Tiene_Butaca(unaButaca))
+            {
+                butacasModificadas.Add(unaButaca);
+
+            }
+            else
+            {
+                butacasNuevas.Add(unaButaca);
+                Aeronave.ListaButacas.Add(unaButaca);
+            }
+
             ButacaNumeric.Value = Aeronave.ListaButacas.Count;
+            errorProvider1.Clear();
+        }
+
+        public void Eliminar_Butaca(ButacaDTO unaButaca)
+        {
+            if (Tiene_Butaca(unaButaca))
+            {
+                butacasModificadas.Add(unaButaca);
+
+            }
+            else
+            {
+                butacasNuevas.Add(unaButaca);
+            }
+
+            ButacaNumeric.Value = Aeronave.ListaButacas.Count + butacasNuevas.Count;
             errorProvider1.Clear();
         }
 
@@ -127,5 +162,7 @@ namespace AerolineaFrba.Abm_Aeronave
             Regex regex = new Regex(@"[a-zA-Z]{3}[\-]{1}[0-9]{3}$");
             return regex.IsMatch(mitextbox.Text);
         }
+
+
     }
 }

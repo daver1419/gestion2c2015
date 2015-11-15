@@ -157,6 +157,11 @@
             // NumericKG
             // 
             this.NumericKG.Location = new System.Drawing.Point(141, 182);
+            this.NumericKG.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.NumericKG.Name = "NumericKG";
             this.NumericKG.Size = new System.Drawing.Size(200, 20);
             this.NumericKG.TabIndex = 12;
@@ -199,6 +204,11 @@
             // 
             this.ButacaNumeric.Enabled = false;
             this.ButacaNumeric.Location = new System.Drawing.Point(254, 223);
+            this.ButacaNumeric.Maximum = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
             this.ButacaNumeric.Name = "ButacaNumeric";
             this.ButacaNumeric.Size = new System.Drawing.Size(75, 20);
             this.ButacaNumeric.TabIndex = 16;

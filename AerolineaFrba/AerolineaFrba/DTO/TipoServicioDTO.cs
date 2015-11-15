@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AerolineaFrba.DTO
 {
-    class TipoServicioDTO
+    public class TipoServicioDTO
     {
         public int IdTipoServicio{get;set;}
         public string Descripcion{get;set;}

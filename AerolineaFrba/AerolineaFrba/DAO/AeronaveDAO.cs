@@ -56,5 +56,21 @@ namespace AerolineaFrba.DAO
             }
             return ret > 0;
         }
+
+        public static bool ViajesProgramados(AeronaveDTO Aeronave)
+        {
+            int ret = 0;
+
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Aeronave_Con_Viajes]", conn);
+                com.CommandType = CommandType.StoredProcedure;
+                com.Parameters.AddWithValue("@aeronave", Aeronave.Numero);
+                com.Parameters.Add("@tiene_viajes", SqlDbType.Bit).Direction = ParameterDirection.Output;
+                com.ExecuteNonQuery();
+                ret = (int) com.Parameters["@Id"].Value;
+            }
+            return ret == 1;
+        }
     }
 }

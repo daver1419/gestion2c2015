@@ -21,5 +21,10 @@ namespace AerolineaFrba.Abm_Aeronave
         {
             new AltaAeronave() { Icon = this.Icon }.ShowDialog(this);
         }
+
+        private void ModificacionButton_Click(object sender, EventArgs e)
+        {
+            new ListadoAeronaves() { Icon = this.Icon }.ShowDialog(this);
+        }
     }
 }
