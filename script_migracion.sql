@@ -1276,3 +1276,49 @@ AS BEGIN
 	set @Id = SCOPE_IDENTITY()
 END
 GO
+--------------------------------------------------------------------------------
+--				SP da de alta una ciudad
+--------------------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SP_Alta_Ciudad](@descripcion nvarchar(255))
+AS
+BEGIN
+	INSERT INTO [NORMALIZADOS].Ciudad(Nombre)
+		VALUES(@descripcion)
+
+	SELECT @@IDENTITY
+END
+GO
+--------------------------------------------------------------------------------
+--				SP verifica si existe ciudad con descripcion
+--------------------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[ExistCiudad_SEL_ByDescr](@descripcion nvarchar(255))
+AS
+BEGIN
+	SELECT Id 
+	FROM [NORMALIZADOS].Ciudad
+	WHERE Nombre=@descripcion
+END
+GO
+--------------------------------------------------------------------------------
+--				SP obtiene las ciudades con una descripcion
+--------------------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetCiudad_SEL_ByDescr](@descripcion nvarchar(255))
+AS
+BEGIN
+	SELECT Id,Nombre
+	FROM [NORMALIZADOS].Ciudad
+	WHERE Nombre=@descripcion
+END
+GO
+--------------------------------------------------------------------------------
+--				SP modifica la ciudad
+--------------------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[ActualizarCiudad_UPD_ById](@Id int,@nombre nvarchar(255))
+AS
+BEGIN
+	UPDATE [NORMALIZADOS].Ciudad
+	SET Nombre=@nombre
+	WHERE Id=@Id
+
+	SELECT @@IDENTITY
+END
