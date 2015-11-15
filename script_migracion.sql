@@ -1276,6 +1276,113 @@ AS BEGIN
 	set @Id = SCOPE_IDENTITY()
 END
 GO
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Modificar_Aeronave]
+@Numero int,
+@Matricula nvarchar(7),
+@Fabricante nvarchar (30),
+@Modelo nvarchar(30),
+@ID_Servicio int,
+@KG_Totales int,
+@Fecha_Alta datetime
+AS
+BEGIN
+	UPDATE [NORMALIZADOS].[Aeronave]
+	SET Matricula = @Matricula,
+		Fabricante = @Fabricante,
+		Modelo = @Modelo,
+		Tipo_Servicio = @ID_Servicio,
+		KG_Disponibles = @KG_Totales,
+		Fecha_Alta = @Fecha_Alta
+	WHERE Numero = @Numero	
+END
+GO
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Butacas_Aeronave]
+@Numero_Aeronave int
+AS
+BEGIN
+	SELECT *
+	FROM [NORMALIZADOS].[Butaca] 
+	WHERE Aeronave = @Numero_Aeronave
+END
+GO
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Modificar_Butaca]
+@Id int,
+@Tipo int
+AS
+BEGIN
+	UPDATE [NORMALIZADOS].[Butaca]
+	SET Tipo_Butaca = @Tipo
+	WHERE Id = @Id	
+END
+GO
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Eliminar_Butaca]
+@Id int
+AS
+BEGIN
+	DELETE [NORMALIZADOS].[Butaca]
+	WHERE Id = @Id	
+END
+GO
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Aeronave_Con_Viajes]
+	@Aeronave int,
+	@Tiene_Viajes bit OUTPUT
+	AS
+		
+		IF (EXISTS	(select * 
+		from [NORMALIZADOS].Viaje V
+		WHERE V.Aeronave = @Aeronave
+		AND V.Fecha_Salida > GETDATE()))
+		BEGIN
+			SET @Tiene_Viajes = 1;
+		END
+		ELSE
+		BEGIN
+			SET @Tiene_Viajes = 0;
+		END
+GO
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronave]
+	@Modelo nvarchar(255),
+	@Matricula nvarchar(255),
+	@Kg_Disponibles numeric(18,0),
+	@Fabricante nvarchar(255),
+	@Tipo_Servicio nvarchar(255),
+	@Cantidad_Butacas int,
+	@Fecha_Alta nvarchar(255),
+	@Fecha_Alta_Fin nvarchar(255),
+	@Fecha_Baja_Def nvarchar(255),
+	@Fecha_Baja_Def_Fin nvarchar(255),
+	@Fecha_Baja_Temporal nvarchar(255),
+	@Fecha_Baja_Temporal_Fin nvarchar(255),
+	@Fecha_Vuelta_Servicio nvarchar(255),
+	@Fecha_Vuelta_Servicio_Fin nvarchar(255)
+
+	AS
+	SELECT * 
+	FROM [NORMALIZADOS].Aeronave A
+	JOIN [NORMALIZADOS].[Baja_Temporal_Aeronave] BTA
+	ON A.Numero = BTA.Aeronave
+	WHERE (A.Modelo like @Modelo OR @Modelo like '')
+		AND (A.Matricula like @Matricula OR @Matricula like '')
+		AND (A.Kg_Disponibles = @Kg_Disponibles OR @Kg_Disponibles = 0)
+		AND (A.Fabricante like @Fabricante OR @Fabricante like '')
+		AND (A.Tipo_Servicio like @Tipo_Servicio OR @Tipo_Servicio like '')
+		AND (A.Cantidad_Butacas > @Cantidad_Butacas OR @Cantidad_Butacas = 0)
+		AND (A.Fecha_Alta > @Fecha_Alta OR @Fecha_Alta is null) 
+		AND (A.Fecha_Alta < @Fecha_Alta_Fin OR @Fecha_Alta_Fin is null) 
+		AND (A.Fecha_Baja_Definitiva > @Fecha_Baja_Def OR @Fecha_Baja_Def is null) 
+		AND (A.Fecha_Baja_Definitiva < @Fecha_Baja_Def_Fin OR @Fecha_Baja_Def_Fin is null)
+		AND (BTA.Fecha_Fuera_Servicio > @Fecha_Baja_Temporal OR @Fecha_Baja_Temporal is null) 
+		AND (BTA.Fecha_Fuera_Servicio < @Fecha_Baja_Temporal_Fin OR @Fecha_Baja_Temporal_Fin is null) 
+		AND (BTA.Fecha_Vuelta_Al_Servicio > @Fecha_Vuelta_Servicio OR @Fecha_Vuelta_Servicio is null)
+		AND (BTA.Fecha_Vuelta_Al_Servicio < @Fecha_Vuelta_Servicio_Fin OR @Fecha_Vuelta_Servicio_Fin is null) 
+GO
+
 --------------------------------------------------------------------------------
 --				SP da de alta una ciudad
 --------------------------------------------------------------------------------
