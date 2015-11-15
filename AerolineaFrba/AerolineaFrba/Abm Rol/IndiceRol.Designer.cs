@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.AltaButton = new System.Windows.Forms.Button();
-            this.ModificacionButton = new System.Windows.Forms.Button();
             this.EliminarButton = new System.Windows.Forms.Button();
+            this.ModificacionButton = new System.Windows.Forms.Button();
+            this.AltaButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,15 +47,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Opciones de Rol";
             // 
-            // AltaButton
+            // EliminarButton
             // 
-            this.AltaButton.Location = new System.Drawing.Point(26, 19);
-            this.AltaButton.Name = "AltaButton";
-            this.AltaButton.Size = new System.Drawing.Size(165, 39);
-            this.AltaButton.TabIndex = 0;
-            this.AltaButton.Text = "Nuevo Rol";
-            this.AltaButton.UseVisualStyleBackColor = true;
-            this.AltaButton.Click += new System.EventHandler(this.AltaButton_Click);
+            this.EliminarButton.Location = new System.Drawing.Point(26, 149);
+            this.EliminarButton.Name = "EliminarButton";
+            this.EliminarButton.Size = new System.Drawing.Size(165, 39);
+            this.EliminarButton.TabIndex = 2;
+            this.EliminarButton.Text = "Eliminar Rol";
+            this.EliminarButton.UseVisualStyleBackColor = true;
+            this.EliminarButton.Click += new System.EventHandler(this.EliminarButton_Click);
             // 
             // ModificacionButton
             // 
@@ -67,15 +67,15 @@
             this.ModificacionButton.UseVisualStyleBackColor = true;
             this.ModificacionButton.Click += new System.EventHandler(this.ModificacionButton_Click);
             // 
-            // EliminarButton
+            // AltaButton
             // 
-            this.EliminarButton.Location = new System.Drawing.Point(26, 149);
-            this.EliminarButton.Name = "EliminarButton";
-            this.EliminarButton.Size = new System.Drawing.Size(165, 39);
-            this.EliminarButton.TabIndex = 2;
-            this.EliminarButton.Text = "Eliminar Rol";
-            this.EliminarButton.UseVisualStyleBackColor = true;
-            this.EliminarButton.Click += new System.EventHandler(this.EliminarButton_Click);
+            this.AltaButton.Location = new System.Drawing.Point(26, 19);
+            this.AltaButton.Name = "AltaButton";
+            this.AltaButton.Size = new System.Drawing.Size(165, 39);
+            this.AltaButton.TabIndex = 0;
+            this.AltaButton.Text = "Nuevo Rol";
+            this.AltaButton.UseVisualStyleBackColor = true;
+            this.AltaButton.Click += new System.EventHandler(this.AltaButton_Click);
             // 
             // IndiceRol
             // 
@@ -85,6 +85,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "IndiceRol";
             this.Text = "ABM Rol";
+            this.Load += new System.EventHandler(this.IndiceRol_Load);
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 

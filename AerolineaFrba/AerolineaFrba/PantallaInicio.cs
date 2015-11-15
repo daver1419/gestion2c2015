@@ -122,7 +122,7 @@ namespace AerolineaFrba
 
                     case FuncionalidadDTO.Funcionalidad.ABM_CIUDAD:
 
-                        new Abm_Ciudad.Form1() { Icon = this.Icon, StartPosition = FormStartPosition.CenterScreen }.ShowDialog(this);
+                        new Abm_Ciudad.IndiceCiudad() { Icon = this.Icon, StartPosition = FormStartPosition.CenterScreen }.ShowDialog(this);
 
                         break;
 
