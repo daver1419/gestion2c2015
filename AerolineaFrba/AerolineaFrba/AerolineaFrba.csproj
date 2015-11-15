@@ -80,11 +80,29 @@
     <Compile Include="Abm Aeronave\IndiceAeronave.Designer.cs">
       <DependentUpon>IndiceAeronave.cs</DependentUpon>
     </Compile>
-    <Compile Include="Abm Ciudad\Form1.cs">
+    <Compile Include="Abm Ciudad\AltaCiudad.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Abm Ciudad\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Abm Ciudad\AltaCiudad.Designer.cs">
+      <DependentUpon>AltaCiudad.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Ciudad\IndiceCiudad.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ciudad\IndiceCiudad.Designer.cs">
+      <DependentUpon>IndiceCiudad.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Ciudad\Modificacion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ciudad\Modificacion.Designer.cs">
+      <DependentUpon>Modificacion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Ciudad\ModificacionListado.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ciudad\ModificacionListado.Designer.cs">
+      <DependentUpon>ModificacionListado.cs</DependentUpon>
     </Compile>
     <Compile Include="Abm Rol\AltaRol.cs">
       <SubType>Form</SubType>
@@ -137,6 +155,7 @@
     </Compile>
     <Compile Include="DAO\AeronaveDAO.cs" />
     <Compile Include="DAO\ButacaDAO.cs" />
+    <Compile Include="DAO\CiudadDAO.cs" />
     <Compile Include="DAO\TipoButacaDAO.cs" />
     <Compile Include="DAO\RolxFuncDAO.cs" />
     <Compile Include="DAO\TipoServicioDAO.cs" />
@@ -151,6 +170,7 @@
     </Compile>
     <Compile Include="DTO\AeronaveDTO.cs" />
     <Compile Include="DTO\ButacaDTO.cs" />
+    <Compile Include="DTO\CiudadDTO.cs" />
     <Compile Include="DTO\TipoButacaDTO.cs" />
     <Compile Include="DTO\RolxFuncDTO.cs" />
     <Compile Include="DTO\TipoServicioDTO.cs" />
@@ -212,6 +232,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Aeronave\IndiceAeronave.resx">
       <DependentUpon>IndiceAeronave.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ciudad\AltaCiudad.resx">
+      <DependentUpon>AltaCiudad.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ciudad\IndiceCiudad.resx">
+      <DependentUpon>IndiceCiudad.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ciudad\Modificacion.resx">
+      <DependentUpon>Modificacion.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ciudad\ModificacionListado.resx">
+      <DependentUpon>ModificacionListado.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Rol\AltaRol.resx">
       <DependentUpon>AltaRol.cs</DependentUpon>

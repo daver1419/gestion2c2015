@@ -31,5 +31,10 @@ namespace AerolineaFrba.Abm_Rol
         {
             new ListadoRoles() { Icon = this.Icon }.ShowDialog(this);
         }
+
+        private void IndiceRol_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
