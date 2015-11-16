@@ -95,5 +95,11 @@ namespace AerolineaFrba.Abm_Aeronave
             Regex regex = new Regex(@"[a-zA-Z]{3}[\-]{1}[0-9]{3}$");
             return regex.IsMatch(mitextbox.Text);
         }
+
+        private void ListadoAeronaves_Load(object sender, EventArgs e)
+        {
+            ComboFabricante.DataSource = FabricanteDAO.selectAll();
+            ComboTipoServicio.DataSource = TipoServicioDAO.selectAll();
+        }
     }
 }

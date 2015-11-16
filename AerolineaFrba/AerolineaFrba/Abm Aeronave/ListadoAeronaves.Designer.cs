@@ -34,6 +34,16 @@
             this.Buscar = new System.Windows.Forms.Button();
             this.Limpiar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.DateVueltaFin = new System.Windows.Forms.DateTimePicker();
+            this.label3 = new System.Windows.Forms.Label();
+            this.DateVuelta = new System.Windows.Forms.DateTimePicker();
+            this.DateFueraFin = new System.Windows.Forms.DateTimePicker();
+            this.label2 = new System.Windows.Forms.Label();
+            this.DateFuera = new System.Windows.Forms.DateTimePicker();
+            this.DateBajaFin = new System.Windows.Forms.DateTimePicker();
+            this.label1 = new System.Windows.Forms.Label();
+            this.DateBaja = new System.Windows.Forms.DateTimePicker();
+            this.DateAltaFin = new System.Windows.Forms.DateTimePicker();
             this.ComboTipoServicio = new System.Windows.Forms.ComboBox();
             this.TextMatricula = new System.Windows.Forms.TextBox();
             this.TextModelo = new System.Windows.Forms.TextBox();
@@ -49,16 +59,6 @@
             this.ButacaNumeric = new System.Windows.Forms.NumericUpDown();
             this.Butacas = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.DateAltaFin = new System.Windows.Forms.DateTimePicker();
-            this.DateBajaFin = new System.Windows.Forms.DateTimePicker();
-            this.label1 = new System.Windows.Forms.Label();
-            this.DateBaja = new System.Windows.Forms.DateTimePicker();
-            this.DateFueraFin = new System.Windows.Forms.DateTimePicker();
-            this.label2 = new System.Windows.Forms.Label();
-            this.DateFuera = new System.Windows.Forms.DateTimePicker();
-            this.DateVueltaFin = new System.Windows.Forms.DateTimePicker();
-            this.label3 = new System.Windows.Forms.Label();
-            this.DateVuelta = new System.Windows.Forms.DateTimePicker();
             ((System.ComponentModel.ISupportInitialize)(this.tablaDatos)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).BeginInit();
@@ -133,6 +133,82 @@
             this.groupBox1.TabIndex = 8;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtro de Búsqueda";
+            // 
+            // DateVueltaFin
+            // 
+            this.DateVueltaFin.Location = new System.Drawing.Point(357, 103);
+            this.DateVueltaFin.Name = "DateVueltaFin";
+            this.DateVueltaFin.Size = new System.Drawing.Size(193, 20);
+            this.DateVueltaFin.TabIndex = 40;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(16, 109);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(111, 13);
+            this.label3.TabIndex = 39;
+            this.label3.Text = "Fecha Vuelta Servicio";
+            // 
+            // DateVuelta
+            // 
+            this.DateVuelta.Location = new System.Drawing.Point(134, 103);
+            this.DateVuelta.Name = "DateVuelta";
+            this.DateVuelta.Size = new System.Drawing.Size(193, 20);
+            this.DateVuelta.TabIndex = 38;
+            // 
+            // DateFueraFin
+            // 
+            this.DateFueraFin.Location = new System.Drawing.Point(357, 77);
+            this.DateFueraFin.Name = "DateFueraFin";
+            this.DateFueraFin.Size = new System.Drawing.Size(193, 20);
+            this.DateFueraFin.TabIndex = 37;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(16, 83);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(108, 13);
+            this.label2.TabIndex = 36;
+            this.label2.Text = "Fecha Fuera Servicio";
+            // 
+            // DateFuera
+            // 
+            this.DateFuera.Location = new System.Drawing.Point(134, 77);
+            this.DateFuera.Name = "DateFuera";
+            this.DateFuera.Size = new System.Drawing.Size(193, 20);
+            this.DateFuera.TabIndex = 35;
+            // 
+            // DateBajaFin
+            // 
+            this.DateBajaFin.Location = new System.Drawing.Point(357, 51);
+            this.DateBajaFin.Name = "DateBajaFin";
+            this.DateBajaFin.Size = new System.Drawing.Size(193, 20);
+            this.DateBajaFin.TabIndex = 34;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(16, 57);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(108, 13);
+            this.label1.TabIndex = 33;
+            this.label1.Text = "Fecha Baja Definitiva";
+            // 
+            // DateBaja
+            // 
+            this.DateBaja.Location = new System.Drawing.Point(134, 51);
+            this.DateBaja.Name = "DateBaja";
+            this.DateBaja.Size = new System.Drawing.Size(193, 20);
+            this.DateBaja.TabIndex = 32;
+            // 
+            // DateAltaFin
+            // 
+            this.DateAltaFin.Location = new System.Drawing.Point(357, 25);
+            this.DateAltaFin.Name = "DateAltaFin";
+            this.DateAltaFin.Size = new System.Drawing.Size(193, 20);
+            this.DateAltaFin.TabIndex = 31;
             // 
             // ComboTipoServicio
             // 
@@ -263,82 +339,6 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
-            // DateAltaFin
-            // 
-            this.DateAltaFin.Location = new System.Drawing.Point(357, 25);
-            this.DateAltaFin.Name = "DateAltaFin";
-            this.DateAltaFin.Size = new System.Drawing.Size(193, 20);
-            this.DateAltaFin.TabIndex = 31;
-            // 
-            // DateBajaFin
-            // 
-            this.DateBajaFin.Location = new System.Drawing.Point(357, 51);
-            this.DateBajaFin.Name = "DateBajaFin";
-            this.DateBajaFin.Size = new System.Drawing.Size(193, 20);
-            this.DateBajaFin.TabIndex = 34;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 57);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 13);
-            this.label1.TabIndex = 33;
-            this.label1.Text = "Fecha Baja Definitiva";
-            // 
-            // DateBaja
-            // 
-            this.DateBaja.Location = new System.Drawing.Point(134, 51);
-            this.DateBaja.Name = "DateBaja";
-            this.DateBaja.Size = new System.Drawing.Size(193, 20);
-            this.DateBaja.TabIndex = 32;
-            // 
-            // DateFueraFin
-            // 
-            this.DateFueraFin.Location = new System.Drawing.Point(357, 77);
-            this.DateFueraFin.Name = "DateFueraFin";
-            this.DateFueraFin.Size = new System.Drawing.Size(193, 20);
-            this.DateFueraFin.TabIndex = 37;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 83);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(108, 13);
-            this.label2.TabIndex = 36;
-            this.label2.Text = "Fecha Fuera Servicio";
-            // 
-            // DateFuera
-            // 
-            this.DateFuera.Location = new System.Drawing.Point(134, 77);
-            this.DateFuera.Name = "DateFuera";
-            this.DateFuera.Size = new System.Drawing.Size(193, 20);
-            this.DateFuera.TabIndex = 35;
-            // 
-            // DateVueltaFin
-            // 
-            this.DateVueltaFin.Location = new System.Drawing.Point(357, 103);
-            this.DateVueltaFin.Name = "DateVueltaFin";
-            this.DateVueltaFin.Size = new System.Drawing.Size(193, 20);
-            this.DateVueltaFin.TabIndex = 40;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 109);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(111, 13);
-            this.label3.TabIndex = 39;
-            this.label3.Text = "Fecha Vuelta Servicio";
-            // 
-            // DateVuelta
-            // 
-            this.DateVuelta.Location = new System.Drawing.Point(134, 103);
-            this.DateVuelta.Name = "DateVuelta";
-            this.DateVuelta.Size = new System.Drawing.Size(193, 20);
-            this.DateVuelta.TabIndex = 38;
-            // 
             // ListadoAeronaves
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -350,6 +350,7 @@
             this.Controls.Add(this.tablaDatos);
             this.Name = "ListadoAeronaves";
             this.Text = "Listado de Aeronaves";
+            this.Load += new System.EventHandler(this.ListadoAeronaves_Load);
             ((System.ComponentModel.ISupportInitialize)(this.tablaDatos)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

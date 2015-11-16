@@ -54,7 +54,6 @@ namespace AerolineaFrba.DAO
                 }
                 dataReader.Close();
                 dataReader.Dispose();
-                
             }
             return ListaCiudades;
         }
@@ -83,6 +82,19 @@ namespace AerolineaFrba.DAO
                      retValue=com.ExecuteNonQuery();
             }
             return retValue>0;
+        }
+        public static List<CiudadDTO> SelectAll()
+        {
+            List<CiudadDTO> listaCiudades;
+
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[GetAllCiudad_SEL]", conn);
+                com.CommandType = CommandType.StoredProcedure;
+                SqlDataReader reader = com.ExecuteReader();
+                listaCiudades = getCiudades(reader);                
+            }
+            return listaCiudades;
         }
     }
 }
