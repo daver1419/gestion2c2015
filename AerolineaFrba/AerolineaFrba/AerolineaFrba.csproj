@@ -171,6 +171,7 @@
     <Compile Include="DTO\AeronaveDTO.cs" />
     <Compile Include="DTO\ButacaDTO.cs" />
     <Compile Include="DTO\CiudadDTO.cs" />
+    <Compile Include="DTO\AeronaveFiltersDTO.cs" />
     <Compile Include="DTO\TipoButacaDTO.cs" />
     <Compile Include="DTO\RolxFuncDTO.cs" />
     <Compile Include="DTO\TipoServicioDTO.cs" />

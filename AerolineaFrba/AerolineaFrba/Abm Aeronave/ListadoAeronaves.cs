@@ -23,7 +23,27 @@ namespace AerolineaFrba.Abm_Aeronave
         private void Buscar_Click(object sender, EventArgs e)
         {
             if (validar()) return;
-            // hay que traer el datagrid view con el [SP_Busqueda_Aeronave]
+            AeronaveDTO aeronave = new AeronaveDTO();
+            AeronaveFiltersDTO aeronaveFilters = new AeronaveFiltersDTO();
+            
+            aeronave.Fabricante = ((FabricanteDTO)ComboFabricante.SelectedValue);
+            aeronave.TipoServicio = ((TipoServicioDTO)ComboTipoServicio.SelectedValue);
+            aeronave.FechaAlta = DateAlta.Value;
+            aeronave.KG = Decimal.ToInt32(NumericKG.Value);
+            aeronave.Matricula = TextMatricula.Text;
+            aeronave.Modelo = TextModelo.Text;
+
+            aeronaveFilters.Aeronave = aeronave;
+            aeronaveFilters.Catidad_Butacas = Convert.ToInt32(ButacaNumeric.Value);
+            aeronaveFilters.Fecha_Alta_Fin = DateAltaFin.Value;
+            aeronaveFilters.Fecha_Baja_Def = DateBaja.Value;
+            aeronaveFilters.Fecha_Baja_Def_Fin = DateBajaFin.Value;
+            aeronaveFilters.Fecha_Baja_Temporal = DateFuera.Value;
+            aeronaveFilters.Fecha_Baja_Temporal_Fin = DateFueraFin.Value;
+            aeronaveFilters.Fecha_Vuelta_Servicio = DateVuelta.Value;
+            aeronaveFilters.Fecha_Vuelta_Servicio_Fin = DateVueltaFin.Value;
+
+            AeronaveDAO.GetByFilters(aeronaveFilters);
 
         }
 
@@ -62,7 +82,7 @@ namespace AerolineaFrba.Abm_Aeronave
         {
             errorProvider1.Clear();
             bool ret = false;
-            if (!buenFormatoMatricula(this.TextMatricula))
+            if (!buenFormatoMatricula(this.TextMatricula) && !(this.TextMatricula.Text == ""))
             {
                 errorProvider1.SetError(TextMatricula, "Debe ingresar una matricula en el formato XXX-000");
                 ret = true;
