@@ -1361,7 +1361,7 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronave]
 	@Fecha_Vuelta_Servicio_Fin nvarchar(255)
 
 	AS
-	SELECT * 
+	SELECT A.* 
 	FROM [NORMALIZADOS].Aeronave A
 	JOIN [NORMALIZADOS].[Baja_Temporal_Aeronave] BTA
 	ON A.Numero = BTA.Aeronave
