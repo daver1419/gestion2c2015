@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using AerolineaFrba.Conexion;
 using AerolineaFrba.DTO;
 using System.Windows.Forms;
+using System.Data;
 
 namespace AerolineaFrba.DAO
 {
@@ -73,12 +74,10 @@ namespace AerolineaFrba.DAO
             int retorno = 0;
             using (SqlConnection Conn = Conexion.Conexion.obtenerConexion())
             {
-                foreach (FuncionalidadDTO fun in rol.ListaFunc)
-                {
-                    RolxFuncDAO.delete(rol.IdRol, fun.IdFuncionalidad);
-                }
-                SqlCommand Comando = new SqlCommand(string.Format("DELETE [NORMALIZADOS].Rol WHERE Id = {0}", rol.IdRol), Conn);
-                retorno = Comando.ExecuteNonQuery();
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Baja_Rol]", Conn);
+                com.CommandType = CommandType.StoredProcedure;
+                com.Parameters.AddWithValue("@Rol", rol.IdRol);
+                retorno = com.ExecuteNonQuery();
                 return retorno > 0;
             }
         }

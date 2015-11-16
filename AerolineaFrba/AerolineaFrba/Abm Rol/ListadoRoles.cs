@@ -81,7 +81,7 @@ namespace AerolineaFrba.Abm_Rol
                 if (confirmResult == DialogResult.Yes)
                 {
                     RolDAO.delete(rol);
-                    MessageBox.Show("El rol fue eliminado con exito");
+                    MessageBox.Show("El rol fue dado de baja con exito");
                     Reload();
                 }
             }
