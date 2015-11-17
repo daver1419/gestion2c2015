@@ -12,6 +12,7 @@ namespace AerolineaFrba.DTO
         public int Numero { get; set; }
         public TipoButacaDTO Tipo_Butaca { get; set; }
         public int Piso { get; set; }
+        public bool Habilitada { get; set; }
         public int Aeronave { get; set; }
 
         public ButacaDTO(){

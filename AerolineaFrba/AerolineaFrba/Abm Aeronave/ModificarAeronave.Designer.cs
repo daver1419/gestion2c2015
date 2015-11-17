@@ -48,6 +48,7 @@
             this.Guardar = new System.Windows.Forms.Button();
             this.Limpiar = new System.Windows.Forms.Button();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ButacaNumeric)).BeginInit();
@@ -56,6 +57,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.NumericKG);
             this.groupBox1.Controls.Add(this.ComboTipoServicio);
             this.groupBox1.Controls.Add(this.TextMatricula);
@@ -178,7 +180,7 @@
             // ButacaNumeric
             // 
             this.ButacaNumeric.Enabled = false;
-            this.ButacaNumeric.Location = new System.Drawing.Point(254, 223);
+            this.ButacaNumeric.Location = new System.Drawing.Point(254, 236);
             this.ButacaNumeric.Maximum = new decimal(new int[] {
             200,
             0,
@@ -237,6 +239,16 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(129, 250);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(96, 23);
+            this.button1.TabIndex = 27;
+            this.button1.Text = "Agregar Butacas";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // ModificarAeronave
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -247,6 +259,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "ModificarAeronave";
             this.Text = "Modificar Aeronave";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ModificarAeronave_FormClosing);
             this.Load += new System.EventHandler(this.ModificarAeronave_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -278,5 +291,6 @@
         private System.Windows.Forms.Button Guardar;
         private System.Windows.Forms.Button Limpiar;
         private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.Button button1;
     }
 }

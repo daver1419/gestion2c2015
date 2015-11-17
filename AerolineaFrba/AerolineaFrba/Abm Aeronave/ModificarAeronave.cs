@@ -34,6 +34,7 @@ namespace AerolineaFrba.Abm_Aeronave
             TextMatricula.Text = Aeronave.Matricula;
             TextModelo.Text = Aeronave.Modelo;
             NumericKG.Value = Aeronave.KG;
+            Aeronave.ListaButacas = ButacaDAO.GetByAeronave(Aeronave);
 
             if (Aeronave.FechaAlta != null)
             {
@@ -66,7 +67,7 @@ namespace AerolineaFrba.Abm_Aeronave
 
             ComboFabricante.SelectedItem = Aeronave.Fabricante;
             ComboTipoServicio.SelectedItem = Aeronave.TipoServicio;
-            Aeronave.ListaButacas.Clear();
+            Aeronave.ListaButacas = ButacaDAO.GetByAeronave(Aeronave);
             ButacaNumeric.Value = Aeronave.ListaButacas.Count;
             errorProvider1.Clear();
         }
@@ -81,7 +82,7 @@ namespace AerolineaFrba.Abm_Aeronave
             Aeronave.Matricula = TextMatricula.Text;
             Aeronave.Modelo = TextModelo.Text;
 
-            if (AeronaveDAO.AltaAeronave(Aeronave)) //Cambiar por modificar aeronave
+            if (AeronaveDAO.ModificacionAeronave(Aeronave, butacasNuevas, butacasModificadas))
             {
                 MessageBox.Show("Los datos se guardaron con exito");
                 this.Close();
@@ -96,41 +97,22 @@ namespace AerolineaFrba.Abm_Aeronave
 
         private void ButacaButton_Click(object sender, EventArgs e)
         {
-            ListadoButacas vent = new ListadoButacas();
+            ListadoButacas vent = new ListadoButacas(Aeronave);
             vent.ShowDialog(this);
         }
 
         // estaba pensando en algo así para manejar las butacas que vamos a agregar eliminar o modificar.
-        public void Cambiar_Butaca(ButacaDTO unaButaca)
+        public void Modificar_Butaca(ButacaDTO unaButaca)
         {
-            if (Tiene_Butaca(unaButaca))
-            {
-                butacasModificadas.Add(unaButaca);
-
-            }
-            else
-            {
-                butacasNuevas.Add(unaButaca);
-                Aeronave.ListaButacas.Add(unaButaca);
-            }
-
-            ButacaNumeric.Value = Aeronave.ListaButacas.Count;
+            butacasModificadas.Add(unaButaca);
             errorProvider1.Clear();
         }
 
-        public void Eliminar_Butaca(ButacaDTO unaButaca)
+        public void Agregar_Butaca(ButacaDTO unaButaca)
         {
-            if (Tiene_Butaca(unaButaca))
-            {
-                butacasModificadas.Add(unaButaca);
-
-            }
-            else
-            {
-                butacasNuevas.Add(unaButaca);
-            }
-
-            ButacaNumeric.Value = Aeronave.ListaButacas.Count + butacasNuevas.Count;
+            butacasNuevas.Add(unaButaca);
+            Aeronave.ListaButacas.Add(unaButaca);
+            ButacaNumeric.Value = Aeronave.ListaButacas.Count;
             errorProvider1.Clear();
         }
 
@@ -143,11 +125,6 @@ namespace AerolineaFrba.Abm_Aeronave
         {
             errorProvider1.Clear();
             bool ret = false;
-            if (DateAlta.Value < DateTime.Now)
-            {
-                errorProvider1.SetError(DateAlta, "La fecha debe ser posterior al momento de ser ingresada.");
-                ret = true;
-            }
             if (this.ComboFabricante.SelectedIndex == -1)
             {
                 errorProvider1.SetError(ComboFabricante, "Debe seleccionar un fabricante.");
@@ -180,6 +157,22 @@ namespace AerolineaFrba.Abm_Aeronave
         {
             Regex regex = new Regex(@"[a-zA-Z]{3}[\-]{1}[0-9]{3}$");
             return regex.IsMatch(mitextbox.Text);
+        }
+
+        public void ReloadButacas()
+        {
+            ButacaNumeric.Value = Aeronave.ListaButacas.Count;
+        }
+
+        private void ModificarAeronave_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ((ListadoAeronaves)this.Owner).Reload();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            AgregarButaca vent = new AgregarButaca(false);
+            vent.ShowDialog(this);
         }
 
 

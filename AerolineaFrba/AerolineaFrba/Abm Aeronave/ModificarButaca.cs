@@ -12,15 +12,14 @@ using AerolineaFrba.DAO;
 
 namespace AerolineaFrba.Abm_Aeronave
 {
-    public partial class AgregarButaca : Form
+    public partial class ModificarButaca : Form
     {
         private ButacaDTO Butaca;
-        private bool alta;
 
-        public AgregarButaca(bool alta)
+        public ModificarButaca(ButacaDTO unaButaca)
         {
             InitializeComponent();
-            this.alta = alta;
+            this.Butaca = unaButaca;
         }
 
         private void Guardar_Click(object sender, EventArgs e)
@@ -30,17 +29,18 @@ namespace AerolineaFrba.Abm_Aeronave
             Butaca.Piso = (int) PisoNumeric.Value;
             Butaca.Tipo_Butaca = (TipoButacaDTO) TipoButacaCombo.SelectedValue;
             Butaca.Habilitada = HabilitadaCheck.Checked;
-            if(alta) ((AltaAeronave)this.Owner).Agregar_Butaca(Butaca);
-            else ((ModificarAeronave)this.Owner).Agregar_Butaca(Butaca);
+            ((ModificarAeronave)((ListadoButacas)this.Owner).Owner).Modificar_Butaca(Butaca);
+            ((ListadoButacas)this.Owner).Reload();
             this.Close();
         }
 
-        private void AgregarButaca_Load(object sender, EventArgs e)
+        private void ModificarButaca_Load(object sender, EventArgs e)
         {
-            Butaca = new ButacaDTO();
+            NumeroNumeric.Value = Butaca.Numero;
+            PisoNumeric.Value = Butaca.Piso;
             TipoButacaCombo.DataSource = TipoButacaDAO.selectAll();
-            TipoButacaCombo.SelectedIndex = -1;
-            HabilitadaCheck.Checked = true;
+            TipoButacaCombo.SelectedItem = Butaca.Tipo_Butaca;
+            HabilitadaCheck.Checked = Butaca.Habilitada;
         }
 
         private bool validar()
@@ -49,20 +49,9 @@ namespace AerolineaFrba.Abm_Aeronave
             bool ret = false;
             ButacaDTO unaButaca = new ButacaDTO();
             unaButaca.Numero = (int)NumeroNumeric.Value;
-            
-            bool tieneButaca;
-            
-            if(alta) tieneButaca = ((AltaAeronave)this.Owner).Tiene_Butaca(unaButaca);
-            else tieneButaca = ((ModificarAeronave)this.Owner).Tiene_Butaca(unaButaca);
-            
-            if (tieneButaca)
-            {
-                errorProvider1.SetError(NumeroNumeric, "El numero de esta butaca ya esta ocupado.");
-                ret = true;
-            }
             if (this.TipoButacaCombo.SelectedIndex == -1)
             {
-                errorProvider1.SetError(TipoButacaCombo, "Debe crear la butaca con un tipo.");
+                errorProvider1.SetError(TipoButacaCombo, "La butaca debe tener un tipo.");
                 ret = true;
             }
             return ret;
@@ -70,10 +59,11 @@ namespace AerolineaFrba.Abm_Aeronave
 
         private void Limpiar_Click(object sender, EventArgs e)
         {
-            NumeroNumeric.Value = 0;
-            PisoNumeric.Value = 1;
-            TipoButacaCombo.SelectedIndex = -1;
-            HabilitadaCheck.Checked = true;
+            NumeroNumeric.Value = Butaca.Numero;
+            PisoNumeric.Value = Butaca.Piso;
+            TipoButacaCombo.DataSource = TipoButacaDAO.selectAll();
+            TipoButacaCombo.SelectedItem = Butaca.Tipo_Butaca;
+            HabilitadaCheck.Checked = Butaca.Habilitada;
             errorProvider1.Clear();
         }
     }

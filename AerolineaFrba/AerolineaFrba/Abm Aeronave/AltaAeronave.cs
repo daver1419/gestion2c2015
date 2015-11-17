@@ -69,7 +69,7 @@ namespace AerolineaFrba.Abm_Aeronave
 
         private void ButacaButton_Click(object sender, EventArgs e)
         {
-            AgregarButaca vent = new AgregarButaca();
+            AgregarButaca vent = new AgregarButaca(true);
             vent.ShowDialog(this);
         }
 

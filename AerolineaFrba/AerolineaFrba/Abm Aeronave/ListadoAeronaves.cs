@@ -15,16 +15,19 @@ namespace AerolineaFrba.Abm_Aeronave
 {
     public partial class ListadoAeronaves : Form
     {
+        AeronaveDTO aeronave;
+        AeronaveFiltersDTO aeronaveFilters;
+
         public ListadoAeronaves()
         {
             InitializeComponent();
+            aeronave = new AeronaveDTO();
+            aeronaveFilters = new AeronaveFiltersDTO();
         }
 
         private void Buscar_Click(object sender, EventArgs e)
         {
             if (validar()) return;
-            AeronaveDTO aeronave = new AeronaveDTO();
-            AeronaveFiltersDTO aeronaveFilters = new AeronaveFiltersDTO();
             
             aeronave.Fabricante = ((FabricanteDTO)ComboFabricante.SelectedValue);
             aeronave.TipoServicio = ((TipoServicioDTO)ComboTipoServicio.SelectedValue);
@@ -133,6 +136,11 @@ namespace AerolineaFrba.Abm_Aeronave
             ComboTipoServicio.DataSource = TipoServicioDAO.selectAll();
             ComboTipoServicio.SelectedIndex = -1;
 
+        }
+
+        public void Reload()
+        {
+            this.tablaDatos.DataSource = AeronaveDAO.GetByFilters(aeronaveFilters);
         }
     }
 }

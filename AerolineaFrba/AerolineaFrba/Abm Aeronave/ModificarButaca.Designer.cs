@@ -1,6 +1,6 @@
 ﻿namespace AerolineaFrba.Abm_Aeronave
 {
-    partial class AgregarButaca
+    partial class ModificarButaca
     {
         /// <summary>
         /// Required designer variable.
@@ -123,7 +123,7 @@
             // 
             // Limpiar
             // 
-            this.Limpiar.Location = new System.Drawing.Point(23, 191);
+            this.Limpiar.Location = new System.Drawing.Point(47, 191);
             this.Limpiar.Name = "Limpiar";
             this.Limpiar.Size = new System.Drawing.Size(75, 23);
             this.Limpiar.TabIndex = 14;
@@ -133,7 +133,7 @@
             // 
             // Guardar
             // 
-            this.Guardar.Location = new System.Drawing.Point(220, 191);
+            this.Guardar.Location = new System.Drawing.Point(260, 191);
             this.Guardar.Name = "Guardar";
             this.Guardar.Size = new System.Drawing.Size(75, 23);
             this.Guardar.TabIndex = 15;
@@ -148,15 +148,15 @@
             // HabilitadaCheck
             // 
             this.HabilitadaCheck.AutoSize = true;
-            this.HabilitadaCheck.Location = new System.Drawing.Point(10, 129);
+            this.HabilitadaCheck.Location = new System.Drawing.Point(9, 129);
             this.HabilitadaCheck.Name = "HabilitadaCheck";
             this.HabilitadaCheck.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.HabilitadaCheck.Size = new System.Drawing.Size(73, 17);
-            this.HabilitadaCheck.TabIndex = 8;
+            this.HabilitadaCheck.TabIndex = 16;
             this.HabilitadaCheck.Text = "Habilitada";
             this.HabilitadaCheck.UseVisualStyleBackColor = true;
             // 
-            // AgregarButaca
+            // ModificarButaca
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -164,9 +164,9 @@
             this.Controls.Add(this.Guardar);
             this.Controls.Add(this.Limpiar);
             this.Controls.Add(this.groupBox1);
-            this.Name = "AgregarButaca";
-            this.Text = "Agregar Butaca";
-            this.Load += new System.EventHandler(this.AgregarButaca_Load);
+            this.Name = "ModificarButaca";
+            this.Text = "Modificar Butaca";
+            this.Load += new System.EventHandler(this.ModificarButaca_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PisoNumeric)).EndInit();
