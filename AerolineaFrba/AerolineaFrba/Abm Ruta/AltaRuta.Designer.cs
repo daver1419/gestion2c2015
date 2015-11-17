@@ -35,17 +35,21 @@
             this.label3 = new System.Windows.Forms.Label();
             this.comboBoxCiudadDest = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.textBoxPrecioBaseKg = new System.Windows.Forms.TextBox();
+            this.textBoxCodigo = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.btnLimpiar = new System.Windows.Forms.Button();
             this.btnGuardar = new System.Windows.Forms.Button();
-            this.textBoxPrecioBasePasaje = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.numericUpDownPBKg = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownPBPas = new System.Windows.Forms.NumericUpDown();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBKg)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBPas)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(36, 52);
+            this.label1.Location = new System.Drawing.Point(36, 76);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(82, 13);
             this.label1.TabIndex = 0;
@@ -54,7 +58,7 @@
             // comboBoxTipoServ
             // 
             this.comboBoxTipoServ.FormattingEnabled = true;
-            this.comboBoxTipoServ.Location = new System.Drawing.Point(181, 44);
+            this.comboBoxTipoServ.Location = new System.Drawing.Point(181, 68);
             this.comboBoxTipoServ.Name = "comboBoxTipoServ";
             this.comboBoxTipoServ.Size = new System.Drawing.Size(121, 21);
             this.comboBoxTipoServ.TabIndex = 1;
@@ -62,7 +66,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(36, 91);
+            this.label2.Location = new System.Drawing.Point(36, 117);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(87, 13);
             this.label2.TabIndex = 2;
@@ -71,7 +75,7 @@
             // comboBoxCiudadOrigen
             // 
             this.comboBoxCiudadOrigen.FormattingEnabled = true;
-            this.comboBoxCiudadOrigen.Location = new System.Drawing.Point(181, 83);
+            this.comboBoxCiudadOrigen.Location = new System.Drawing.Point(181, 109);
             this.comboBoxCiudadOrigen.Name = "comboBoxCiudadOrigen";
             this.comboBoxCiudadOrigen.Size = new System.Drawing.Size(121, 21);
             this.comboBoxCiudadOrigen.TabIndex = 3;
@@ -79,7 +83,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(36, 129);
+            this.label3.Location = new System.Drawing.Point(36, 156);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(92, 13);
             this.label3.TabIndex = 4;
@@ -88,7 +92,7 @@
             // comboBoxCiudadDest
             // 
             this.comboBoxCiudadDest.FormattingEnabled = true;
-            this.comboBoxCiudadDest.Location = new System.Drawing.Point(181, 121);
+            this.comboBoxCiudadDest.Location = new System.Drawing.Point(181, 148);
             this.comboBoxCiudadDest.Name = "comboBoxCiudadDest";
             this.comboBoxCiudadDest.Size = new System.Drawing.Size(121, 21);
             this.comboBoxCiudadDest.TabIndex = 5;
@@ -96,23 +100,23 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(36, 169);
+            this.label4.Location = new System.Drawing.Point(36, 195);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(97, 13);
             this.label4.TabIndex = 6;
             this.label4.Text = "Precio base por Kg";
             // 
-            // textBoxPrecioBaseKg
+            // textBoxCodigo
             // 
-            this.textBoxPrecioBaseKg.Location = new System.Drawing.Point(181, 161);
-            this.textBoxPrecioBaseKg.Name = "textBoxPrecioBaseKg";
-            this.textBoxPrecioBaseKg.Size = new System.Drawing.Size(121, 20);
-            this.textBoxPrecioBaseKg.TabIndex = 7;
+            this.textBoxCodigo.Location = new System.Drawing.Point(181, 31);
+            this.textBoxCodigo.Name = "textBoxCodigo";
+            this.textBoxCodigo.Size = new System.Drawing.Size(121, 20);
+            this.textBoxCodigo.TabIndex = 7;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(36, 209);
+            this.label5.Location = new System.Drawing.Point(36, 233);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(115, 13);
             this.label5.TabIndex = 8;
@@ -120,7 +124,7 @@
             // 
             // btnLimpiar
             // 
-            this.btnLimpiar.Location = new System.Drawing.Point(39, 262);
+            this.btnLimpiar.Location = new System.Drawing.Point(39, 276);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(75, 23);
             this.btnLimpiar.TabIndex = 9;
@@ -130,30 +134,48 @@
             // 
             // btnGuardar
             // 
-            this.btnGuardar.Location = new System.Drawing.Point(259, 262);
+            this.btnGuardar.Location = new System.Drawing.Point(258, 276);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(75, 23);
             this.btnGuardar.TabIndex = 10;
             this.btnGuardar.Text = "Guardar";
             this.btnGuardar.UseVisualStyleBackColor = true;
             // 
-            // textBoxPrecioBasePasaje
+            // label6
             // 
-            this.textBoxPrecioBasePasaje.Location = new System.Drawing.Point(181, 202);
-            this.textBoxPrecioBasePasaje.Name = "textBoxPrecioBasePasaje";
-            this.textBoxPrecioBasePasaje.Size = new System.Drawing.Size(121, 20);
-            this.textBoxPrecioBasePasaje.TabIndex = 11;
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(36, 38);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(40, 13);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "Codigo";
+            // 
+            // numericUpDownPBKg
+            // 
+            this.numericUpDownPBKg.Location = new System.Drawing.Point(181, 187);
+            this.numericUpDownPBKg.Name = "numericUpDownPBKg";
+            this.numericUpDownPBKg.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDownPBKg.TabIndex = 13;
+            // 
+            // numericUpDownPBPas
+            // 
+            this.numericUpDownPBPas.Location = new System.Drawing.Point(182, 226);
+            this.numericUpDownPBPas.Name = "numericUpDownPBPas";
+            this.numericUpDownPBPas.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDownPBPas.TabIndex = 14;
             // 
             // AltaRuta
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(362, 297);
-            this.Controls.Add(this.textBoxPrecioBasePasaje);
+            this.ClientSize = new System.Drawing.Size(362, 323);
+            this.Controls.Add(this.numericUpDownPBPas);
+            this.Controls.Add(this.numericUpDownPBKg);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.btnGuardar);
             this.Controls.Add(this.btnLimpiar);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.textBoxPrecioBaseKg);
+            this.Controls.Add(this.textBoxCodigo);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.comboBoxCiudadDest);
             this.Controls.Add(this.label3);
@@ -164,6 +186,8 @@
             this.Name = "AltaRuta";
             this.Text = "AltaRuta";
             this.Load += new System.EventHandler(this.AltaRuta_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBKg)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBPas)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -178,10 +202,12 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox comboBoxCiudadDest;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBoxPrecioBaseKg;
+        private System.Windows.Forms.TextBox textBoxCodigo;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnLimpiar;
         private System.Windows.Forms.Button btnGuardar;
-        private System.Windows.Forms.TextBox textBoxPrecioBasePasaje;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.NumericUpDown numericUpDownPBKg;
+        private System.Windows.Forms.NumericUpDown numericUpDownPBPas;
     }
 }
