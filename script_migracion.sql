@@ -1278,10 +1278,10 @@ END
 GO
 
 CREATE PROCEDURE [NORMALIZADOS].[SP_Alta_Butaca](@Aeronave int, @Numero numeric(18,0), @Piso numeric(18,0), 
-@Tipo_Butaca int)
+@Tipo_Butaca int, @Habilitada bit)
 AS BEGIN
-	INSERT INTO [NORMALIZADOS].[Butaca](Numero, Piso, Tipo_Butaca, Aeronave)
-	VALUES (@Numero, @Piso, @Tipo_Butaca, @Aeronave)
+	INSERT INTO [NORMALIZADOS].[Butaca](Numero, Piso, Tipo_Butaca, Aeronave, Habilitada)
+	VALUES (@Numero, @Piso, @Tipo_Butaca, @Aeronave, @Habilitada)
 	declare @Id int
 	set @Id = SCOPE_IDENTITY()
 END
@@ -1290,20 +1290,22 @@ GO
 CREATE PROCEDURE [NORMALIZADOS].[SP_Modificar_Aeronave]
 @Numero int,
 @Matricula nvarchar(7),
-@Fabricante nvarchar (30),
-@Modelo nvarchar(30),
-@ID_Servicio int,
-@KG_Totales int,
-@Fecha_Alta datetime
+@Fabricante int,
+@Modelo nvarchar(255),
+@Tipo_Servicio int,
+@KG_Disponibles numeric(18,0),
+@Fecha_Alta datetime,
+@Cant_Butacas int
 AS
 BEGIN
 	UPDATE [NORMALIZADOS].[Aeronave]
 	SET Matricula = @Matricula,
 		Fabricante = @Fabricante,
 		Modelo = @Modelo,
-		Tipo_Servicio = @ID_Servicio,
-		KG_Disponibles = @KG_Totales,
-		Fecha_Alta = @Fecha_Alta
+		Tipo_Servicio = @Tipo_Servicio,
+		KG_Disponibles = @KG_Disponibles,
+		Fecha_Alta = @Fecha_Alta,
+		Cantidad_Butacas = @Cant_Butacas
 	WHERE Numero = @Numero	
 END
 GO
@@ -1312,28 +1314,34 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Butacas_Aeronave]
 @Numero_Aeronave int
 AS
 BEGIN
-	SELECT *
-	FROM [NORMALIZADOS].[Butaca] 
+	SELECT B.*, TB.Descripcion
+	FROM [NORMALIZADOS].[Butaca] B
+	JOIN [NORMALIZADOS].[Tipo_Butaca] TB
+	ON TB.Id = B.Tipo_Butaca
 	WHERE Aeronave = @Numero_Aeronave
 END
 GO
 
 CREATE PROCEDURE [NORMALIZADOS].[SP_Modificar_Butaca]
 @Id int,
-@Tipo int
+@Tipo int,
+@Habilitada bit,
+@Piso int,
+@Numero int
 AS
 BEGIN
 	UPDATE [NORMALIZADOS].[Butaca]
-	SET Tipo_Butaca = @Tipo
+	SET Tipo_Butaca = @Tipo, Habilitada = @Habilitada, Piso = @Piso, Numero = @Numero
 	WHERE Id = @Id	
 END
 GO
 
-CREATE PROCEDURE [NORMALIZADOS].[SP_Eliminar_Butaca]
+CREATE PROCEDURE [NORMALIZADOS].[SP_Baja_Butaca]
 @Id int
 AS
 BEGIN
-	DELETE [NORMALIZADOS].[Butaca]
+	UPDATE [NORMALIZADOS].[Butaca]
+	SET Habilitada = 0
 	WHERE Id = @Id	
 END
 GO
@@ -1343,7 +1351,7 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Aeronave_Con_Viajes]
 	@Tiene_Viajes int OUTPUT
 	AS
 		
-		IF (EXISTS	(select * 
+		IF (EXISTS	(select 1 
 		from [NORMALIZADOS].Viaje V
 		WHERE V.Aeronave = @Aeronave
 		AND V.Fecha_Salida > GETDATE()))
@@ -1396,7 +1404,6 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronave]
 		AND (BTA.Fecha_Vuelta_Al_Servicio > @Fecha_Vuelta_Servicio OR @Fecha_Vuelta_Servicio is null)
 		AND (BTA.Fecha_Vuelta_Al_Servicio < @Fecha_Vuelta_Servicio_Fin OR @Fecha_Vuelta_Servicio_Fin is null) 
 GO
-
 --------------------------------------------------------------------------------
 --				SP da de alta una ciudad
 --------------------------------------------------------------------------------
