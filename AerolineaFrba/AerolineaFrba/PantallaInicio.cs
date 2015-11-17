@@ -128,7 +128,7 @@ namespace AerolineaFrba
 
                     case FuncionalidadDTO.Funcionalidad.ABM_RUTA_AEREA:
 
-                        new Abm_Ruta.Form1() { Icon = this.Icon, StartPosition = FormStartPosition.CenterScreen }.ShowDialog(this);
+                        new Abm_Ruta.IndiceRuta() { Icon = this.Icon, StartPosition = FormStartPosition.CenterScreen }.ShowDialog(this);
 
                         break;
 

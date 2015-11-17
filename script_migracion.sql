@@ -1340,7 +1340,7 @@ GO
 
 CREATE PROCEDURE [NORMALIZADOS].[SP_Aeronave_Con_Viajes]
 	@Aeronave int,
-	@Tiene_Viajes bit OUTPUT
+	@Tiene_Viajes int OUTPUT
 	AS
 		
 		IF (EXISTS	(select * 
@@ -1363,25 +1363,29 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronave]
 	@Fabricante nvarchar(255),
 	@Tipo_Servicio nvarchar(255),
 	@Cantidad_Butacas int,
-	@Fecha_Alta nvarchar(255),
-	@Fecha_Alta_Fin nvarchar(255),
-	@Fecha_Baja_Def nvarchar(255),
-	@Fecha_Baja_Def_Fin nvarchar(255),
-	@Fecha_Baja_Temporal nvarchar(255),
-	@Fecha_Baja_Temporal_Fin nvarchar(255),
-	@Fecha_Vuelta_Servicio nvarchar(255),
-	@Fecha_Vuelta_Servicio_Fin nvarchar(255)
+	@Fecha_Alta datetime,
+	@Fecha_Alta_Fin datetime,
+	@Fecha_Baja_Def datetime,
+	@Fecha_Baja_Def_Fin datetime,
+	@Fecha_Baja_Temporal datetime,
+	@Fecha_Baja_Temporal_Fin datetime,
+	@Fecha_Vuelta_Servicio datetime,
+	@Fecha_Vuelta_Servicio_Fin datetime
 
 	AS
-	SELECT A.* 
+	SELECT A.*, S.Descripcion, F.Nombre
 	FROM [NORMALIZADOS].Aeronave A
-	JOIN [NORMALIZADOS].[Baja_Temporal_Aeronave] BTA
+	LEFT JOIN [NORMALIZADOS].[Baja_Temporal_Aeronave] BTA
 	ON A.Numero = BTA.Aeronave
+	LEFT JOIN [NORMALIZADOS].Servicio S
+	ON A.Tipo_Servicio = S.Id
+	LEFT JOIN [NORMALIZADOS].Fabricante F
+	ON A.Fabricante = F.Id
 	WHERE (A.Modelo like @Modelo OR @Modelo like '')
 		AND (A.Matricula like @Matricula OR @Matricula like '')
 		AND (A.Kg_Disponibles = @Kg_Disponibles OR @Kg_Disponibles = 0)
-		AND (A.Fabricante like @Fabricante OR @Fabricante like '')
-		AND (A.Tipo_Servicio like @Tipo_Servicio OR @Tipo_Servicio like '')
+		AND (F.Nombre like @Fabricante OR @Fabricante is null)
+		AND (S.Descripcion like @Tipo_Servicio OR @Tipo_Servicio is null)
 		AND (A.Cantidad_Butacas > @Cantidad_Butacas OR @Cantidad_Butacas = 0)
 		AND (A.Fecha_Alta > @Fecha_Alta OR @Fecha_Alta is null) 
 		AND (A.Fecha_Alta < @Fecha_Alta_Fin OR @Fecha_Alta_Fin is null) 

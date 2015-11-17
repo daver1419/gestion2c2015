@@ -20,11 +20,10 @@ namespace AerolineaFrba.Abm_Ruta
 
         private void btnLimpiar_Click(object sender, EventArgs e)
         {
+            textBoxCodigo.Text = "";
             comboBoxTipoServ.SelectedIndex = -1;
             comboBoxCiudadOrigen.SelectedIndex = -1;
             comboBoxCiudadDest.SelectedIndex = -1;
-            textBoxPrecioBaseKg.Text = "";
-            textBoxPrecioBasePasaje.Text = "";
         }
 
         private void AltaRuta_Load(object sender, EventArgs e)

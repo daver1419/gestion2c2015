@@ -128,11 +128,29 @@
     <Compile Include="Abm Rol\IndiceRol.Designer.cs">
       <DependentUpon>IndiceRol.cs</DependentUpon>
     </Compile>
-    <Compile Include="Abm Ruta\Form1.cs">
+    <Compile Include="Abm Ruta\AltaRuta.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Abm Ruta\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Abm Ruta\AltaRuta.Designer.cs">
+      <DependentUpon>AltaRuta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Ruta\BajaRuta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ruta\BajaRuta.Designer.cs">
+      <DependentUpon>BajaRuta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Ruta\IndiceRuta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ruta\IndiceRuta.Designer.cs">
+      <DependentUpon>IndiceRuta.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Ruta\ListadoRuta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Ruta\ListadoRuta.Designer.cs">
+      <DependentUpon>ListadoRuta.cs</DependentUpon>
     </Compile>
     <Compile Include="Canje Millas\Form1.cs">
       <SubType>Form</SubType>
@@ -257,6 +275,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Rol\IndiceRol.resx">
       <DependentUpon>IndiceRol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ruta\AltaRuta.resx">
+      <DependentUpon>AltaRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ruta\BajaRuta.resx">
+      <DependentUpon>BajaRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ruta\IndiceRuta.resx">
+      <DependentUpon>IndiceRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Ruta\ListadoRuta.resx">
+      <DependentUpon>ListadoRuta.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login\FormLogin.resx">
       <DependentUpon>FormLogin.cs</DependentUpon>
