@@ -75,6 +75,7 @@
             this.tablaDatos.Name = "tablaDatos";
             this.tablaDatos.Size = new System.Drawing.Size(563, 156);
             this.tablaDatos.TabIndex = 4;
+            this.tablaDatos.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.tablaDatos_CellContentClick);
             // 
             // Seleccionar
             // 
@@ -136,8 +137,10 @@
             // 
             // DateVueltaFin
             // 
+            this.DateVueltaFin.Checked = false;
             this.DateVueltaFin.Location = new System.Drawing.Point(357, 103);
             this.DateVueltaFin.Name = "DateVueltaFin";
+            this.DateVueltaFin.ShowCheckBox = true;
             this.DateVueltaFin.Size = new System.Drawing.Size(193, 20);
             this.DateVueltaFin.TabIndex = 40;
             // 
@@ -152,15 +155,19 @@
             // 
             // DateVuelta
             // 
+            this.DateVuelta.Checked = false;
             this.DateVuelta.Location = new System.Drawing.Point(134, 103);
             this.DateVuelta.Name = "DateVuelta";
+            this.DateVuelta.ShowCheckBox = true;
             this.DateVuelta.Size = new System.Drawing.Size(193, 20);
             this.DateVuelta.TabIndex = 38;
             // 
             // DateFueraFin
             // 
+            this.DateFueraFin.Checked = false;
             this.DateFueraFin.Location = new System.Drawing.Point(357, 77);
             this.DateFueraFin.Name = "DateFueraFin";
+            this.DateFueraFin.ShowCheckBox = true;
             this.DateFueraFin.Size = new System.Drawing.Size(193, 20);
             this.DateFueraFin.TabIndex = 37;
             // 
@@ -175,15 +182,19 @@
             // 
             // DateFuera
             // 
+            this.DateFuera.Checked = false;
             this.DateFuera.Location = new System.Drawing.Point(134, 77);
             this.DateFuera.Name = "DateFuera";
+            this.DateFuera.ShowCheckBox = true;
             this.DateFuera.Size = new System.Drawing.Size(193, 20);
             this.DateFuera.TabIndex = 35;
             // 
             // DateBajaFin
             // 
+            this.DateBajaFin.Checked = false;
             this.DateBajaFin.Location = new System.Drawing.Point(357, 51);
             this.DateBajaFin.Name = "DateBajaFin";
+            this.DateBajaFin.ShowCheckBox = true;
             this.DateBajaFin.Size = new System.Drawing.Size(193, 20);
             this.DateBajaFin.TabIndex = 34;
             // 
@@ -198,15 +209,19 @@
             // 
             // DateBaja
             // 
+            this.DateBaja.Checked = false;
             this.DateBaja.Location = new System.Drawing.Point(134, 51);
             this.DateBaja.Name = "DateBaja";
+            this.DateBaja.ShowCheckBox = true;
             this.DateBaja.Size = new System.Drawing.Size(193, 20);
             this.DateBaja.TabIndex = 32;
             // 
             // DateAltaFin
             // 
+            this.DateAltaFin.Checked = false;
             this.DateAltaFin.Location = new System.Drawing.Point(357, 25);
             this.DateAltaFin.Name = "DateAltaFin";
+            this.DateAltaFin.ShowCheckBox = true;
             this.DateAltaFin.Size = new System.Drawing.Size(193, 20);
             this.DateAltaFin.TabIndex = 31;
             // 
@@ -287,8 +302,10 @@
             // 
             // DateAlta
             // 
+            this.DateAlta.Checked = false;
             this.DateAlta.Location = new System.Drawing.Point(134, 25);
             this.DateAlta.Name = "DateAlta";
+            this.DateAlta.ShowCheckBox = true;
             this.DateAlta.Size = new System.Drawing.Size(193, 20);
             this.DateAlta.TabIndex = 17;
             // 
@@ -315,7 +332,6 @@
             // 
             // ButacaNumeric
             // 
-            this.ButacaNumeric.Enabled = false;
             this.ButacaNumeric.Location = new System.Drawing.Point(134, 275);
             this.ButacaNumeric.Maximum = new decimal(new int[] {
             200,

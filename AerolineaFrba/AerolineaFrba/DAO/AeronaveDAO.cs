@@ -68,7 +68,7 @@ namespace AerolineaFrba.DAO
                 com.Parameters.AddWithValue("@aeronave", Aeronave.Numero);
                 com.Parameters.Add("@tiene_viajes", SqlDbType.Bit).Direction = ParameterDirection.Output;
                 com.ExecuteNonQuery();
-                ret = (int) com.Parameters["@Id"].Value;
+                ret = Convert.ToInt32(com.Parameters["@tiene_viajes"].Value);
             }
             return ret == 1;
         }
@@ -85,13 +85,18 @@ namespace AerolineaFrba.DAO
                     aeronave.Numero = Convert.ToInt32(dataReader["Numero"]);
                     FabricanteDTO fabricante = new FabricanteDTO();
                     fabricante.IdFabricante = Convert.ToInt32(dataReader["Fabricante"]);
+                    fabricante.Nombre = Convert.ToString(dataReader["Nombre"]);
                     aeronave.Fabricante = fabricante;
-                    aeronave.FechaAlta = Convert.ToDateTime(dataReader["Fecha_Alta"]);
+                    if (dataReader["Fecha_Alta"] != DBNull.Value)
+                        aeronave.FechaAlta = Convert.ToDateTime(dataReader["Fecha_Alta"]);
+                    else
+                        aeronave.FechaAlta = DateTime.MinValue;
                     aeronave.KG = Convert.ToInt32(dataReader["Kg_Disponibles"]);
                     aeronave.Matricula = Convert.ToString(dataReader["Matricula"]);
                     aeronave.Modelo = Convert.ToString(dataReader["Modelo"]);
                     TipoServicioDTO tipoServicio = new TipoServicioDTO();
                     tipoServicio.IdTipoServicio = Convert.ToInt32(dataReader["Tipo_Servicio"]);
+                    tipoServicio.Descripcion = Convert.ToString(dataReader["Descripcion"]);
                     aeronave.TipoServicio = tipoServicio;
 
                     ListaAeronaves.Add(aeronave);
@@ -111,17 +116,59 @@ namespace AerolineaFrba.DAO
                 com.Parameters.AddWithValue("@Modelo", aeronaveFilter.Aeronave.Modelo);
                 com.Parameters.AddWithValue("@Matricula", aeronaveFilter.Aeronave.Matricula);
                 com.Parameters.AddWithValue("@Kg_Disponibles", aeronaveFilter.Aeronave.KG);
-                com.Parameters.AddWithValue("@Fabricante", aeronaveFilter.Aeronave.Fabricante.Nombre);
-                com.Parameters.AddWithValue("@Tipo_Servicio", aeronaveFilter.Aeronave.TipoServicio.Descripcion);
+               
+                if (aeronaveFilter.Aeronave.Fabricante != null)
+                    com.Parameters.AddWithValue("@Fabricante", aeronaveFilter.Aeronave.Fabricante.Nombre);
+                else
+                    com.Parameters.AddWithValue("@Fabricante", DBNull.Value);
+
+                if (aeronaveFilter.Aeronave.TipoServicio != null)
+                    com.Parameters.AddWithValue("@Tipo_Servicio", aeronaveFilter.Aeronave.TipoServicio.Descripcion);
+                else
+                    com.Parameters.AddWithValue("@Tipo_Servicio", DBNull.Value);
+
                 com.Parameters.AddWithValue("@Cantidad_Butacas", aeronaveFilter.Catidad_Butacas);
-                com.Parameters.AddWithValue("@Fecha_Alta", aeronaveFilter.Aeronave.FechaAlta);
-                com.Parameters.AddWithValue("@Fecha_Alta_Fin", aeronaveFilter.Fecha_Alta_Fin);
-                com.Parameters.AddWithValue("@Fecha_Baja_Def", aeronaveFilter.Fecha_Baja_Def);
-                com.Parameters.AddWithValue("@Fecha_Baja_Def_Fin", aeronaveFilter.Fecha_Baja_Def_Fin);
-                com.Parameters.AddWithValue("@Fecha_Baja_Temporal", aeronaveFilter.Fecha_Baja_Temporal);
-                com.Parameters.AddWithValue("@Fecha_Baja_Temporal_Fin", aeronaveFilter.Fecha_Baja_Temporal_Fin);
-                com.Parameters.AddWithValue("@Fecha_Vuelta_Servicio", aeronaveFilter.Fecha_Vuelta_Servicio);
-                com.Parameters.AddWithValue("@Fecha_Vuelta_Servicio_Fin", aeronaveFilter.Fecha_Vuelta_Servicio_Fin);
+
+                if (aeronaveFilter.FechaAlta != null)
+                    com.Parameters.AddWithValue("@Fecha_Alta", aeronaveFilter.Aeronave.FechaAlta);
+                else
+                    com.Parameters.AddWithValue("@Fecha_Alta", DBNull.Value);
+
+                if (aeronaveFilter.Fecha_Alta_Fin != null)
+                    com.Parameters.AddWithValue("@Fecha_Alta_Fin", aeronaveFilter.Fecha_Alta_Fin);
+                else
+                    com.Parameters.AddWithValue("@Fecha_Alta_Fin", DBNull.Value);
+
+                if (aeronaveFilter.Fecha_Baja_Def != null)
+                    com.Parameters.AddWithValue("@Fecha_Baja_Def", aeronaveFilter.Fecha_Baja_Def);
+                else
+                    com.Parameters.AddWithValue("@Fecha_Baja_Def", DBNull.Value);
+
+                if (aeronaveFilter.Fecha_Baja_Def_Fin != null)
+                    com.Parameters.AddWithValue("@Fecha_Baja_Def_Fin", aeronaveFilter.Fecha_Baja_Def_Fin);
+                else
+                    com.Parameters.AddWithValue("@Fecha_Baja_Def_Fin", DBNull.Value);
+
+                if (aeronaveFilter.Fecha_Baja_Temporal != null)
+                    com.Parameters.AddWithValue("@Fecha_Baja_Temporal", aeronaveFilter.Fecha_Baja_Temporal);
+                else
+                    com.Parameters.AddWithValue("@Fecha_Baja_Temporal", DBNull.Value);
+
+                if (aeronaveFilter.Fecha_Baja_Temporal_Fin != null)
+                    com.Parameters.AddWithValue("@Fecha_Baja_Temporal_Fin", aeronaveFilter.Fecha_Baja_Temporal_Fin);
+                else
+                    com.Parameters.AddWithValue("@Fecha_Baja_Temporal_Fin", DBNull.Value);
+
+                if (aeronaveFilter.Fecha_Vuelta_Servicio != null)
+                    com.Parameters.AddWithValue("@Fecha_Vuelta_Servicio", aeronaveFilter.Fecha_Vuelta_Servicio);
+                else
+                    com.Parameters.AddWithValue("@Fecha_Vuelta_Servicio", DBNull.Value);
+
+                if (aeronaveFilter.Fecha_Vuelta_Servicio_Fin != null)
+                    com.Parameters.AddWithValue("@Fecha_Vuelta_Servicio_Fin", aeronaveFilter.Fecha_Vuelta_Servicio_Fin);
+                else
+                    com.Parameters.AddWithValue("@Fecha_Vuelta_Servicio_Fin", DBNull.Value);
+
                 SqlDataReader dataReader = com.ExecuteReader();
                 return getAeronaves(dataReader);
 

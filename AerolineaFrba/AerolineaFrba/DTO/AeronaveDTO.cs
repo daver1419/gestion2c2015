@@ -14,7 +14,7 @@ namespace AerolineaFrba.DTO
         public int KG{get;set;}
         public TipoServicioDTO TipoServicio{get;set;}
         public FabricanteDTO Fabricante{get;set;}
-        public DateTime FechaAlta{get;set;}
+        public DateTime? FechaAlta{get;set;}
         public List<ButacaDTO> ListaButacas { get; set; }
 
         public AeronaveDTO(){

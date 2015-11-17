@@ -28,22 +28,36 @@ namespace AerolineaFrba.Abm_Aeronave
             
             aeronave.Fabricante = ((FabricanteDTO)ComboFabricante.SelectedValue);
             aeronave.TipoServicio = ((TipoServicioDTO)ComboTipoServicio.SelectedValue);
-            aeronave.FechaAlta = DateAlta.Value;
             aeronave.KG = Decimal.ToInt32(NumericKG.Value);
             aeronave.Matricula = TextMatricula.Text;
             aeronave.Modelo = TextModelo.Text;
 
             aeronaveFilters.Aeronave = aeronave;
             aeronaveFilters.Catidad_Butacas = Convert.ToInt32(ButacaNumeric.Value);
-            aeronaveFilters.Fecha_Alta_Fin = DateAltaFin.Value;
-            aeronaveFilters.Fecha_Baja_Def = DateBaja.Value;
-            aeronaveFilters.Fecha_Baja_Def_Fin = DateBajaFin.Value;
-            aeronaveFilters.Fecha_Baja_Temporal = DateFuera.Value;
-            aeronaveFilters.Fecha_Baja_Temporal_Fin = DateFueraFin.Value;
-            aeronaveFilters.Fecha_Vuelta_Servicio = DateVuelta.Value;
-            aeronaveFilters.Fecha_Vuelta_Servicio_Fin = DateVueltaFin.Value;
+            if (DateAlta.Checked) aeronaveFilters.FechaAlta = DateAlta.Value;
+            else aeronaveFilters.FechaAlta = null;
+            if (DateAltaFin.Checked) aeronaveFilters.Fecha_Alta_Fin = DateAltaFin.Value;
+            else aeronaveFilters.Fecha_Alta_Fin = null;
+            if (DateBaja.Checked) aeronaveFilters.Fecha_Baja_Def = DateBaja.Value;
+            else aeronaveFilters.Fecha_Baja_Def = null;
+            if (DateBajaFin.Checked) aeronaveFilters.Fecha_Baja_Def_Fin = DateBajaFin.Value;
+            else aeronaveFilters.Fecha_Alta_Fin = null;
+            if (DateFuera.Checked) aeronaveFilters.Fecha_Baja_Temporal = DateFuera.Value;
+            else aeronaveFilters.Fecha_Baja_Temporal = null;
+            if (DateFueraFin.Checked) aeronaveFilters.Fecha_Baja_Temporal_Fin = DateFueraFin.Value;
+            else aeronaveFilters.Fecha_Baja_Temporal_Fin = null;
+            if (DateVuelta.Checked) aeronaveFilters.Fecha_Vuelta_Servicio = DateVuelta.Value;
+            else aeronaveFilters.Fecha_Vuelta_Servicio = null;
+            if (DateVueltaFin.Checked) aeronaveFilters.Fecha_Vuelta_Servicio_Fin = DateVueltaFin.Value;
+            else aeronaveFilters.Fecha_Vuelta_Servicio_Fin = null;
 
-            AeronaveDAO.GetByFilters(aeronaveFilters);
+
+            this.tablaDatos.DataSource = AeronaveDAO.GetByFilters(aeronaveFilters);
+            if (Equals(this.tablaDatos.Rows.Count, 0))
+            {
+                MessageBox.Show("No se encontraron datos");
+            }
+            
 
         }
 
@@ -99,7 +113,10 @@ namespace AerolineaFrba.Abm_Aeronave
         private void ListadoAeronaves_Load(object sender, EventArgs e)
         {
             ComboFabricante.DataSource = FabricanteDAO.selectAll();
+            ComboFabricante.SelectedIndex = -1;
             ComboTipoServicio.DataSource = TipoServicioDAO.selectAll();
+            ComboTipoServicio.SelectedIndex = -1;
+
         }
     }
 }

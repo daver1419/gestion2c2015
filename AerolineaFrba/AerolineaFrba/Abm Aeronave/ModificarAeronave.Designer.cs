@@ -208,7 +208,6 @@
             // 
             // DateAlta
             // 
-            this.DateAlta.Enabled = false;
             this.DateAlta.Location = new System.Drawing.Point(129, 20);
             this.DateAlta.Name = "DateAlta";
             this.DateAlta.Size = new System.Drawing.Size(200, 20);

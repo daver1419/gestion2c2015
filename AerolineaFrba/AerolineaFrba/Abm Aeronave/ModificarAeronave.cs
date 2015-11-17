@@ -27,15 +27,24 @@ namespace AerolineaFrba.Abm_Aeronave
 
         private void ModificarAeronave_Load(object sender, EventArgs e)
         {
-            Aeronave = new AeronaveDTO();
             ComboFabricante.DataSource = FabricanteDAO.selectAll();
-            ComboFabricante.SelectedIndex = -1;
+            ComboFabricante.SelectedItem = Aeronave.Fabricante;
             ComboTipoServicio.DataSource = TipoServicioDAO.selectAll();
-            ComboTipoServicio.SelectedIndex = -1;
+            ComboTipoServicio.SelectedItem = Aeronave.TipoServicio;
             TextMatricula.Text = Aeronave.Matricula;
             TextModelo.Text = Aeronave.Modelo;
             NumericKG.Value = Aeronave.KG;
-            DateAlta.Value = Aeronave.FechaAlta;
+
+            if (Aeronave.FechaAlta != null)
+            {
+                if (Aeronave.FechaAlta != DateTime.MinValue)
+                    DateAlta.Value = Convert.ToDateTime(Aeronave.FechaAlta);
+                else
+                    DateAlta.Value = DateTime.Today;
+            }
+            else
+                DateAlta.Value = DateTime.Today;
+
             ButacaNumeric.Value = Aeronave.ListaButacas.Count;
         }
 
@@ -44,9 +53,19 @@ namespace AerolineaFrba.Abm_Aeronave
             TextMatricula.Text = Aeronave.Matricula;
             TextModelo.Text = Aeronave.Modelo;
             NumericKG.Value = Aeronave.KG;
-            DateAlta.Value = Aeronave.FechaAlta;
-            ComboFabricante.SelectedIndex = -1;
-            ComboTipoServicio.SelectedIndex = -1;
+            
+            if (Aeronave.FechaAlta != null)
+            {
+                if (Aeronave.FechaAlta != DateTime.MinValue)
+                    DateAlta.Value = Convert.ToDateTime(Aeronave.FechaAlta);
+                else
+                    DateAlta.Value = DateTime.Today;
+            }
+            else
+                DateAlta.Value = DateTime.Today;
+
+            ComboFabricante.SelectedItem = Aeronave.Fabricante;
+            ComboTipoServicio.SelectedItem = Aeronave.TipoServicio;
             Aeronave.ListaButacas.Clear();
             ButacaNumeric.Value = Aeronave.ListaButacas.Count;
             errorProvider1.Clear();
