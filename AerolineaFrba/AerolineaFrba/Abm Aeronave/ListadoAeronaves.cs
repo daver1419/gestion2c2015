@@ -34,8 +34,8 @@ namespace AerolineaFrba.Abm_Aeronave
 
             aeronaveFilters.Aeronave = aeronave;
             aeronaveFilters.Catidad_Butacas = Convert.ToInt32(ButacaNumeric.Value);
-            if (DateAlta.Checked) aeronaveFilters.FechaAlta = DateAlta.Value;
-            else aeronaveFilters.FechaAlta = null;
+            if (DateAlta.Checked) aeronaveFilters.Aeronave.FechaAlta = DateAlta.Value;
+            else aeronaveFilters.Aeronave.FechaAlta = null;
             if (DateAltaFin.Checked) aeronaveFilters.Fecha_Alta_Fin = DateAltaFin.Value;
             else aeronaveFilters.Fecha_Alta_Fin = null;
             if (DateBaja.Checked) aeronaveFilters.Fecha_Baja_Def = DateBaja.Value;
@@ -84,12 +84,28 @@ namespace AerolineaFrba.Abm_Aeronave
         {
             TextMatricula.Text = "";
             TextModelo.Text = "";
-            NumericKG.Value = -1;
-            ButacaNumeric.Value = -1;
+            NumericKG.Value = 0;
+            ButacaNumeric.Value = 0;
             DateAlta.Value = DateTime.Now;
+            DateAltaFin.Value = DateTime.Now;
+            DateBaja.Value = DateTime.Now;
+            DateBajaFin.Value = DateTime.Now;
+            DateFuera.Value = DateTime.Now;
+            DateFueraFin.Value = DateTime.Now;
+            DateVuelta.Value = DateTime.Now;
+            DateVueltaFin.Value = DateTime.Now;
             ComboFabricante.SelectedIndex = -1;
             ComboTipoServicio.SelectedIndex = -1;
             errorProvider1.Clear();
+            DateAlta.Checked = false;
+            DateAltaFin.Checked = false;
+            DateBaja.Checked = false;
+            DateBajaFin.Checked = false;
+            DateFuera.Checked = false;
+            DateFueraFin.Checked = false;
+            DateVuelta.Checked = false;
+            DateVueltaFin.Checked = false;
+            tablaDatos.DataSource = null;
         }
 
         private bool validar()

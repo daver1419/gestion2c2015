@@ -10,7 +10,6 @@ namespace AerolineaFrba.DTO
     {
         public AeronaveDTO Aeronave { get; set; }
         public int Catidad_Butacas { get; set; }
-        public DateTime? FechaAlta { get; set; }
         public DateTime? Fecha_Alta_Fin { get; set; }
         public DateTime? Fecha_Baja_Def { get; set; }
         public DateTime? Fecha_Baja_Def_Fin { get; set; }

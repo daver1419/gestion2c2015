@@ -129,7 +129,7 @@ namespace AerolineaFrba.DAO
 
                 com.Parameters.AddWithValue("@Cantidad_Butacas", aeronaveFilter.Catidad_Butacas);
 
-                if (aeronaveFilter.FechaAlta != null)
+                if (aeronaveFilter.Aeronave.FechaAlta != null)
                     com.Parameters.AddWithValue("@Fecha_Alta", aeronaveFilter.Aeronave.FechaAlta);
                 else
                     com.Parameters.AddWithValue("@Fecha_Alta", DBNull.Value);
