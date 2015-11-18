@@ -1450,3 +1450,66 @@ BEGIN
 
 	SELECT @@IDENTITY
 END
+
+
+/**************************************
+create table [NORMALIZADOS].[Escalas]
+(
+	[Id] [numeric](18,0) IDENTITY(0,1) PRIMARY KEY,
+	[Ciudad_Origen]  [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Ciudad](Id) NOT NULL,
+	[Ciudad_Destino] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Ciudad](Id) NOT NULL,
+	CHECK(Ciudad_Destino <> Ciudad_Origen),
+	UNIQUE(Ciudad_Origen, Ciudad_Destino)
+)
+GO
+INSERT INTO [NORMALIZADOS].Escalas(Ciudad_Origen,Ciudad_Destino)
+	SELECT distinct C1.ID, C2.ID
+	from gd_esquema.Maestra M
+	JOIN [NORMALIZADOS].Ciudad C1
+	ON M.Ruta_Ciudad_Origen=C1.Nombre
+	JOIN [NORMALIZADOS].Ciudad C2
+	ON M.Ruta_Ciudad_Destino=C2.Nombre
+GO
+
+CREATE TABLE [NORMALIZADOS].[#RutasTemporal]
+(
+	[Id] [numeric](18,0) IDENTITY(0,1) PRIMARY KEY,
+	[Ruta_Codigo] [int],
+	[Ciudad_Origen]  varchar(250),
+	[Ciudad_Destino] varchar(250),
+	[Precio_BasePasaje] [numeric](18, 2) NOT NULL,
+	[Precio_BaseKG] [numeric](18, 2) NOT NULL,
+	[Tipo_Servicio] [nvarchar](255),
+	CHECK(Precio_BaseKG >= 0),
+	CHECK(Precio_BasePasaje >= 0),
+)
+GO
+INSERT INTO [NORMALIZADOS].#RutasTemporal(Ruta_Codigo,Ciudad_Origen,Ciudad_Destino,Precio_BasePasaje,Precio_BaseKG,Tipo_Servicio)
+	SELECT Distinct M.Ruta_Codigo, M.Ruta_Ciudad_Origen, M.Ruta_Ciudad_Destino, M.Ruta_Precio_BasePasaje, M.Ruta_Precio_BaseKG, M.Tipo_Servicio
+	FROM gd_esquema.Maestra M
+GO
+
+	CREATE TABLE [NORMALIZADOS].[Rutas]
+(
+	[Ruta_Codigo] [int],
+	[Escala]  [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Escalas](Id) NOT NULL,
+	[Precio_BasePasaje] [numeric](18, 2) NOT NULL,
+	[Precio_BaseKG] [numeric](18, 2) NOT NULL,
+	[Tipo_Servicio] [numeric](18,0),
+	[Habilitada] [bit] DEFAULT 1,
+	CHECK(Precio_BaseKG >= 0),
+	CHECK(Precio_BasePasaje >= 0),
+	PRIMARY KEY (Ruta_Codigo, Escala)
+)
+GO
+INSERT INTO [NORMALIZADOS].Rutas(Ruta_Codigo,Escala,Precio_BasePasaje,Precio_BaseKG,Tipo_Servicio)
+	select R.ruta_codigo, E.ID, R.precio_basepasaje, R2.precio_basekg, S.ID from normalizados.#RutasTemporal R
+	JOIN NORMALIZADOS.Ciudad C1 ON C1.Nombre = R.ciudad_origen
+	JOIN NORMALIZADOS.Ciudad C2 ON C2.Nombre = R.ciudad_Destino
+	JOIN NORMALIZADOS.Escalas E ON E.Ciudad_Origen = C1.ID AND E.Ciudad_Destino = C2.ID
+	JOIN NORMALIZADOS.Servicio S ON S.Descripcion = R.Tipo_servicio
+	JOIN NORMALIZADOS.#RutasTemporal R2 ON R.ruta_codigo = R2.ruta_codigo AND R.ciudad_origen = R2.ciudad_origen AND R.ciudad_destino = R2.ciudad_destino
+	where R.precio_basepasaje > 0 AND R2.precio_basekg > 0
+GO
+
+**************************************/
