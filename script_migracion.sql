@@ -158,85 +158,51 @@ INSERT INTO NORMALIZADOS.Servicio(Descripcion, Porcentaje_Adicional)
 	GROUP BY Tipo_Servicio
 )
 GO
-/*****************************************
-			   ESCALAS 
-******************************************/
-CREATE TABLE [NORMALIZADOS].[Escala]
-(
-	[Id] [numeric](18,0) IDENTITY(0,1) PRIMARY KEY,
-	[Ciudad_Origen]  [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Ciudad](Id) NOT NULL,
-	[Ciudad_Destino] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Ciudad](Id) NOT NULL,
-	[Precio_BasePasaje] [numeric](18, 2) NOT NULL,
-	[Precio_BaseKG] [numeric](18, 2) NOT NULL,
-	CHECK(Ciudad_Destino <> Ciudad_Origen),
-	CHECK(Precio_BaseKG >= 0),
-	CHECK(Precio_BasePasaje >= 0),
-	UNIQUE(Ciudad_Origen, Ciudad_Destino)
-)
 
-GO
-INSERT INTO [NORMALIZADOS].Escala(Ciudad_Origen,Ciudad_Destino,Precio_BasePasaje,Precio_BaseKG)
-	SELECT distinct C1.Id,C2.Id,M.Ruta_Precio_BasePasaje,M.Ruta_Precio_BaseKG
-	FROM [gd_esquema].[Maestra] M
-	JOIN [NORMALIZADOS].Ciudad C1
-		ON M.Ruta_Ciudad_Origen=C1.Nombre
-	JOIN [NORMALIZADOS].Ciudad C2
-		ON M.Ruta_Ciudad_Destino=C2.Nombre
-	JOIN [gd_esquema].[Maestra] B 
-		ON m.Ruta_Precio_BasePasaje > 0 AND
-			B.Ruta_Precio_BaseKG > 0 AND
-			m.Ruta_Codigo = B.Ruta_Codigo AND
-			B.Ruta_Ciudad_Origen=M.Ruta_Ciudad_Origen
-	ORDER BY C1.Id,C2.Id
-GO
 /*****************************************
 			   RUTAS AEREAS 
 ******************************************/
 
-CREATE TABLE [NORMALIZADOS].[Ruta_Aerea](
-	[Codigo] [numeric](18,0) PRIMARY KEY NOT NULL,
-	[Habilitada] [bit] DEFAULT 1
+CREATE TABLE [NORMALIZADOS].[#RutasTemporal]
+(
+	[Id] [numeric](18,0) IDENTITY(0,1) PRIMARY KEY,
+	[Ruta_Codigo] [int],
+	[Ciudad_Origen]  varchar(250),
+	[Ciudad_Destino] varchar(250),
+	[Precio_BasePasaje] [numeric](18, 2) NOT NULL,
+	[Precio_BaseKG] [numeric](18, 2) NOT NULL,
+	[Tipo_Servicio] [nvarchar](255),
+	CHECK(Precio_BaseKG >= 0),
+	CHECK(Precio_BasePasaje >= 0),
 )
+GO
+INSERT INTO [NORMALIZADOS].#RutasTemporal(Ruta_Codigo,Ciudad_Origen,Ciudad_Destino,Precio_BasePasaje,Precio_BaseKG,Tipo_Servicio)
+	SELECT Distinct M.Ruta_Codigo, M.Ruta_Ciudad_Origen, M.Ruta_Ciudad_Destino, M.Ruta_Precio_BasePasaje, M.Ruta_Precio_BaseKG, M.Tipo_Servicio
+	FROM gd_esquema.Maestra M
+GO
+CREATE TABLE [NORMALIZADOS].[Ruta_Aerea]
+(
+	[Id] [numeric](18,0) IDENTITY(0,1) PRIMARY KEY,
+	[Ruta_Codigo] [numeric](18,0),
+	[Ciudad_Origen]  [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Ciudad](Id) NOT NULL,
+	[Ciudad_Destino] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Ciudad](Id) NOT NULL,
+	[Precio_BasePasaje] [numeric](18, 2) NOT NULL,
+	[Precio_BaseKG] [numeric](18, 2) NOT NULL,
+	[Tipo_Servicio] [numeric](18,0),
+	[Habilitada] [bit] DEFAULT 1,
+	CHECK(Precio_BaseKG >= 0),
+	CHECK(Precio_BasePasaje >= 0),
+)
+GO
+INSERT INTO [NORMALIZADOS].Ruta_Aerea(Ruta_Codigo,Ciudad_Origen,Ciudad_Destino,Precio_BasePasaje,Precio_BaseKG,Tipo_Servicio)
+	select R.ruta_codigo, C1.ID, C2.ID, R.precio_basepasaje, R2.precio_basekg, S.ID from normalizados.#RutasTemporal R
+	JOIN NORMALIZADOS.Ciudad C1 ON C1.Nombre = R.ciudad_origen
+	JOIN NORMALIZADOS.Ciudad C2 ON C2.Nombre = R.ciudad_Destino
+	JOIN NORMALIZADOS.Servicio S ON S.Descripcion = R.Tipo_servicio
+	JOIN NORMALIZADOS.#RutasTemporal R2 ON R.ruta_codigo = R2.ruta_codigo AND R.ciudad_origen = R2.ciudad_origen AND R.ciudad_destino = R2.ciudad_destino
+	where R.precio_basepasaje > 0 AND R2.precio_basekg > 0
 GO
 
-INSERT INTO [NORMALIZADOS].[Ruta_Aerea](Codigo)
-	SELECT DISTINCT Ruta_Codigo
-	FROM gd_esquema.Maestra
-	order by Ruta_Codigo
-GO
-/********************************************
-				ServicioxRuta
-*********************************************/	
-CREATE TABLE [Normalizados].ServicioxRuta(
-	Servicio [int] FOREIGN KEY REFERENCES [Normalizados].Servicio(Id) NOT NULL,
-	Ruta [numeric](18,0) FOREIGN KEY REFERENCES [Normalizados].Ruta_Aerea(Codigo) NOT NULL,
-	PRIMARY KEY(Servicio,Ruta)
-)
-GO
-INSERT INTO [NORMALIZADOS].ServicioxRuta(Servicio,Ruta)
-	SELECT DISTINCT S.Id,M.Ruta_Codigo
-	FROM gd_esquema.Maestra M
-	JOIN NORMALIZADOS.Servicio S
-		ON M.Tipo_Servicio=S.Descripcion
-/********************************************
-					EscalaxRuta
-*********************************************/	
-CREATE TABLE [Normalizados].EscalaxRuta(
-	Ruta [numeric](18,0) FOREIGN KEY REFERENCES [Normalizados].Ruta_Aerea(Codigo) NOT NULL,
-	Escala [numeric](18,0) FOREIGN KEY REFERENCES [Normalizados].Escala(Id) NOT NULL,
-	PRIMARY KEY(Ruta,Escala)
-)
- INSERT INTO [NORMALIZADOS].EscalaxRuta(Ruta,Escala)
-	SELECT DISTINCT M.Ruta_Codigo,E.Id
-	FROM gd_esquema.Maestra M
-	JOIN NORMALIZADOS.Ciudad ORIGEN
-		ON M.Ruta_Ciudad_Origen=ORIGEN.Nombre
-	JOIN NORMALIZADOS.Ciudad DESTINO
-		ON DESTINO.Nombre=M.Ruta_Ciudad_Destino
-	JOIN NORMALIZADOS.Escala E
-		ON ORIGEN.Id=E.Ciudad_Origen
-		AND DESTINO.Id=E.Ciudad_Destino
-GO
 /********************************************
 					FABRICANTE
 *********************************************/	
@@ -255,6 +221,35 @@ INSERT INTO [NORMALIZADOS].[Fabricante]([Nombre])
 GO
 
 /********************************************
+					MODELO
+*********************************************/	
+
+CREATE TABLE [NORMALIZADOS].[Modelo](
+	[Id] [int] PRIMARY KEY IDENTITY(0,1),
+	[Modelo] [nvarchar](255) UNIQUE NOT NULL
+)
+GO
+
+INSERT INTO [NORMALIZADOS].[Modelo]([Modelo])
+(
+	SELECT DISTINCT [Aeronave_Modelo]
+	FROM[gd_esquema].[Maestra]
+)
+GO
+/********************************************
+					AERONAVES
+*********************************************/	
+CREATE TABLE [NORMALIZADOS].[Estado_Aeronave](
+	[Id] [int] PRIMARY KEY IDENTITY(1,1),
+	[Descripcion] [nvarchar](255) NOT NULL
+)
+GO
+INSERT INTO [NORMALIZADOS].[Estado_Aeronave](Descripcion)
+	VALUES('Dado de alta'),
+			('Fuera de servicio'),
+			('Dado de baja por vida util')
+GO
+/********************************************
 					AERONAVES
 *********************************************/	
 
@@ -262,28 +257,27 @@ CREATE TABLE [NORMALIZADOS].[Aeronave](
 	[Numero][int] PRIMARY KEY IDENTITY(1,1),
 	[Matricula] [nvarchar](255) UNIQUE NOT NULL,
 	[Fecha_Alta] [datetime],
-	[Modelo] [nvarchar](255) NOT NULL,
+	[Modelo] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Modelo] (Id) NOT NULL,
 	[Fabricante] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Fabricante] (Id) NOT NULL,
 	[Fecha_Baja_Definitiva] [datetime],
-	[Cantidad_Butacas] [numeric](18,0) NOT NULL,
 	[KG_Disponibles] [numeric](18,0) NOT NULL,
-	[Tipo_Servicio] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Servicio] (Id) NOT NULL
+	[Tipo_Servicio] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Servicio] (Id) NOT NULL,
+	[Estado] [int] DEFAULT 1 FOREIGN KEY REFERENCES [NORMALIZADOS].[Estado_Aeronave](Id)
 	)
 GO
 INSERT INTO [NORMALIZADOS].[Aeronave](
 	[Matricula],
 	[Modelo],
 	[Fabricante],
-	[Cantidad_Butacas],
 	[KG_Disponibles], --Total de Kg que puede llevar la Aeronave 
 	[Tipo_Servicio]
 	)
 (
-	SELECT A.Aeronave_Matricula, A.Aeronave_Modelo,F.Id,COUNT(DISTINCT A.Butaca_Nro) ,A.Aeronave_KG_Disponibles,S.Id
+	SELECT DISTINCT A.Aeronave_Matricula, M.Id,F.Id,A.Aeronave_KG_Disponibles,S.Id
 	FROM [gd_esquema].[Maestra] A
 	JOIN [NORMALIZADOS].[Servicio] S ON A.Tipo_Servicio = S.Descripcion AND A.Pasaje_Codigo > 0
+	JOIN [NORMALIZADOS].[Modelo] M ON M.Modelo = A.Aeronave_Modelo
 	JOIN [NORMALIZADOS].[Fabricante] F ON A.Aeronave_Fabricante = F.Nombre
-	GROUP BY  A.Aeronave_Matricula,A.Aeronave_Modelo,F.Id,A.Aeronave_KG_Disponibles,S.Id
 )
 GO
 
@@ -304,37 +298,51 @@ GO
 					VIAJE
 **************************************************/
 
+CREATE TABLE [NORMALIZADOS].[#ViajeTemporal](
+	[Id] [int] PRIMARY KEY IDENTITY (0,1),
+	Fecha_Salida [datetime],
+	Fecha_LLegada [datetime],
+	Fecha_LLegada_Estimada [datetime],
+	Ruta_Codigo [numeric](18,0),
+	Aeronave_Matricula nvarchar(255)
+	)
+GO
+
+INSERT INTO [NORMALIZADOS].[#ViajeTemporal](Fecha_Salida,Fecha_LLegada,Fecha_LLegada_Estimada,Ruta_Codigo,Aeronave_Matricula)
+	SELECT DISTINCT M.FechaSalida,M.FechaLLegada,M.Fecha_LLegada_Estimada,M.Ruta_Codigo,M.Aeronave_Matricula
+	FROM [gd_esquema].[Maestra] M
+	
+GO
+
 CREATE TABLE [NORMALIZADOS].[Viaje](
 	[Id] [int] PRIMARY KEY IDENTITY (0,1),
 	[Fecha_Salida] [datetime] NOT NULL,
 	[Fecha_Llegada] [datetime],
 	[Fecha_Llegada_Estimada] [datetime] NOT NULL,
-	[Ruta_Aerea] [numeric](18,0),
-	[Servicio] [int],
+	[Ruta_Aerea] [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Ruta_Aerea](Id),
 	[Aeronave] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Aeronave] (Numero)
 	)
 GO
-ALTER TABLE [NORMALIZADOS].Viaje
-  ADD CONSTRAINT FK_Viaje_ServicioxRuta
-  FOREIGN KEY(Servicio,Ruta_Aerea) REFERENCES [NORMALIZADOS].ServicioxRuta(Servicio,Ruta)
-GO
+
 INSERT INTO [NORMALIZADOS].[Viaje](
 	[Fecha_Salida],
 	[Fecha_Llegada],
 	[Fecha_Llegada_Estimada],
 	[Ruta_Aerea],
-	[Servicio],
 	[Aeronave]
 	)
 (
-	SELECT DISTINCT A.FechaSalida,A.FechaLLegada,A.Fecha_LLegada_Estimada,R.Codigo,S.Id, N.Numero
-	FROM [gd_esquema].[Maestra] A
-	JOIN [NORMALIZADOS].[Aeronave] N ON A.Aeronave_Matricula = N.Matricula
-	JOIN [NORMALIZADOS].[Ruta_Aerea] R ON  A.Ruta_Codigo = R.Codigo	
-	JOIN [NORMALIZADOS].[Servicio] S ON S.Descripcion=A.Tipo_Servicio
+
+	SELECT V.Fecha_Salida,V.Fecha_Llegada,V.Fecha_LLegada_Estimada,R.Id,A.Numero
+	FROM [NORMALIZADOS].[#ViajeTemporal] V
+	JOIN [NORMALIZADOS].[Aeronave] A ON V.Aeronave_Matricula = A.Matricula
+	JOIN [NORMALIZADOS].[Ruta_Aerea] R ON  V.Ruta_Codigo = R.Ruta_Codigo
 
 )
 GO
+
+
+
 /******************************************************************
 					  TIPO_BUTACA
 *******************************************************************/
@@ -384,31 +392,6 @@ INSERT INTO [NORMALIZADOS].[Butaca](
 GO
 
 /*****************************************************************
-						BUTACA RESERVADA
-******************************************************************/
-
-CREATE TABLE [NORMALIZADOS].[Butaca_Reservada]
-(	
-	[Butaca] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Butaca] (Id),
-	[Viaje] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Viaje] (Id),
-	[Fecha] [datetime], 
-	PRIMARY KEY ([Butaca],[Viaje])
-)
-GO
-
-/*****************************************************************
-						KGS USADOS
-******************************************************************/
-
-CREATE TABLE [NORMALIZADOS].[Kgs_Usados]
-(
-	[Id] [int] PRIMARY KEY IDENTITY (0,1),
-	[Kg] [numeric](18,0) NOT NULL,
-	[Fecha] [datetime],	
-	[Viaje] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Viaje](Id)	
-)
-GO
-/*****************************************************************
 							TIPO_PAGO
 ******************************************************************/
 CREATE TABLE [NORMALIZADOS].[Tipo_Pago](
@@ -422,6 +405,24 @@ INSERT INTO [NORMALIZADOS].[Tipo_Pago](Descripcion)
 
 GO
 /*****************************************************************
+							Tipo_Tarjeta
+******************************************************************/
+CREATE TABLE [NORMALIZADOS].[Tipo_Tarjeta](
+	[Id] [int] PRIMARY KEY IDENTITY(0,1) NOT NULL,
+	[Nombre] [nvarchar](255) NOT NULL
+)
+GO
+/*****************************************************************
+							Tarjeta_Credito
+******************************************************************/
+CREATE TABLE [NORMALIZADOS].[Tarjeta_Credito](
+	[Nro] [bigint] PRIMARY KEY,
+	[Codigo] INT NOT NULL,
+	[Fecha_Vencimiento] INT NOT NULL,
+	[Tipo_Tarjeta] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Tipo_Tarjeta](Id)
+)
+GO
+/*****************************************************************
 							COMPRA
 ******************************************************************/
 
@@ -431,6 +432,7 @@ CREATE TABLE [NORMALIZADOS].[Compra](
 	[Fecha] [datetime] NOT NULL,
 	[Comprador] [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Cliente] (Id) NOT NULL,
 	[Medio_Pago] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Tipo_Pago](Id) NOT NULL,
+	[Tarjeta_Credito] [bigint] FOREIGN KEY REFERENCES [NORMALIZADOS].[Tarjeta_Credito](Nro) NULL,
 	[Pasaje_Codigo] [numeric](18,0),
 	[Paquete_Codigo] [numeric](18,0),
 	[Viaje] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Viaje] (Id) NOT NULL
@@ -461,14 +463,25 @@ INSERT INTO [NORMALIZADOS].[Compra](
 	[Viaje]
 	)
 (
-	SELECT M.Pasaje_FechaCompra, CLI.Id, 1, M.Pasaje_Codigo,V.Id -- Pago en efectivo porque no aclara otra cosa..
+	SELECT DISTINCT M.Pasaje_FechaCompra, CLI.Id, 1, M.Pasaje_Codigo,V.Id -- Pago en efectivo porque no aclara otra cosa..
 	FROM gd_esquema.Maestra M
 	JOIN [NORMALIZADOS].[Cliente] CLI
 	ON CLI.Apellido = M.Cli_Apellido AND CLI.Dni = M.Cli_Dni AND CLI.Nombre = M.Cli_Nombre
 	JOIN [NORMALIZADOS].[Aeronave] A
 	ON A.Matricula = M.Aeronave_Matricula
+	JOIN NORMALIZADOS.Servicio S
+	ON S.Descripcion=M.Tipo_Servicio
+	JOIN NORMALIZADOS.Ciudad C1
+	ON C1.Nombre=M.Ruta_Ciudad_Origen
+	JOIN NORMALIZADOS.Ciudad C2
+	ON C2.Nombre=M.Ruta_Ciudad_Destino
+	JOIN NORMALIZADOS.Ruta_Aerea R
+	ON R.Ruta_Codigo=M.Ruta_Codigo
+	AND R.Ciudad_Origen=C1.Id
+	AND R.Ciudad_Destino=C2.Id
+	AND R.Tipo_Servicio=S.Id
 	JOIN [NORMALIZADOS].[Viaje] V
-	ON V.Aeronave = A.Numero AND V.Fecha_Salida = M.FechaSalida AND V.Ruta_Aerea = M.Ruta_Codigo
+	ON V.Aeronave = A.Numero AND V.Fecha_Salida = M.FechaSalida AND V.Ruta_Aerea =R.Id
 	WHERE M.Pasaje_Codigo != 0
 
 )
@@ -506,7 +519,7 @@ CREATE TABLE [NORMALIZADOS].[Encomienda](
 	[Precio]  [numeric](18,2) NOT NULL,
 	[Kg] [numeric](18,0) NOT NULL,
 	[Cliente] [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Cliente] (Id) NOT NULL,
-	[Compra] [int] NOT NULL,
+	[Compra] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Compra] (Id) NOT NULL,
 )
 GO
 
@@ -519,14 +532,25 @@ INSERT INTO [NORMALIZADOS].[Compra](
 	)
 (
 SELECT M.Paquete_FechaCompra, CLI.Id, 1, M.Paquete_Codigo,V.Id -- Pago en efectivo porque no aclara otra cosa..
-FROM gd_esquema.Maestra M
-JOIN [NORMALIZADOS].[Cliente] CLI
-ON CLI.Apellido = M.Cli_Apellido AND CLI.Dni = M.Cli_Dni AND CLI.Nombre = M.Cli_Nombre
-JOIN [NORMALIZADOS].[Aeronave] A
-ON A.Matricula = M.Aeronave_Matricula
-JOIN [NORMALIZADOS].[Viaje] V
-ON V.Aeronave = A.Numero AND V.Fecha_Salida = M.FechaSalida AND V.Ruta_Aerea = M.Ruta_Codigo
-WHERE M.Paquete_Codigo != 0
+	FROM gd_esquema.Maestra M
+	JOIN [NORMALIZADOS].[Cliente] CLI
+	ON CLI.Apellido = M.Cli_Apellido AND CLI.Dni = M.Cli_Dni AND CLI.Nombre = M.Cli_Nombre
+	JOIN [NORMALIZADOS].[Aeronave] A
+	ON A.Matricula = M.Aeronave_Matricula
+	JOIN NORMALIZADOS.Servicio S
+	ON S.Descripcion=M.Tipo_Servicio
+	JOIN NORMALIZADOS.Ciudad C1
+	ON C1.Nombre=M.Ruta_Ciudad_Origen
+	JOIN NORMALIZADOS.Ciudad C2
+	ON C2.Nombre=M.Ruta_Ciudad_Destino
+	JOIN NORMALIZADOS.Ruta_Aerea R
+	ON R.Ruta_Codigo=M.Ruta_Codigo
+	AND R.Ciudad_Origen=C1.Id
+	AND R.Ciudad_Destino=C2.Id
+	AND R.Tipo_Servicio=S.Id
+	JOIN [NORMALIZADOS].[Viaje] V
+	ON V.Aeronave = A.Numero AND V.Fecha_Salida = M.FechaSalida AND V.Ruta_Aerea =R.Id
+	WHERE M.Paquete_Codigo != 0
 )
 GO
 
@@ -563,7 +587,9 @@ GO
 ALTER TABLE [NORMALIZADOS].[Compra]
 DROP COLUMN Paquete_Codigo
 GO
-
+DROP TABLE [NORMALIZADOS].[#RutasTemporal]
+GO
+DROP TABLE [NORMALIZADOS].[#ViajeTemporal]
 /*****************************************************************
 							DETALLE_CANCELACION
 ******************************************************************/
@@ -571,8 +597,7 @@ GO
 CREATE TABLE [NORMALIZADOS].[Detalle_Cancelacion](
 	[Id] [int] PRIMARY KEY IDENTITY (0,1),
 	[Fecha] [datetime] NOT NULL,
-	[Motivo] [nvarchar](255),
-	[Compra] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].Compra(Id) NOT NULL
+	[Motivo] [nvarchar](255)
 	)
 GO
 
@@ -1450,66 +1475,13 @@ BEGIN
 
 	SELECT @@IDENTITY
 END
-
-
-/**************************************
-create table [NORMALIZADOS].[Escalas]
-(
-	[Id] [numeric](18,0) IDENTITY(0,1) PRIMARY KEY,
-	[Ciudad_Origen]  [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Ciudad](Id) NOT NULL,
-	[Ciudad_Destino] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Ciudad](Id) NOT NULL,
-	CHECK(Ciudad_Destino <> Ciudad_Origen),
-	UNIQUE(Ciudad_Origen, Ciudad_Destino)
-)
 GO
-INSERT INTO [NORMALIZADOS].Escalas(Ciudad_Origen,Ciudad_Destino)
-	SELECT distinct C1.ID, C2.ID
-	from gd_esquema.Maestra M
-	JOIN [NORMALIZADOS].Ciudad C1
-	ON M.Ruta_Ciudad_Origen=C1.Nombre
-	JOIN [NORMALIZADOS].Ciudad C2
-	ON M.Ruta_Ciudad_Destino=C2.Nombre
-GO
-
-CREATE TABLE [NORMALIZADOS].[#RutasTemporal]
-(
-	[Id] [numeric](18,0) IDENTITY(0,1) PRIMARY KEY,
-	[Ruta_Codigo] [int],
-	[Ciudad_Origen]  varchar(250),
-	[Ciudad_Destino] varchar(250),
-	[Precio_BasePasaje] [numeric](18, 2) NOT NULL,
-	[Precio_BaseKG] [numeric](18, 2) NOT NULL,
-	[Tipo_Servicio] [nvarchar](255),
-	CHECK(Precio_BaseKG >= 0),
-	CHECK(Precio_BasePasaje >= 0),
-)
-GO
-INSERT INTO [NORMALIZADOS].#RutasTemporal(Ruta_Codigo,Ciudad_Origen,Ciudad_Destino,Precio_BasePasaje,Precio_BaseKG,Tipo_Servicio)
-	SELECT Distinct M.Ruta_Codigo, M.Ruta_Ciudad_Origen, M.Ruta_Ciudad_Destino, M.Ruta_Precio_BasePasaje, M.Ruta_Precio_BaseKG, M.Tipo_Servicio
-	FROM gd_esquema.Maestra M
-GO
-
-	CREATE TABLE [NORMALIZADOS].[Rutas]
-(
-	[Ruta_Codigo] [int],
-	[Escala]  [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Escalas](Id) NOT NULL,
-	[Precio_BasePasaje] [numeric](18, 2) NOT NULL,
-	[Precio_BaseKG] [numeric](18, 2) NOT NULL,
-	[Tipo_Servicio] [numeric](18,0),
-	[Habilitada] [bit] DEFAULT 1,
-	CHECK(Precio_BaseKG >= 0),
-	CHECK(Precio_BasePasaje >= 0),
-	PRIMARY KEY (Ruta_Codigo, Escala)
-)
-GO
-INSERT INTO [NORMALIZADOS].Rutas(Ruta_Codigo,Escala,Precio_BasePasaje,Precio_BaseKG,Tipo_Servicio)
-	select R.ruta_codigo, E.ID, R.precio_basepasaje, R2.precio_basekg, S.ID from normalizados.#RutasTemporal R
-	JOIN NORMALIZADOS.Ciudad C1 ON C1.Nombre = R.ciudad_origen
-	JOIN NORMALIZADOS.Ciudad C2 ON C2.Nombre = R.ciudad_Destino
-	JOIN NORMALIZADOS.Escalas E ON E.Ciudad_Origen = C1.ID AND E.Ciudad_Destino = C2.ID
-	JOIN NORMALIZADOS.Servicio S ON S.Descripcion = R.Tipo_servicio
-	JOIN NORMALIZADOS.#RutasTemporal R2 ON R.ruta_codigo = R2.ruta_codigo AND R.ciudad_origen = R2.ciudad_origen AND R.ciudad_destino = R2.ciudad_destino
-	where R.precio_basepasaje > 0 AND R2.precio_basekg > 0
-GO
-
-**************************************/
+--------------------------------------------------------------------------------
+--				SP trae todas las ciudades
+--------------------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetAllCiudad_SEL]
+AS
+BEGIN
+	SELECT Id,Nombre
+	FROM [NORMALIZADOS].Ciudad
+END
