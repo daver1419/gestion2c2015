@@ -237,7 +237,7 @@ INSERT INTO [NORMALIZADOS].[Modelo]([Modelo])
 )
 GO
 /********************************************
-					AERONAVES
+					ESTADO AERONAVE
 *********************************************/	
 CREATE TABLE [NORMALIZADOS].[Estado_Aeronave](
 	[Id] [int] PRIMARY KEY IDENTITY(1,1),
@@ -304,12 +304,15 @@ CREATE TABLE [NORMALIZADOS].[#ViajeTemporal](
 	Fecha_LLegada [datetime],
 	Fecha_LLegada_Estimada [datetime],
 	Ruta_Codigo [numeric](18,0),
+	[Ciudad_Origen] nvarchar(255),
+	[Ciudad_Destino] nvarchar(255),
 	Aeronave_Matricula nvarchar(255)
 	)
 GO
 
-INSERT INTO [NORMALIZADOS].[#ViajeTemporal](Fecha_Salida,Fecha_LLegada,Fecha_LLegada_Estimada,Ruta_Codigo,Aeronave_Matricula)
-	SELECT DISTINCT M.FechaSalida,M.FechaLLegada,M.Fecha_LLegada_Estimada,M.Ruta_Codigo,M.Aeronave_Matricula
+INSERT INTO [NORMALIZADOS].[#ViajeTemporal](Fecha_Salida,Fecha_LLegada,Fecha_LLegada_Estimada,Ruta_Codigo,Ciudad_Origen,Ciudad_Destino,Aeronave_Matricula)
+	
+	SELECT DISTINCT M.FechaSalida,M.FechaLLegada,M.Fecha_LLegada_Estimada,M.Ruta_Codigo,M.Ruta_Ciudad_Origen,M.Ruta_Ciudad_Destino,M.Aeronave_Matricula
 	FROM [gd_esquema].[Maestra] M
 	
 GO
@@ -336,7 +339,11 @@ INSERT INTO [NORMALIZADOS].[Viaje](
 	SELECT V.Fecha_Salida,V.Fecha_Llegada,V.Fecha_LLegada_Estimada,R.Id,A.Numero
 	FROM [NORMALIZADOS].[#ViajeTemporal] V
 	JOIN [NORMALIZADOS].[Aeronave] A ON V.Aeronave_Matricula = A.Matricula
-	JOIN [NORMALIZADOS].[Ruta_Aerea] R ON  V.Ruta_Codigo = R.Ruta_Codigo
+	JOIN [NORMALIZADOS].[Ciudad] C1
+	ON C1.Nombre=V.Ciudad_Origen
+	JOIN [NORMALIZADOS].[Ciudad] C2
+	ON C2.Nombre=V.Ciudad_Destino
+	JOIN [NORMALIZADOS].[Ruta_Aerea] R ON  V.Ruta_Codigo = R.Ruta_Codigo AND R.Ciudad_Origen = C1.ID AND R.Ciudad_Destino = C2.ID
 
 )
 GO
