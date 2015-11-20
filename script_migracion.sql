@@ -1492,3 +1492,67 @@ BEGIN
 	SELECT Id,Nombre
 	FROM [NORMALIZADOS].Ciudad
 END
+
+--------------------------------------------------------------------------------
+--			BUTACAS DISPONIBLES DE AERONAVE
+--------------------------------------------------------------------------------
+
+CREATE FUNCTION NORMALIZADOS.BUTACAS_DISPONIBLES(@matricula nvarchar(255), @codigo_ruta [numeric](18,0),
+												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255))
+RETURNS int
+AS 
+	BEGIN
+
+		DECLARE @butacas_disponibles int
+
+			SELECT @butacas_disponibles = COUNT(*) FROM NORMALIZADOS.Pasaje P
+			JOIN NORMALIZADOS.Compra C ON P.Compra = C.Id
+			JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+			JOIN NORMALIZADOS.Butaca B ON P.Butaca = B.Id
+			JOIN NORMALIZADOS.Aeronave A ON A.Numero = B.Aeronave
+			JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
+			JOIN NORMALIZADOS.Ciudad C1 ON R.Ciudad_Origen = C1.ID
+			JOIN NORMALIZADOS.Ciudad C2 ON R.Ciudad_Destino = C2.ID
+			WHERE A.Matricula = @matricula AND R.Ruta_Codigo = @codigo_ruta 
+			AND LTRIM(RTRIM(C1.Nombre)) = @ciudad_origen AND LTRIM(RTRIM(C2.Nombre)) = @ciudad_destino
+
+		RETURN @butacas_disponibles
+	END
+GO
+
+------------------------------------------------------------------
+--              FUNCION PARA TOTAL BUTACAS AERONAVE             --
+------------------------------------------------------------------
+
+CREATE FUNCTION NORMALIZADOS.TOTAL_BUTACAS(@matricula nvarchar(255))
+RETURNS int
+AS 
+	BEGIN
+
+		DECLARE @cantidad_butacas int
+
+			SELECT @cantidad_butacas = COUNT(*) 
+			FROM NORMALIZADOS.Butaca B
+			JOIN NORMALIZADOS.Aeronave A ON A.Numero = B.Aeronave
+			WHERE A.Matricula = @matricula
+
+		RETURN @cantidad_butacas
+	END
+GO
+
+------------------------------------------------------------------
+--         FUNCION PARA TOTAL BUTACAS OCUPADAS AERONAVE         --
+------------------------------------------------------------------
+
+CREATE FUNCTION NORMALIZADOS.BUTACAS_DISPONIBLES(@matricula nvarchar(255), @codigo_ruta [numeric](18,0),
+												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255))
+RETURNS int
+AS 
+	BEGIN
+		DECLARE @butacas_ocupadas int
+	
+		@butacas_ocupadas = (SELECT NORMALIZADOS.TOTAL_BUTACAS(@matricula)-NORMALIZADOS.BUTACAS_DISPONIBLES(@matricula,@codigo_ruta,@ciudad_origen,@ciudad_destino)
+	
+		RETURN @butacas_ocupadas
+	END
+GO
