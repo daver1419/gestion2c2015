@@ -26,5 +26,10 @@ namespace AerolineaFrba.Abm_Aeronave
         {
             new ListadoAeronaves() { Icon = this.Icon }.ShowDialog(this);
         }
+
+        private void BajaButton_Click(object sender, EventArgs e)
+        {
+            new BajaAeronave() { Icon = this.Icon }.ShowDialog(this);
+        }
     }
 }

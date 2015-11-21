@@ -228,5 +228,46 @@ namespace AerolineaFrba.DAO
 
             }
         }
+
+        public static List<AeronaveDTO> GetByFiltersBaja(AeronaveFiltersDTO aeronaveFilter)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Busqueda_Baja_Aeronave]", conn);
+                com.CommandType = CommandType.StoredProcedure;
+                com.Parameters.AddWithValue("@Matricula", aeronaveFilter.Aeronave.Matricula);
+                com.Parameters.AddWithValue("@Kg_Disponibles", aeronaveFilter.Aeronave.KG);
+
+                if (aeronaveFilter.Aeronave.Modelo != null)
+                    com.Parameters.AddWithValue("@Modelo", aeronaveFilter.Aeronave.Modelo.Modelo);
+                else
+                    com.Parameters.AddWithValue("@Modelo", DBNull.Value);
+
+                if (aeronaveFilter.Aeronave.Fabricante != null)
+                    com.Parameters.AddWithValue("@Fabricante", aeronaveFilter.Aeronave.Fabricante.Nombre);
+                else
+                    com.Parameters.AddWithValue("@Fabricante", DBNull.Value);
+
+                if (aeronaveFilter.Aeronave.TipoServicio != null)
+                    com.Parameters.AddWithValue("@Tipo_Servicio", aeronaveFilter.Aeronave.TipoServicio.Descripcion);
+                else
+                    com.Parameters.AddWithValue("@Tipo_Servicio", DBNull.Value);
+
+                if (aeronaveFilter.Aeronave.FechaAlta != null)
+                    com.Parameters.AddWithValue("@Fecha_Alta", aeronaveFilter.Aeronave.FechaAlta);
+                else
+                    com.Parameters.AddWithValue("@Fecha_Alta", DBNull.Value);
+
+                if (aeronaveFilter.Fecha_Alta_Fin != null)
+                    com.Parameters.AddWithValue("@Fecha_Alta_Fin", aeronaveFilter.Fecha_Alta_Fin);
+                else
+                    com.Parameters.AddWithValue("@Fecha_Alta_Fin", DBNull.Value);
+
+                SqlDataReader dataReader = com.ExecuteReader();
+                return getAeronaves(dataReader);
+
+            }
+        }
+
     }
 }

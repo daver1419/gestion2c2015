@@ -62,6 +62,7 @@
             this.BajaButton.TabIndex = 2;
             this.BajaButton.Text = "Baja de Aeronave";
             this.BajaButton.UseVisualStyleBackColor = true;
+            this.BajaButton.Click += new System.EventHandler(this.BajaButton_Click);
             // 
             // groupBox1
             // 
