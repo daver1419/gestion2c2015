@@ -190,7 +190,7 @@ CREATE TABLE [NORMALIZADOS].[Ruta_Aerea]
 	[Precio_BaseKG] [numeric](18, 2) NOT NULL,
 	[Tipo_Servicio] [numeric](18,0),
 	[Habilitada] [bit] DEFAULT 1,
-	UNIQUE(Ruta_Codigo,Ciudad_Origen,Ciudad_destino),
+	UNIQUE(Ciudad_Origen,Ciudad_destino,Tipo_Servicio),
 	CHECK(Precio_BaseKG >= 0),
 	CHECK(Precio_BasePasaje >= 0),
 )
