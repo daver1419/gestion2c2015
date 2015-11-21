@@ -187,6 +187,7 @@
     <Compile Include="DAO\ButacaDAO.cs" />
     <Compile Include="DAO\CiudadDAO.cs" />
     <Compile Include="DAO\ModeloDAO.cs" />
+    <Compile Include="DAO\RutaDAO.cs" />
     <Compile Include="DAO\TipoButacaDAO.cs" />
     <Compile Include="DAO\RolxFuncDAO.cs" />
     <Compile Include="DAO\TipoServicioDAO.cs" />
@@ -204,6 +205,7 @@
     <Compile Include="DTO\CiudadDTO.cs" />
     <Compile Include="DTO\AeronaveFiltersDTO.cs" />
     <Compile Include="DTO\ModeloDTO.cs" />
+    <Compile Include="DTO\RutaDTO.cs" />
     <Compile Include="DTO\TipoButacaDTO.cs" />
     <Compile Include="DTO\RolxFuncDTO.cs" />
     <Compile Include="DTO\TipoServicioDTO.cs" />
