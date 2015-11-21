@@ -1556,3 +1556,76 @@ AS
 		RETURN @butacas_ocupadas
 	END
 GO
+------------------------------------------------------------------
+--         SP verifica si existe una ruta con ciudad de origen, destino y servicio
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[ExistTuplaRuta](
+@ciudadOrigen numeric(18,0),
+@ciudadDestino numeric(18,0),
+@tipoServicio numeric(18,0))
+AS
+BEGIN
+	SELECT 1
+	FROM [NORMALIZADOS].[Ruta_Aerea]
+	WHERE Tipo_Servicio=@tipoServicio
+			AND Ciudad_Origen=@ciudadOrigen
+			AND Ciudad_Destino=@ciudadDestino
+END
+GO
+------------------------------------------------------------------
+--         SP verifica si existe una ruta con un codigo
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[ExistCodigoRuta](@codigoRuta numeric(18,0))
+AS
+BEGIN
+	SELECT 1
+	FROM [NORMALIZADOS].[Ruta_Aerea]
+	WHERE Ruta_Codigo=@codigoRuta
+END
+GO
+------------------------------------------------------------------
+--         SP verifica si para un codigo de ruta ya existente
+--				arma correctamente el tramo con las otras rutas con mismo codigo
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[CheckRutaConMismoCodigo](
+@codigoRuta numeric(18,0),
+@ciudadOrigen numeric(18,0),
+@ciudadDestino numeric(18,0)
+)
+AS
+BEGIN
+	SELECT 1
+	FROM [NORMALIZADOS].[Ruta_Aerea]
+	WHERE @codigoRuta=Ruta_Codigo
+		AND	(@ciudadOrigen=Ciudad_Destino
+		OR @ciudadDestino=@ciudadOrigen)
+END
+GO
+------------------------------------------------------------------
+--         SP guarda una ruta
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SaveRuta](
+@codigoRuta numeric(18,0),
+@ciudadOrigen numeric(18,0),
+@ciudadDestino numeric(18,0),
+@precioBasePasaje numeric(18,2),
+@precioBaseKg numeric(18,2),
+@tipoServicio numeric(18,0)
+)
+AS
+BEGIN
+	INSERT INTO [NORMALIZADOS].[Ruta_Aerea](Ruta_Codigo,
+											Ciudad_Origen,
+											Ciudad_Destino,
+											Precio_BasePasaje,
+											Precio_BaseKG,
+											Tipo_Servicio)
+		VALUES(@codigoRuta,
+				@ciudadOrigen,
+				@ciudadDestino,
+				@precioBasePasaje,
+				@precioBaseKg,
+				@tipoServicio)
+
+	SELECT @@ROWCOUNT
+END
