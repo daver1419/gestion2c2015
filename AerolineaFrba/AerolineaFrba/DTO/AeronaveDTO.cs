@@ -10,7 +10,7 @@ namespace AerolineaFrba.DTO
     {
         public int Numero{get;set;}
         public string Matricula{get;set;}
-        public string Modelo{get;set;}
+        public ModeloDTO Modelo{get;set;}
         public int KG{get;set;}
         public TipoServicioDTO TipoServicio{get;set;}
         public FabricanteDTO Fabricante{get;set;}

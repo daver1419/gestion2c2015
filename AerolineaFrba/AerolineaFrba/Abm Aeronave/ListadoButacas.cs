@@ -36,14 +36,24 @@ namespace AerolineaFrba.Abm_Aeronave
             }
             else
             {
-                var confirmResult = MessageBox.Show("Seguro que quieres eliminar esta butaca?",
-                                     "Confirmar Delete",
-                                     MessageBoxButtons.YesNo);
-                if (confirmResult == DialogResult.Yes)
+                if (butaca.Habilitada == true)
                 {
-                    ButacaDAO.delete(butaca);
-                    MessageBox.Show("La butaca fue eliminada con exito.");
-                    Reload();
+                    var confirmResult = MessageBox.Show("Seguro que quieres eliminar esta butaca?",
+                                         "Confirmar Delete",
+                                         MessageBoxButtons.YesNo);
+                    if (confirmResult == DialogResult.Yes)
+                    {
+                        if (ButacaDAO.delete(butaca))
+                        {
+                            butaca.Habilitada = false;
+                            MessageBox.Show("La butaca fue eliminada con exito.");
+                            Reload();
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("La butaca ya esta inhabilitada");
                 }
             }
         }

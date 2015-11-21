@@ -46,7 +46,6 @@
             this.DateAltaFin = new System.Windows.Forms.DateTimePicker();
             this.ComboTipoServicio = new System.Windows.Forms.ComboBox();
             this.TextMatricula = new System.Windows.Forms.TextBox();
-            this.TextModelo = new System.Windows.Forms.TextBox();
             this.ComboFabricante = new System.Windows.Forms.ComboBox();
             this.TipoServicio = new System.Windows.Forms.Label();
             this.Matricula = new System.Windows.Forms.Label();
@@ -54,16 +53,14 @@
             this.Modelo = new System.Windows.Forms.Label();
             this.FechaAlta = new System.Windows.Forms.Label();
             this.DateAlta = new System.Windows.Forms.DateTimePicker();
-            this.NumericKG = new System.Windows.Forms.NumericUpDown();
-            this.KG = new System.Windows.Forms.Label();
-            this.ButacaNumeric = new System.Windows.Forms.NumericUpDown();
-            this.Butacas = new System.Windows.Forms.Label();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.KG = new System.Windows.Forms.Label();
+            this.NumericKG = new System.Windows.Forms.NumericUpDown();
+            this.ComboModelo = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.tablaDatos)).BeginInit();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ButacaNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).BeginInit();
             this.SuspendLayout();
             // 
             // tablaDatos
@@ -104,6 +101,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.ComboModelo);
             this.groupBox1.Controls.Add(this.DateVueltaFin);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.DateVuelta);
@@ -116,7 +114,6 @@
             this.groupBox1.Controls.Add(this.DateAltaFin);
             this.groupBox1.Controls.Add(this.ComboTipoServicio);
             this.groupBox1.Controls.Add(this.TextMatricula);
-            this.groupBox1.Controls.Add(this.TextModelo);
             this.groupBox1.Controls.Add(this.ComboFabricante);
             this.groupBox1.Controls.Add(this.TipoServicio);
             this.groupBox1.Controls.Add(this.Matricula);
@@ -126,8 +123,6 @@
             this.groupBox1.Controls.Add(this.DateAlta);
             this.groupBox1.Controls.Add(this.NumericKG);
             this.groupBox1.Controls.Add(this.KG);
-            this.groupBox1.Controls.Add(this.ButacaNumeric);
-            this.groupBox1.Controls.Add(this.Butacas);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(563, 318);
@@ -240,13 +235,6 @@
             this.TextMatricula.Size = new System.Drawing.Size(193, 20);
             this.TextMatricula.TabIndex = 27;
             // 
-            // TextModelo
-            // 
-            this.TextModelo.Location = new System.Drawing.Point(134, 159);
-            this.TextModelo.Name = "TextModelo";
-            this.TextModelo.Size = new System.Drawing.Size(193, 20);
-            this.TextModelo.TabIndex = 26;
-            // 
             // ComboFabricante
             // 
             this.ComboFabricante.FormattingEnabled = true;
@@ -309,6 +297,19 @@
             this.DateAlta.Size = new System.Drawing.Size(193, 20);
             this.DateAlta.TabIndex = 17;
             // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
+            // 
+            // KG
+            // 
+            this.KG.AutoSize = true;
+            this.KG.Location = new System.Drawing.Point(16, 249);
+            this.KG.Name = "KG";
+            this.KG.Size = new System.Drawing.Size(67, 13);
+            this.KG.TabIndex = 23;
+            this.KG.Text = "Cantidad KG";
+            // 
             // NumericKG
             // 
             this.NumericKG.Location = new System.Drawing.Point(134, 249);
@@ -321,39 +322,13 @@
             this.NumericKG.Size = new System.Drawing.Size(193, 20);
             this.NumericKG.TabIndex = 29;
             // 
-            // KG
+            // ComboModelo
             // 
-            this.KG.AutoSize = true;
-            this.KG.Location = new System.Drawing.Point(16, 249);
-            this.KG.Name = "KG";
-            this.KG.Size = new System.Drawing.Size(67, 13);
-            this.KG.TabIndex = 23;
-            this.KG.Text = "Cantidad KG";
-            // 
-            // ButacaNumeric
-            // 
-            this.ButacaNumeric.Location = new System.Drawing.Point(134, 275);
-            this.ButacaNumeric.Maximum = new decimal(new int[] {
-            200,
-            0,
-            0,
-            0});
-            this.ButacaNumeric.Name = "ButacaNumeric";
-            this.ButacaNumeric.Size = new System.Drawing.Size(193, 20);
-            this.ButacaNumeric.TabIndex = 30;
-            // 
-            // Butacas
-            // 
-            this.Butacas.AutoSize = true;
-            this.Butacas.Location = new System.Drawing.Point(16, 277);
-            this.Butacas.Name = "Butacas";
-            this.Butacas.Size = new System.Drawing.Size(46, 13);
-            this.Butacas.TabIndex = 24;
-            this.Butacas.Text = "Butacas";
-            // 
-            // errorProvider1
-            // 
-            this.errorProvider1.ContainerControl = this;
+            this.ComboModelo.FormattingEnabled = true;
+            this.ComboModelo.Location = new System.Drawing.Point(134, 159);
+            this.ComboModelo.Name = "ComboModelo";
+            this.ComboModelo.Size = new System.Drawing.Size(193, 21);
+            this.ComboModelo.TabIndex = 41;
             // 
             // ListadoAeronaves
             // 
@@ -370,9 +345,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.tablaDatos)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ButacaNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -386,7 +360,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ComboBox ComboTipoServicio;
         private System.Windows.Forms.TextBox TextMatricula;
-        private System.Windows.Forms.TextBox TextModelo;
         private System.Windows.Forms.ComboBox ComboFabricante;
         private System.Windows.Forms.Label TipoServicio;
         private System.Windows.Forms.Label Matricula;
@@ -394,10 +367,6 @@
         private System.Windows.Forms.Label Modelo;
         private System.Windows.Forms.Label FechaAlta;
         private System.Windows.Forms.DateTimePicker DateAlta;
-        private System.Windows.Forms.NumericUpDown NumericKG;
-        private System.Windows.Forms.Label KG;
-        private System.Windows.Forms.NumericUpDown ButacaNumeric;
-        private System.Windows.Forms.Label Butacas;
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private System.Windows.Forms.DateTimePicker DateAltaFin;
         private System.Windows.Forms.DateTimePicker DateVueltaFin;
@@ -409,5 +378,8 @@
         private System.Windows.Forms.DateTimePicker DateBajaFin;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.DateTimePicker DateBaja;
+        private System.Windows.Forms.NumericUpDown NumericKG;
+        private System.Windows.Forms.Label KG;
+        private System.Windows.Forms.ComboBox ComboModelo;
     }
 }

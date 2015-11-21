@@ -29,12 +29,14 @@ namespace AerolineaFrba.Abm_Aeronave
             ComboFabricante.SelectedIndex = -1;
             ComboTipoServicio.DataSource = TipoServicioDAO.selectAll();
             ComboTipoServicio.SelectedIndex = -1;
+            ComboModelo.DataSource = ModeloDAO.selectAll();
+            ComboModelo.SelectedIndex = -1;
         }
 
         private void Limpiar_Click(object sender, EventArgs e)
         {
             TextMatricula.Text = "";
-            TextModelo.Text = "";
+            ComboModelo.SelectedIndex = -1;
             NumericKG.Value = 0;
             DateAlta.Value = DateTime.Now;
             ComboFabricante.SelectedIndex = -1;
@@ -52,7 +54,7 @@ namespace AerolineaFrba.Abm_Aeronave
             Aeronave.FechaAlta = DateAlta.Value;
             Aeronave.KG = Decimal.ToInt32(NumericKG.Value);
             Aeronave.Matricula = TextMatricula.Text;
-            Aeronave.Modelo = TextModelo.Text;
+            Aeronave.Modelo = ((ModeloDTO)ComboModelo.SelectedValue);
 
             if (AeronaveDAO.AltaAeronave(Aeronave))
             {
@@ -99,9 +101,9 @@ namespace AerolineaFrba.Abm_Aeronave
                 errorProvider1.SetError(ComboFabricante, "Debe seleccionar un fabricante.");
                 ret = true;
             }
-            if (this.TextModelo.Text == "")
+            if (this.ComboModelo.SelectedIndex == -1)
             {
-                errorProvider1.SetError(TextModelo, "Debe ingresar un modelo");
+                errorProvider1.SetError(ComboModelo, "Debe seleccionar un modelo");
                 ret = true;
             }
             if (this.TextMatricula.Text == "" || !buenFormatoMatricula(this.TextMatricula))

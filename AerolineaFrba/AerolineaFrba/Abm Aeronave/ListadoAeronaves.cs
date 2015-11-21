@@ -33,10 +33,9 @@ namespace AerolineaFrba.Abm_Aeronave
             aeronave.TipoServicio = ((TipoServicioDTO)ComboTipoServicio.SelectedValue);
             aeronave.KG = Decimal.ToInt32(NumericKG.Value);
             aeronave.Matricula = TextMatricula.Text;
-            aeronave.Modelo = TextModelo.Text;
+            aeronave.Modelo = ((ModeloDTO)ComboModelo.SelectedValue);
 
             aeronaveFilters.Aeronave = aeronave;
-            aeronaveFilters.Catidad_Butacas = Convert.ToInt32(ButacaNumeric.Value);
             if (DateAlta.Checked) aeronaveFilters.Aeronave.FechaAlta = DateAlta.Value;
             else aeronaveFilters.Aeronave.FechaAlta = null;
             if (DateAltaFin.Checked) aeronaveFilters.Fecha_Alta_Fin = DateAltaFin.Value;
@@ -72,7 +71,7 @@ namespace AerolineaFrba.Abm_Aeronave
 
             AeronaveDTO aeronave = (AeronaveDTO)tablaDatos.Rows[e.RowIndex].DataBoundItem;
 
-            if (AeronaveDAO.ViajesProgramados(aeronave))
+            if (!AeronaveDAO.ViajesProgramados(aeronave))
             {
                 ModificarAeronave vent = new ModificarAeronave(aeronave);
                 vent.ShowDialog(this);
@@ -86,9 +85,7 @@ namespace AerolineaFrba.Abm_Aeronave
         private void Limpiar_Click(object sender, EventArgs e)
         {
             TextMatricula.Text = "";
-            TextModelo.Text = "";
             NumericKG.Value = 0;
-            ButacaNumeric.Value = 0;
             DateAlta.Value = DateTime.Now;
             DateAltaFin.Value = DateTime.Now;
             DateBaja.Value = DateTime.Now;
@@ -97,6 +94,7 @@ namespace AerolineaFrba.Abm_Aeronave
             DateFueraFin.Value = DateTime.Now;
             DateVuelta.Value = DateTime.Now;
             DateVueltaFin.Value = DateTime.Now;
+            ComboModelo.SelectedIndex = -1;
             ComboFabricante.SelectedIndex = -1;
             ComboTipoServicio.SelectedIndex = -1;
             errorProvider1.Clear();
@@ -135,6 +133,8 @@ namespace AerolineaFrba.Abm_Aeronave
             ComboFabricante.SelectedIndex = -1;
             ComboTipoServicio.DataSource = TipoServicioDAO.selectAll();
             ComboTipoServicio.SelectedIndex = -1;
+            ComboModelo.DataSource = ModeloDAO.selectAll();
+            ComboModelo.SelectedIndex = -1;
 
         }
 

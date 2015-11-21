@@ -31,8 +31,9 @@ namespace AerolineaFrba.Abm_Aeronave
             ComboFabricante.SelectedItem = Aeronave.Fabricante;
             ComboTipoServicio.DataSource = TipoServicioDAO.selectAll();
             ComboTipoServicio.SelectedItem = Aeronave.TipoServicio;
+            ModeloCombo.DataSource = ModeloDAO.selectAll();
+            ModeloCombo.SelectedItem = Aeronave.Modelo;
             TextMatricula.Text = Aeronave.Matricula;
-            TextModelo.Text = Aeronave.Modelo;
             NumericKG.Value = Aeronave.KG;
             Aeronave.ListaButacas = ButacaDAO.GetByAeronave(Aeronave);
 
@@ -52,7 +53,6 @@ namespace AerolineaFrba.Abm_Aeronave
         private void Limpiar_Click(object sender, EventArgs e)
         {
             TextMatricula.Text = Aeronave.Matricula;
-            TextModelo.Text = Aeronave.Modelo;
             NumericKG.Value = Aeronave.KG;
             
             if (Aeronave.FechaAlta != null)
@@ -65,6 +65,7 @@ namespace AerolineaFrba.Abm_Aeronave
             else
                 DateAlta.Value = DateTime.Today;
 
+            ModeloCombo.SelectedItem = Aeronave.Modelo;
             ComboFabricante.SelectedItem = Aeronave.Fabricante;
             ComboTipoServicio.SelectedItem = Aeronave.TipoServicio;
             Aeronave.ListaButacas = ButacaDAO.GetByAeronave(Aeronave);
@@ -80,7 +81,7 @@ namespace AerolineaFrba.Abm_Aeronave
             Aeronave.FechaAlta = DateAlta.Value;
             Aeronave.KG = Decimal.ToInt32(NumericKG.Value);
             Aeronave.Matricula = TextMatricula.Text;
-            Aeronave.Modelo = TextModelo.Text;
+            Aeronave.Modelo = ((ModeloDTO)ModeloCombo.SelectedValue);
 
             if (AeronaveDAO.ModificacionAeronave(Aeronave, butacasNuevas, butacasModificadas))
             {
@@ -130,9 +131,9 @@ namespace AerolineaFrba.Abm_Aeronave
                 errorProvider1.SetError(ComboFabricante, "Debe seleccionar un fabricante.");
                 ret = true;
             }
-            if (this.TextModelo.Text == "")
+            if (this.ModeloCombo.SelectedIndex == -1)
             {
-                errorProvider1.SetError(TextModelo, "Debe ingresar un modelo");
+                errorProvider1.SetError(ModeloCombo, "Debe seleccionar un modelo");
                 ret = true;
             }
             if (this.TextMatricula.Text == "" || !buenFormatoMatricula(this.TextMatricula))

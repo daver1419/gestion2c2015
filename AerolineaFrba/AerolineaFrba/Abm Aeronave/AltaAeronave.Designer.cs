@@ -38,16 +38,16 @@
             this.KG = new System.Windows.Forms.Label();
             this.Butacas = new System.Windows.Forms.Label();
             this.ComboFabricante = new System.Windows.Forms.ComboBox();
-            this.TextModelo = new System.Windows.Forms.TextBox();
             this.TextMatricula = new System.Windows.Forms.TextBox();
             this.ComboTipoServicio = new System.Windows.Forms.ComboBox();
             this.NumericKG = new System.Windows.Forms.NumericUpDown();
             this.Limpiar = new System.Windows.Forms.Button();
             this.Guardar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.ButacaNumeric = new System.Windows.Forms.NumericUpDown();
             this.ButacaButton = new System.Windows.Forms.Button();
+            this.ButacaNumeric = new System.Windows.Forms.NumericUpDown();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.ComboModelo = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ButacaNumeric)).BeginInit();
@@ -132,13 +132,6 @@
             this.ComboFabricante.Size = new System.Drawing.Size(200, 21);
             this.ComboFabricante.TabIndex = 8;
             // 
-            // TextModelo
-            // 
-            this.TextModelo.Location = new System.Drawing.Point(141, 87);
-            this.TextModelo.Name = "TextModelo";
-            this.TextModelo.Size = new System.Drawing.Size(200, 20);
-            this.TextModelo.TabIndex = 9;
-            // 
             // TextMatricula
             // 
             this.TextMatricula.Location = new System.Drawing.Point(141, 118);
@@ -188,6 +181,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.ComboModelo);
             this.groupBox1.Controls.Add(this.ButacaButton);
             this.groupBox1.Controls.Add(this.ButacaNumeric);
             this.groupBox1.Controls.Add(this.Butacas);
@@ -199,6 +193,16 @@
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos Aeronave";
+            // 
+            // ButacaButton
+            // 
+            this.ButacaButton.Location = new System.Drawing.Point(129, 220);
+            this.ButacaButton.Name = "ButacaButton";
+            this.ButacaButton.Size = new System.Drawing.Size(96, 23);
+            this.ButacaButton.TabIndex = 16;
+            this.ButacaButton.Text = "Agregar Butaca";
+            this.ButacaButton.UseVisualStyleBackColor = true;
+            this.ButacaButton.Click += new System.EventHandler(this.ButacaButton_Click);
             // 
             // ButacaNumeric
             // 
@@ -213,19 +217,17 @@
             this.ButacaNumeric.Size = new System.Drawing.Size(75, 20);
             this.ButacaNumeric.TabIndex = 16;
             // 
-            // ButacaButton
-            // 
-            this.ButacaButton.Location = new System.Drawing.Point(129, 220);
-            this.ButacaButton.Name = "ButacaButton";
-            this.ButacaButton.Size = new System.Drawing.Size(96, 23);
-            this.ButacaButton.TabIndex = 16;
-            this.ButacaButton.Text = "Agregar Butaca";
-            this.ButacaButton.UseVisualStyleBackColor = true;
-            this.ButacaButton.Click += new System.EventHandler(this.ButacaButton_Click);
-            // 
             // errorProvider1
             // 
             this.errorProvider1.ContainerControl = this;
+            // 
+            // ComboModelo
+            // 
+            this.ComboModelo.FormattingEnabled = true;
+            this.ComboModelo.Location = new System.Drawing.Point(129, 79);
+            this.ComboModelo.Name = "ComboModelo";
+            this.ComboModelo.Size = new System.Drawing.Size(200, 21);
+            this.ComboModelo.TabIndex = 16;
             // 
             // AltaAeronave
             // 
@@ -237,7 +239,6 @@
             this.Controls.Add(this.NumericKG);
             this.Controls.Add(this.ComboTipoServicio);
             this.Controls.Add(this.TextMatricula);
-            this.Controls.Add(this.TextModelo);
             this.Controls.Add(this.ComboFabricante);
             this.Controls.Add(this.KG);
             this.Controls.Add(this.TipoServicio);
@@ -269,7 +270,6 @@
         private System.Windows.Forms.Label KG;
         private System.Windows.Forms.Label Butacas;
         private System.Windows.Forms.ComboBox ComboFabricante;
-        private System.Windows.Forms.TextBox TextModelo;
         private System.Windows.Forms.TextBox TextMatricula;
         private System.Windows.Forms.ComboBox ComboTipoServicio;
         private System.Windows.Forms.NumericUpDown NumericKG;
@@ -279,5 +279,6 @@
         private System.Windows.Forms.Button ButacaButton;
         private System.Windows.Forms.NumericUpDown ButacaNumeric;
         private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.ComboBox ComboModelo;
     }
 }

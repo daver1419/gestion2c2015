@@ -25,12 +25,11 @@ namespace AerolineaFrba.DAO
                     com.CommandType = CommandType.StoredProcedure;
                     com.Transaction = tran;
                     com.Parameters.AddWithValue("@matricula", Aeronave.Matricula);
-                    com.Parameters.AddWithValue("@modelo", Aeronave.Modelo);
+                    com.Parameters.AddWithValue("@modelo", Aeronave.Modelo.Id);
                     com.Parameters.AddWithValue("@kg_disponibles", Aeronave.KG);
                     com.Parameters.AddWithValue("@fecha_alta", Aeronave.FechaAlta);
                     com.Parameters.AddWithValue("@fabricante", Aeronave.Fabricante.IdFabricante);
                     com.Parameters.AddWithValue("@tipo_servicio", Aeronave.TipoServicio.IdTipoServicio);
-                    com.Parameters.AddWithValue("@cant_butacas", Aeronave.ListaButacas.Count);
                     com.Parameters.Add("@Id", SqlDbType.Int).Direction = ParameterDirection.Output;
                     com.ExecuteNonQuery();
                     Aeronave.Numero = Convert.ToInt32(com.Parameters["@Id"].Value);
@@ -72,12 +71,11 @@ namespace AerolineaFrba.DAO
                     com.CommandType = CommandType.StoredProcedure;
                     com.Transaction = tran;
                     com.Parameters.AddWithValue("@matricula", Aeronave.Matricula);
-                    com.Parameters.AddWithValue("@modelo", Aeronave.Modelo);
+                    com.Parameters.AddWithValue("@modelo", Aeronave.Modelo.Id);
                     com.Parameters.AddWithValue("@kg_disponibles", Aeronave.KG);
                     com.Parameters.AddWithValue("@fecha_alta", Aeronave.FechaAlta);
                     com.Parameters.AddWithValue("@fabricante", Aeronave.Fabricante.IdFabricante);
                     com.Parameters.AddWithValue("@tipo_servicio", Aeronave.TipoServicio.IdTipoServicio);
-                    com.Parameters.AddWithValue("@cant_butacas", Aeronave.ListaButacas.Count);
                     com.Parameters.AddWithValue("@numero", Aeronave.Numero);
                     com.ExecuteNonQuery();
 
@@ -144,7 +142,10 @@ namespace AerolineaFrba.DAO
                         aeronave.FechaAlta = DateTime.MinValue;
                     aeronave.KG = Convert.ToInt32(dataReader["Kg_Disponibles"]);
                     aeronave.Matricula = Convert.ToString(dataReader["Matricula"]);
-                    aeronave.Modelo = Convert.ToString(dataReader["Modelo"]);
+                    ModeloDTO modelo = new ModeloDTO();
+                    modelo.Id = Convert.ToInt32(dataReader["Modelo"]);
+                    modelo.Modelo = Convert.ToString(dataReader["Modelo_Desc"]);
+                    aeronave.Modelo = modelo;
                     TipoServicioDTO tipoServicio = new TipoServicioDTO();
                     tipoServicio.IdTipoServicio = Convert.ToInt32(dataReader["Tipo_Servicio"]);
                     tipoServicio.Descripcion = Convert.ToString(dataReader["Descripcion"]);
@@ -164,10 +165,14 @@ namespace AerolineaFrba.DAO
             {
                 SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Busqueda_Aeronave]", conn);
                 com.CommandType = CommandType.StoredProcedure;
-                com.Parameters.AddWithValue("@Modelo", aeronaveFilter.Aeronave.Modelo);
                 com.Parameters.AddWithValue("@Matricula", aeronaveFilter.Aeronave.Matricula);
                 com.Parameters.AddWithValue("@Kg_Disponibles", aeronaveFilter.Aeronave.KG);
-               
+
+                if (aeronaveFilter.Aeronave.Modelo != null)
+                    com.Parameters.AddWithValue("@Modelo", aeronaveFilter.Aeronave.Modelo.Modelo);
+                else
+                    com.Parameters.AddWithValue("@Modelo", DBNull.Value);
+
                 if (aeronaveFilter.Aeronave.Fabricante != null)
                     com.Parameters.AddWithValue("@Fabricante", aeronaveFilter.Aeronave.Fabricante.Nombre);
                 else
@@ -177,8 +182,6 @@ namespace AerolineaFrba.DAO
                     com.Parameters.AddWithValue("@Tipo_Servicio", aeronaveFilter.Aeronave.TipoServicio.Descripcion);
                 else
                     com.Parameters.AddWithValue("@Tipo_Servicio", DBNull.Value);
-
-                com.Parameters.AddWithValue("@Cantidad_Butacas", aeronaveFilter.Catidad_Butacas);
 
                 if (aeronaveFilter.Aeronave.FechaAlta != null)
                     com.Parameters.AddWithValue("@Fecha_Alta", aeronaveFilter.Aeronave.FechaAlta);

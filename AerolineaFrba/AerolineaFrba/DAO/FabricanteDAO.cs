@@ -13,7 +13,7 @@ namespace AerolineaFrba.DAO
     {
         private static List<FabricanteDTO> readerToListFabricante(SqlDataReader dataReader)
         {
-            List<FabricanteDTO> listaFunc = new List<FabricanteDTO>();
+            List<FabricanteDTO> listaFabs = new List<FabricanteDTO>();
             if (dataReader.HasRows)
             {
                 while (dataReader.Read())
@@ -22,12 +22,12 @@ namespace AerolineaFrba.DAO
                     fab.IdFabricante = Convert.ToInt32(dataReader["Id"]);
                     fab.Nombre = Convert.ToString(dataReader["Nombre"]);
 
-                    listaFunc.Add(fab);
+                    listaFabs.Add(fab);
                 }
             }
             dataReader.Close();
             dataReader.Dispose();
-            return listaFunc;
+            return listaFabs;
         }
 
         public static List<FabricanteDTO> selectAll()
@@ -41,11 +41,6 @@ namespace AerolineaFrba.DAO
                     return fabricantes;
                 }
             }
-        }
-
-        private static List<FabricanteDTO> readerToListFabricantes(SqlDataReader reader)
-        {
-            throw new NotImplementedException();
         }
     }
 }

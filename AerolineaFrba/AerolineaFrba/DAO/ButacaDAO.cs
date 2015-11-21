@@ -37,14 +37,14 @@ namespace AerolineaFrba.DAO
             com.ExecuteNonQuery();
         }
 
-        public static void delete(ButacaDTO butaca)
+        public static bool delete(ButacaDTO butaca)
         {
             using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
             {
                 SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Baja_Butaca]", conn);
                 com.CommandType = CommandType.StoredProcedure;
                 com.Parameters.AddWithValue("@Id", butaca.IdButaca);
-                com.ExecuteNonQuery();
+                return com.ExecuteNonQuery() > 0;
             }
         }
 
