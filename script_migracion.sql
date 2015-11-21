@@ -227,11 +227,11 @@ GO
 
 CREATE TABLE [NORMALIZADOS].[Modelo](
 	[Id] [int] PRIMARY KEY IDENTITY(0,1),
-	[Modelo] [nvarchar](255) UNIQUE NOT NULL
+	[Modelo_Desc] [nvarchar](255) UNIQUE NOT NULL
 )
 GO
 
-INSERT INTO [NORMALIZADOS].[Modelo]([Modelo])
+INSERT INTO [NORMALIZADOS].[Modelo]([Modelo_Desc])
 (
 	SELECT DISTINCT [Aeronave_Modelo]
 	FROM[gd_esquema].[Maestra]
@@ -277,7 +277,7 @@ INSERT INTO [NORMALIZADOS].[Aeronave](
 	SELECT DISTINCT A.Aeronave_Matricula, M.Id,F.Id,A.Aeronave_KG_Disponibles,S.Id
 	FROM [gd_esquema].[Maestra] A
 	JOIN [NORMALIZADOS].[Servicio] S ON A.Tipo_Servicio = S.Descripcion AND A.Pasaje_Codigo > 0
-	JOIN [NORMALIZADOS].[Modelo] M ON M.Modelo = A.Aeronave_Modelo
+	JOIN [NORMALIZADOS].[Modelo] M ON M.Modelo_Desc = A.Aeronave_Modelo
 	JOIN [NORMALIZADOS].[Fabricante] F ON A.Aeronave_Fabricante = F.Nombre
 )
 GO
@@ -379,7 +379,8 @@ CREATE TABLE [NORMALIZADOS].[Butaca]
 	[Numero] [numeric](18,0) NOT NULL,
 	[Piso] [numeric](18,0) NOT NULL DEFAULT 1,
 	[Tipo_Butaca] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Tipo_Butaca] (Id) NOT NULL DEFAULT 0,
-	[Aeronave] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Aeronave] (Numero) NOT NULL
+	[Aeronave] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Aeronave] (Numero) NOT NULL,
+	[Habilitada] [bit] DEFAULT 1
 )
 GO
 	
@@ -1302,10 +1303,10 @@ GO
 --------------------------------------------------------------------------------
 
 CREATE PROCEDURE [NORMALIZADOS].[SP_Alta_Aeronave](@Matricula nvarchar(255), @Modelo nvarchar(255), @Kg_Disponibles numeric(18,0), 
-@Fabricante int, @Tipo_Servicio int, @Fecha_Alta datetime, @Cant_Butacas int, @Id int OUTPUT)
+@Fabricante int, @Tipo_Servicio int, @Fecha_Alta datetime, @Id int OUTPUT)
 AS BEGIN
-	INSERT INTO [NORMALIZADOS].[Aeronave](Matricula, Modelo, KG_Disponibles, Fabricante, Tipo_Servicio, Fecha_Alta, Cantidad_Butacas)
-	VALUES (UPPER(@Matricula), UPPER(@Modelo), @Kg_Disponibles, @Fabricante, @Tipo_Servicio, @Fecha_Alta, @Cant_Butacas)
+	INSERT INTO [NORMALIZADOS].[Aeronave](Matricula, Modelo, KG_Disponibles, Fabricante, Tipo_Servicio, Fecha_Alta)
+	VALUES (UPPER(@Matricula), UPPER(@Modelo), @Kg_Disponibles, @Fabricante, @Tipo_Servicio, @Fecha_Alta)
 	set @Id = SCOPE_IDENTITY()
 END
 GO
@@ -1327,8 +1328,7 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Modificar_Aeronave]
 @Modelo nvarchar(255),
 @Tipo_Servicio int,
 @KG_Disponibles numeric(18,0),
-@Fecha_Alta datetime,
-@Cant_Butacas int
+@Fecha_Alta datetime
 AS
 BEGIN
 	UPDATE [NORMALIZADOS].[Aeronave]
@@ -1337,8 +1337,7 @@ BEGIN
 		Modelo = @Modelo,
 		Tipo_Servicio = @Tipo_Servicio,
 		KG_Disponibles = @KG_Disponibles,
-		Fecha_Alta = @Fecha_Alta,
-		Cantidad_Butacas = @Cant_Butacas
+		Fecha_Alta = @Fecha_Alta
 	WHERE Numero = @Numero	
 END
 GO
@@ -1386,8 +1385,7 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Aeronave_Con_Viajes]
 		
 		IF (EXISTS	(select 1 
 		from [NORMALIZADOS].Viaje V
-		WHERE V.Aeronave = @Aeronave
-		AND V.Fecha_Salida > GETDATE()))
+		WHERE V.Aeronave = @Aeronave))
 		BEGIN
 			SET @Tiene_Viajes = 1;
 		END
@@ -1403,7 +1401,6 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronave]
 	@Kg_Disponibles numeric(18,0),
 	@Fabricante nvarchar(255),
 	@Tipo_Servicio nvarchar(255),
-	@Cantidad_Butacas int,
 	@Fecha_Alta datetime,
 	@Fecha_Alta_Fin datetime,
 	@Fecha_Baja_Def datetime,
@@ -1414,7 +1411,7 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronave]
 	@Fecha_Vuelta_Servicio_Fin datetime
 
 	AS
-	SELECT A.*, S.Descripcion, F.Nombre
+	SELECT A.*, S.Descripcion, F.Nombre, M.Modelo_Desc
 	FROM [NORMALIZADOS].Aeronave A
 	LEFT JOIN [NORMALIZADOS].[Baja_Temporal_Aeronave] BTA
 	ON A.Numero = BTA.Aeronave
@@ -1422,12 +1419,13 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronave]
 	ON A.Tipo_Servicio = S.Id
 	LEFT JOIN [NORMALIZADOS].Fabricante F
 	ON A.Fabricante = F.Id
-	WHERE (A.Modelo like @Modelo OR @Modelo like '')
+	LEFT JOIN [NORMALIZADOS].[Modelo] M
+	ON M.Id = A.Modelo
+	WHERE (M.Modelo_Desc like @Modelo OR @Modelo is null)
 		AND (A.Matricula like @Matricula OR @Matricula like '')
 		AND (A.Kg_Disponibles = @Kg_Disponibles OR @Kg_Disponibles = 0)
 		AND (F.Nombre like @Fabricante OR @Fabricante is null)
 		AND (S.Descripcion like @Tipo_Servicio OR @Tipo_Servicio is null)
-		AND (A.Cantidad_Butacas > @Cantidad_Butacas OR @Cantidad_Butacas = 0)
 		AND (A.Fecha_Alta > @Fecha_Alta OR @Fecha_Alta is null) 
 		AND (A.Fecha_Alta < @Fecha_Alta_Fin OR @Fecha_Alta_Fin is null) 
 		AND (A.Fecha_Baja_Definitiva > @Fecha_Baja_Def OR @Fecha_Baja_Def is null) 
