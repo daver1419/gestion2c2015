@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.comboBoxTipoServ = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -42,8 +43,10 @@
             this.label6 = new System.Windows.Forms.Label();
             this.numericUpDownPBKg = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownPBPas = new System.Windows.Forms.NumericUpDown();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBKg)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBPas)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -140,6 +143,7 @@
             this.btnGuardar.TabIndex = 10;
             this.btnGuardar.Text = "Guardar";
             this.btnGuardar.UseVisualStyleBackColor = true;
+            this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
             // 
             // label6
             // 
@@ -163,6 +167,10 @@
             this.numericUpDownPBPas.Name = "numericUpDownPBPas";
             this.numericUpDownPBPas.Size = new System.Drawing.Size(120, 20);
             this.numericUpDownPBPas.TabIndex = 14;
+            // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
             // 
             // AltaRuta
             // 
@@ -188,6 +196,7 @@
             this.Load += new System.EventHandler(this.AltaRuta_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBKg)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBPas)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -209,5 +218,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown numericUpDownPBKg;
         private System.Windows.Forms.NumericUpDown numericUpDownPBPas;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
     }
 }
