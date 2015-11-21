@@ -1435,6 +1435,43 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronave]
 		AND (BTA.Fecha_Vuelta_Al_Servicio > @Fecha_Vuelta_Servicio OR @Fecha_Vuelta_Servicio is null)
 		AND (BTA.Fecha_Vuelta_Al_Servicio < @Fecha_Vuelta_Servicio_Fin OR @Fecha_Vuelta_Servicio_Fin is null) 
 GO
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Baja_Aeronave]
+	@Modelo nvarchar(255),
+	@Matricula nvarchar(255),
+	@Kg_Disponibles numeric(18,0),
+	@Fabricante nvarchar(255),
+	@Tipo_Servicio nvarchar(255),
+	@Fecha_Alta datetime,
+	@Fecha_Alta_Fin datetime
+
+	AS
+	SELECT A.*, S.Descripcion, F.Nombre, M.Modelo_Desc
+	FROM [NORMALIZADOS].Aeronave A
+	LEFT JOIN [NORMALIZADOS].Servicio S
+	ON A.Tipo_Servicio = S.Id
+	LEFT JOIN [NORMALIZADOS].Fabricante F
+	ON A.Fabricante = F.Id
+	LEFT JOIN [NORMALIZADOS].[Modelo] M
+	ON M.Id = A.Modelo
+	WHERE (M.Modelo_Desc like @Modelo OR @Modelo is null)
+		AND (A.Matricula like @Matricula OR @Matricula like '')
+		AND (A.Kg_Disponibles = @Kg_Disponibles OR @Kg_Disponibles = 0)
+		AND (F.Nombre like @Fabricante OR @Fabricante is null)
+		AND (S.Descripcion like @Tipo_Servicio OR @Tipo_Servicio is null)
+		AND (A.Fecha_Alta > @Fecha_Alta OR @Fecha_Alta is null) 
+		AND (A.Fecha_Alta < @Fecha_Alta_Fin OR @Fecha_Alta_Fin is null) 
+		AND (A.Fecha_Baja_Definitiva is null)
+		AND ( NOT EXISTS (SELECT 1
+						  FROM [NORMALIZADOS].[Baja_Temporal_Aeronave] BTA
+						  WHERE A.Numero = BTA.Aeronave
+						  AND GETDATE() BETWEEN BTA.Fecha_Fuera_Servicio AND BTA.Fecha_Vuelta_Al_Servicio
+						  )
+			)
+ 
+GO
+
+
 --------------------------------------------------------------------------------
 --				SP da de alta una ciudad
 --------------------------------------------------------------------------------
