@@ -1495,10 +1495,10 @@ BEGIN
 END
 
 --------------------------------------------------------------------------------
---			BUTACAS DISPONIBLES DE AERONAVE
+--			FUNCION devuelve cantidad de butacas disponibles
 --------------------------------------------------------------------------------
 
-CREATE FUNCTION NORMALIZADOS.BUTACAS_DISPONIBLES(@matricula nvarchar(255), @codigo_ruta [numeric](18,0),
+CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@matricula nvarchar(255), @codigo_ruta [numeric](18,0),
 												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255))
 RETURNS int
 AS 
@@ -1522,10 +1522,11 @@ AS
 GO
 
 ------------------------------------------------------------------
---              FUNCION PARA TOTAL BUTACAS AERONAVE             --
+--              FUNCION devuelve la cantidad total de butacas
+--						para una aeronave
 ------------------------------------------------------------------
 
-CREATE FUNCTION NORMALIZADOS.TOTAL_BUTACAS(@matricula nvarchar(255))
+CREATE FUNCTION NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(@matricula nvarchar(255))
 RETURNS int
 AS 
 	BEGIN
@@ -1542,17 +1543,17 @@ AS
 GO
 
 ------------------------------------------------------------------
---         FUNCION PARA TOTAL BUTACAS OCUPADAS AERONAVE         --
+--         SP devuelve la cantidad de butacas ocupadas
+--				de una aeronave
 ------------------------------------------------------------------
-
-CREATE FUNCTION NORMALIZADOS.BUTACAS_DISPONIBLES(@matricula nvarchar(255), @codigo_ruta [numeric](18,0),
+CREATE FUNCTION NORMALIZADOS.GetCantidadButacasOcupadas(@matricula nvarchar(255), @codigo_ruta [numeric](18,0),
 												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255))
 RETURNS int
 AS 
 	BEGIN
 		DECLARE @butacas_ocupadas int
 	
-		@butacas_ocupadas = (SELECT NORMALIZADOS.TOTAL_BUTACAS(@matricula)-NORMALIZADOS.BUTACAS_DISPONIBLES(@matricula,@codigo_ruta,@ciudad_origen,@ciudad_destino)
+		SET @butacas_ocupadas = NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(@matricula)-NORMALIZADOS.GetCantidadButacasDisponibles(@matricula,@codigo_ruta,@ciudad_origen,@ciudad_destino)
 	
 		RETURN @butacas_ocupadas
 	END
