@@ -37,6 +37,7 @@ namespace AerolineaFrba.Abm_Aeronave
             aeronave.Modelo = ((ModeloDTO)ComboModelo.SelectedValue);
 
             aeronaveFilters.Aeronave = aeronave;
+
             if (DateAlta.Checked) aeronaveFilters.Aeronave.FechaAlta = DateAlta.Value;
             else aeronaveFilters.Aeronave.FechaAlta = null;
             if (DateAltaFin.Checked) aeronaveFilters.Fecha_Alta_Fin = DateAltaFin.Value;
@@ -55,19 +56,46 @@ namespace AerolineaFrba.Abm_Aeronave
         private void tablaDatos_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             //Ignora los clicks que no son sobre los elementos de la columna de botones
-            if (e.RowIndex < 0 || e.ColumnIndex != tablaDatos.Columns.IndexOf(tablaDatos.Columns["Seleccionar"]) || tablaDatos.DataSource == null)
+            if (e.RowIndex < 0 || tablaDatos.RowCount == e.RowIndex + 1 || (e.ColumnIndex != tablaDatos.Columns.IndexOf(tablaDatos.Columns["Baja_Temporal"]) && e.ColumnIndex != tablaDatos.Columns.IndexOf(tablaDatos.Columns["Baja_Def"])))
                 return;
 
             AeronaveDTO aeronave = (AeronaveDTO)tablaDatos.Rows[e.RowIndex].DataBoundItem;
+            bool reemplazar = false;
 
-            if (!AeronaveDAO.ViajesProgramados(aeronave))
+            if (AeronaveDAO.ViajesProgramados(aeronave))
             {
-                ModificarAeronave vent = new ModificarAeronave(aeronave);
-                vent.ShowDialog(this);
+                var confirmResult = MessageBox.Show("Esta aeronave tiene viajes programados, desea reemplazar esta aeronave?",
+                    "Confirmar Delete",
+                    MessageBoxButtons.YesNo);
+                if (confirmResult == DialogResult.Yes)
+                {
+                    reemplazar = true;
+                }
+            }
+
+            if (e.ColumnIndex == tablaDatos.Columns.IndexOf(tablaDatos.Columns["Baja_Temporal"]))
+            {
+                var confirmResult = MessageBox.Show("Seguro que quieres dar de baja temporalmente?",
+                    "Confirmar Delete",
+                    MessageBoxButtons.YesNo);
+                if (confirmResult == DialogResult.Yes)
+                {
+                    BajaTemporal vent = new BajaTemporal(aeronave, reemplazar);
+                    vent.ShowDialog(this);
+                    Reload();
+                }
             }
             else
             {
-                MessageBox.Show("No se puede modificar la Aeronave porque tiene viajes planificados.");
+                var confirmResult = MessageBox.Show("Seguro que quieres dar de baja definitiva?",
+                    "Confirmar Delete",
+                    MessageBoxButtons.YesNo);
+                if (confirmResult == DialogResult.Yes)
+                {
+                    //lanzar procedure que da de baja definitivamente y usa flag reemplazar
+                    //para saber si reemplaza la aeronave o cancela los pasajes.
+                    Reload();
+                }
             }
         }
 

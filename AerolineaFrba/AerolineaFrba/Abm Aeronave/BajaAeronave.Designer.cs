@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.tablaDatos = new System.Windows.Forms.DataGridView();
-            this.Seleccionar = new System.Windows.Forms.DataGridViewButtonColumn();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.ComboModelo = new System.Windows.Forms.ComboBox();
             this.DateAltaFin = new System.Windows.Forms.DateTimePicker();
@@ -48,6 +47,8 @@
             this.Buscar = new System.Windows.Forms.Button();
             this.Limpiar = new System.Windows.Forms.Button();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.Baja_Temporal = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.Baja_Def = new System.Windows.Forms.DataGridViewButtonColumn();
             ((System.ComponentModel.ISupportInitialize)(this.tablaDatos)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).BeginInit();
@@ -58,17 +59,13 @@
             // 
             this.tablaDatos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.tablaDatos.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Seleccionar});
+            this.Baja_Temporal,
+            this.Baja_Def});
             this.tablaDatos.Location = new System.Drawing.Point(10, 251);
             this.tablaDatos.Name = "tablaDatos";
             this.tablaDatos.Size = new System.Drawing.Size(565, 156);
             this.tablaDatos.TabIndex = 5;
             this.tablaDatos.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.tablaDatos_CellContentClick);
-            // 
-            // Seleccionar
-            // 
-            this.Seleccionar.HeaderText = "Seleccionar";
-            this.Seleccionar.Name = "Seleccionar";
             // 
             // groupBox1
             // 
@@ -231,6 +228,18 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // Baja_Temporal
+            // 
+            this.Baja_Temporal.HeaderText = "Baja temporal";
+            this.Baja_Temporal.Name = "Baja_Temporal";
+            // 
+            // Baja_Def
+            // 
+            this.Baja_Def.HeaderText = "Baja definitiva";
+            this.Baja_Def.Name = "Baja_Def";
+            this.Baja_Def.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Baja_Def.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            // 
             // BajaAeronave
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -255,7 +264,6 @@
         #endregion
 
         private System.Windows.Forms.DataGridView tablaDatos;
-        private System.Windows.Forms.DataGridViewButtonColumn Seleccionar;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ComboBox ComboModelo;
         private System.Windows.Forms.DateTimePicker DateAltaFin;
@@ -273,5 +281,7 @@
         private System.Windows.Forms.Button Buscar;
         private System.Windows.Forms.Button Limpiar;
         private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.DataGridViewButtonColumn Baja_Temporal;
+        private System.Windows.Forms.DataGridViewButtonColumn Baja_Def;
     }
 }

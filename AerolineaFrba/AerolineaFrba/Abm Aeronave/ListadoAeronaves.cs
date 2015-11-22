@@ -118,6 +118,26 @@ namespace AerolineaFrba.Abm_Aeronave
                 errorProvider1.SetError(TextMatricula, "Debe ingresar una matricula en el formato XXX-000");
                 ret = true;
             }
+            if (DateAlta.Checked && DateAltaFin.Checked && DateAlta.Value > DateAltaFin.Value)
+            {
+                errorProvider1.SetError(DateAltaFin, "La fecha de fin debe ser posterior a la del comienzo");
+                ret = true;
+            }
+            if (DateFuera.Checked && DateFueraFin.Checked && DateFuera.Value > DateFueraFin.Value)
+            {
+                errorProvider1.SetError(DateFueraFin, "La fecha de fin debe ser posterior a la del comienzo");
+                ret = true;
+            }
+            if (DateVuelta.Checked && DateVueltaFin.Checked && DateVuelta.Value > DateVueltaFin.Value)
+            {
+                errorProvider1.SetError(DateVueltaFin, "La fecha de fin debe ser posterior a la del comienzo");
+                ret = true;
+            }
+            if (DateBaja.Checked && DateBajaFin.Checked && DateBaja.Value > DateBajaFin.Value)
+            {
+                errorProvider1.SetError(DateBajaFin, "La fecha de fin debe ser posterior a la del comienzo");
+                ret = true;
+            }
             return ret;
         }
 
