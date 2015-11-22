@@ -1666,3 +1666,65 @@ BEGIN
 
 	SELECT @@ROWCOUNT
 END
+------------------------------------------------------------------
+--         SP actualiza ruta/s con el mismo codigo
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[ActualizarRuta](
+@codigoRuta numeric(18,0),
+@ciudadOrigen numeric(18,0),
+@ciudadDestino numeric(18,0),
+@precioBasePasaje numeric(18,2),
+@precioBaseKg numeric(18,2),
+@tipoServicio numeric(18,0)
+)
+AS
+BEGIN
+	UPDATE [NORMALIZADOS].[Ruta_Aerea]
+	SET Ruta_Codigo=@codigoRuta,
+		Ciudad_Origen=@ciudadOrigen,
+		Ciudad_Destino=@ciudadDestino,
+		Precio_BaseKG=@precioBaseKg,
+		Precio_BasePasaje=@precioBasePasaje,
+		Tipo_Servicio=@tipoServicio
+	WHERE Ruta_Codigo=@codigoRuta
+
+	SELECT @@ROWCOUNT
+END
+GO
+------------------------------------------------------------------
+--         SP devuelve rutas de acuerdo a los filtros
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetRutaByFilters](
+@codigoRuta numeric(18,0),
+@ciudadOrigen numeric(18,0),
+@ciudadDestino numeric(18,0),
+@precioBasePasaje numeric(18,2),
+@precioBaseKg numeric(18,2),
+@tipoServicio numeric(18,0)
+)
+AS
+BEGIN
+	SELECT RA.Id,
+			RA.Ciudad_Origen as CiudadOrigenId,
+			C1.Nombre as CiudadOrigenNombre,
+			RA.Ciudad_Destino as CiudaDestinoId,
+			C2.Nombre as CiudadDestinoNombre,
+			RA.Ruta_Codigo as Codigo,
+			RA.Precio_BaseKG,
+			RA.Precio_BasePasaje,
+			RA.Tipo_Servicio as ServicioId,
+			S.Descripcion as ServicioDescr
+	FROM Ruta_Aerea RA
+	JOIN Ciudad C1
+		ON RA.Ciudad_Origen=C1.Id
+	JOIN Ciudad C2
+		ON RA.Ciudad_Origen=C2.Id
+	JOIN Servicio S
+		ON RA.Tipo_Servicio=S.Id
+	WHERE (Ruta_Codigo=@codigoRuta OR @codigoRuta is null)
+		AND (Ciudad_Origen=@ciudadOrigen OR @ciudadOrigen is null)
+		AND (Ciudad_Destino=@ciudadDestino OR @ciudadDestino is null)
+		AND (Tipo_Servicio=@tipoServicio OR @tipoServicio is null)
+		AND (Precio_BaseKG=@precioBaseKg OR @precioBaseKg=0)
+		AND (Precio_BasePasaje=@precioBasePasaje OR @precioBasePasaje=0)
+END
