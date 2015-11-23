@@ -1695,7 +1695,7 @@ GO
 --         SP devuelve rutas de acuerdo a los filtros
 ------------------------------------------------------------------
 CREATE PROCEDURE [NORMALIZADOS].[GetRutaByFilters](
-@codigoRuta numeric(18,0),
+@codigo numeric(18,0),
 @ciudadOrigen numeric(18,0),
 @ciudadDestino numeric(18,0),
 @precioBasePasaje numeric(18,2),
@@ -1707,24 +1707,36 @@ BEGIN
 	SELECT RA.Id,
 			RA.Ciudad_Origen as CiudadOrigenId,
 			C1.Nombre as CiudadOrigenNombre,
-			RA.Ciudad_Destino as CiudaDestinoId,
+			RA.Ciudad_Destino as CiudadDestinoId,
 			C2.Nombre as CiudadDestinoNombre,
 			RA.Ruta_Codigo as Codigo,
 			RA.Precio_BaseKG,
 			RA.Precio_BasePasaje,
 			RA.Tipo_Servicio as ServicioId,
-			S.Descripcion as ServicioDescr
+			S.Descripcion as ServicioDescr,
+			RA.Habilitada
 	FROM Ruta_Aerea RA
 	JOIN Ciudad C1
 		ON RA.Ciudad_Origen=C1.Id
 	JOIN Ciudad C2
-		ON RA.Ciudad_Origen=C2.Id
+		ON RA.Ciudad_Destino=C2.Id
 	JOIN Servicio S
 		ON RA.Tipo_Servicio=S.Id
-	WHERE (Ruta_Codigo=@codigoRuta OR @codigoRuta is null)
+	WHERE (Ruta_Codigo=@codigo OR @codigo =0)
 		AND (Ciudad_Origen=@ciudadOrigen OR @ciudadOrigen is null)
 		AND (Ciudad_Destino=@ciudadDestino OR @ciudadDestino is null)
 		AND (Tipo_Servicio=@tipoServicio OR @tipoServicio is null)
 		AND (Precio_BaseKG=@precioBaseKg OR @precioBaseKg=0)
 		AND (Precio_BasePasaje=@precioBasePasaje OR @precioBasePasaje=0)
+END
+GO
+------------------------------------------------------------------
+--         SP devuelve rutas de acuerdo a los filtros
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[EliminarRuta](@IdRuta numeric(18,0))
+AS
+BEGIN
+	UPDATE [NORMALIZADOS].[Ruta_Aerea]
+	SET Habilitada=0
+	WHERE Id=@IdRuta
 END
