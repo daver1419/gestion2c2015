@@ -19,6 +19,7 @@ namespace AerolineaFrba.Abm_Ruta
         public ListadoRuta()
         {
             InitializeComponent();
+            ruta = new RutaDTO();
         }
 
         private void ListadoRuta_Load(object sender, EventArgs e)
@@ -39,6 +40,7 @@ namespace AerolineaFrba.Abm_Ruta
             comboBoxCiudadDest.SelectedIndex = -1;
             numericUpDown1.Value = 0;
             numericUpDown2.Value = 0;
+            dataGridView1.DataSource = null;
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -53,13 +55,7 @@ namespace AerolineaFrba.Abm_Ruta
 
         private bool validar()
         {
-            errorProvider1.Clear();
             bool ret = true;
-            if (textBoxCodigo.Text == "")
-            {
-                errorProvider1.SetError(textBoxCodigo, "Ingrese un codigo");
-                ret = false;
-            }
             return ret;
         }
 
@@ -67,7 +63,7 @@ namespace AerolineaFrba.Abm_Ruta
         {
             if (validar())
             {
-                ruta.Codigo =Int32.Parse( textBoxCodigo.Text);
+                ruta.Codigo = Int32.Parse(textBoxCodigo.Text == "" ? "0" : textBoxCodigo.Text);
                 ruta.CiudadOrigen = (CiudadDTO)comboBoxCiudadOrig.SelectedItem;
                 ruta.CiudadDestino = (CiudadDTO)comboBoxCiudadDest.SelectedItem;
                 ruta.PrecioBaseKg = numericUpDown1.Value;

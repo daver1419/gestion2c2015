@@ -30,8 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.numericUpDownPBPas = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownPBKg = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.textBoxCodigo = new System.Windows.Forms.TextBox();
@@ -58,9 +56,11 @@
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.buttonGuardar = new System.Windows.Forms.Button();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.textBoxPBKg = new System.Windows.Forms.TextBox();
+            this.textBoxPBPas = new System.Windows.Forms.TextBox();
+            this.checkBoxAct = new System.Windows.Forms.CheckBox();
+            this.checkBoxMod = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBPas)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBKg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBPasMod)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBKgMod)).BeginInit();
@@ -69,8 +69,9 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.numericUpDownPBPas);
-            this.groupBox1.Controls.Add(this.numericUpDownPBKg);
+            this.groupBox1.Controls.Add(this.checkBoxAct);
+            this.groupBox1.Controls.Add(this.textBoxPBPas);
+            this.groupBox1.Controls.Add(this.textBoxPBKg);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.textBoxCodigo);
@@ -83,24 +84,10 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(29, 22);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(375, 217);
+            this.groupBox1.Size = new System.Drawing.Size(375, 239);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos actuales";
-            // 
-            // numericUpDownPBPas
-            // 
-            this.numericUpDownPBPas.Location = new System.Drawing.Point(200, 171);
-            this.numericUpDownPBPas.Name = "numericUpDownPBPas";
-            this.numericUpDownPBPas.Size = new System.Drawing.Size(120, 20);
-            this.numericUpDownPBPas.TabIndex = 26;
-            // 
-            // numericUpDownPBKg
-            // 
-            this.numericUpDownPBKg.Location = new System.Drawing.Point(199, 143);
-            this.numericUpDownPBKg.Name = "numericUpDownPBKg";
-            this.numericUpDownPBKg.Size = new System.Drawing.Size(120, 20);
-            this.numericUpDownPBKg.TabIndex = 25;
             // 
             // label6
             // 
@@ -189,6 +176,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.checkBoxMod);
             this.groupBox2.Controls.Add(this.numericUpDownPBPasMod);
             this.groupBox2.Controls.Add(this.numericUpDownPBKgMod);
             this.groupBox2.Controls.Add(this.label7);
@@ -201,9 +189,9 @@
             this.groupBox2.Controls.Add(this.label11);
             this.groupBox2.Controls.Add(this.comboBoxServMod);
             this.groupBox2.Controls.Add(this.label12);
-            this.groupBox2.Location = new System.Drawing.Point(29, 263);
+            this.groupBox2.Location = new System.Drawing.Point(29, 277);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(375, 211);
+            this.groupBox2.Size = new System.Drawing.Size(375, 235);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Datos a modificar";
@@ -309,7 +297,7 @@
             // 
             // buttonLimpiar
             // 
-            this.buttonLimpiar.Location = new System.Drawing.Point(29, 503);
+            this.buttonLimpiar.Location = new System.Drawing.Point(29, 529);
             this.buttonLimpiar.Name = "buttonLimpiar";
             this.buttonLimpiar.Size = new System.Drawing.Size(75, 23);
             this.buttonLimpiar.TabIndex = 2;
@@ -319,7 +307,7 @@
             // 
             // buttonGuardar
             // 
-            this.buttonGuardar.Location = new System.Drawing.Point(329, 503);
+            this.buttonGuardar.Location = new System.Drawing.Point(329, 529);
             this.buttonGuardar.Name = "buttonGuardar";
             this.buttonGuardar.Size = new System.Drawing.Size(75, 23);
             this.buttonGuardar.TabIndex = 3;
@@ -331,11 +319,45 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // textBoxPBKg
+            // 
+            this.textBoxPBKg.Location = new System.Drawing.Point(200, 143);
+            this.textBoxPBKg.Name = "textBoxPBKg";
+            this.textBoxPBKg.Size = new System.Drawing.Size(119, 20);
+            this.textBoxPBKg.TabIndex = 25;
+            // 
+            // textBoxPBPas
+            // 
+            this.textBoxPBPas.Location = new System.Drawing.Point(200, 171);
+            this.textBoxPBPas.Name = "textBoxPBPas";
+            this.textBoxPBPas.Size = new System.Drawing.Size(119, 20);
+            this.textBoxPBPas.TabIndex = 26;
+            // 
+            // checkBoxAct
+            // 
+            this.checkBoxAct.AutoSize = true;
+            this.checkBoxAct.Location = new System.Drawing.Point(151, 212);
+            this.checkBoxAct.Name = "checkBoxAct";
+            this.checkBoxAct.Size = new System.Drawing.Size(73, 17);
+            this.checkBoxAct.TabIndex = 28;
+            this.checkBoxAct.Text = "Habilitado";
+            this.checkBoxAct.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMod
+            // 
+            this.checkBoxMod.AutoSize = true;
+            this.checkBoxMod.Location = new System.Drawing.Point(151, 204);
+            this.checkBoxMod.Name = "checkBoxMod";
+            this.checkBoxMod.Size = new System.Drawing.Size(73, 17);
+            this.checkBoxMod.TabIndex = 39;
+            this.checkBoxMod.Text = "Habilitado";
+            this.checkBoxMod.UseVisualStyleBackColor = true;
+            // 
             // ModificacionRuta
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(431, 564);
+            this.ClientSize = new System.Drawing.Size(431, 573);
             this.Controls.Add(this.buttonGuardar);
             this.Controls.Add(this.buttonLimpiar);
             this.Controls.Add(this.groupBox2);
@@ -345,8 +367,6 @@
             this.Load += new System.EventHandler(this.ModificacionRuta_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBPas)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBKg)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBPasMod)).EndInit();
@@ -359,8 +379,6 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.NumericUpDown numericUpDownPBPas;
-        private System.Windows.Forms.NumericUpDown numericUpDownPBKg;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox textBoxCodigo;
@@ -387,5 +405,9 @@
         private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.Button buttonGuardar;
         private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.TextBox textBoxPBPas;
+        private System.Windows.Forms.TextBox textBoxPBKg;
+        private System.Windows.Forms.CheckBox checkBoxAct;
+        private System.Windows.Forms.CheckBox checkBoxMod;
     }
 }

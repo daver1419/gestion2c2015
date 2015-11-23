@@ -105,10 +105,11 @@ namespace AerolineaFrba.DAO
                     CiudadDTO ciudadDestino = new CiudadDTO();
                     ciudadDestino.IdCiudad = Convert.ToInt32(dataReader["CiudadDestinoId"]);
                     ciudadDestino.Descripcion = Convert.ToString(dataReader["CiudadDestinoNombre"]);
-                    ruta.CiudadOrigen = ciudadDestino;
+                    ruta.CiudadDestino = ciudadDestino;
                     ruta.Codigo = Convert.ToInt32(dataReader["Codigo"]);
-                    ruta.PrecioBaseKg = Convert.ToInt32(dataReader["PrecioBaseKg"]);
-                    ruta.PrecioBasePasaje = Convert.ToInt32(dataReader["PrecioBasePasaje"]);
+                    ruta.PrecioBaseKg = Convert.ToDecimal(dataReader["Precio_BaseKg"]);
+                    ruta.PrecioBasePasaje = Convert.ToDecimal(dataReader["Precio_BasePasaje"]);
+                    ruta.Habilitado = Convert.ToBoolean(dataReader["Habilitada"]);
                     TipoServicioDTO servicio = new TipoServicioDTO();
                     servicio.IdTipoServicio = Convert.ToInt32(dataReader["ServicioId"]);
                     servicio.Descripcion = Convert.ToString(dataReader["ServicioDescr"]);
@@ -150,9 +151,9 @@ namespace AerolineaFrba.DAO
                     com.Parameters.AddWithValue("@ciudadDestino", DBNull.Value);
 
                 if (unaRuta.Servicio != null)
-                    com.Parameters.AddWithValue("@servicio", unaRuta.Servicio.IdTipoServicio);
+                    com.Parameters.AddWithValue("@tipoServicio", unaRuta.Servicio.IdTipoServicio);
                 else
-                    com.Parameters.AddWithValue("@servicio", DBNull.Value);
+                    com.Parameters.AddWithValue("@tipoServicio", DBNull.Value);
 
                 if (unaRuta.PrecioBaseKg != null)
                     com.Parameters.AddWithValue("@precioBaseKg", unaRuta.PrecioBaseKg);
@@ -187,6 +188,23 @@ namespace AerolineaFrba.DAO
                 comm.Parameters.AddWithValue("@precioBasePasaje", ruta.PrecioBasePasaje);
                 comm.Parameters.AddWithValue("@precioBaseKg", ruta.PrecioBaseKg);
                 comm.Parameters.AddWithValue("@tipoServicio", ruta.Servicio.IdTipoServicio);
+                retValue = comm.ExecuteNonQuery();
+            }
+            return retValue > 0;
+        }
+        /// <summary>
+        /// Da de baja una ruta
+        /// </summary>
+        /// <param name="ruta"></param>
+        /// <returns></returns>
+        public static bool Eliminar(RutaDTO ruta)
+        {
+            int retValue = 0;
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[EliminarRuta]", conn);
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.Parameters.AddWithValue("@IdRuta", ruta.IdRuta);
                 retValue = comm.ExecuteNonQuery();
             }
             return retValue > 0;

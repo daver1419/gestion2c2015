@@ -28,19 +28,24 @@ namespace AerolineaFrba.Abm_Ruta
             comboBoxCiudadOrigen.SelectedItem = ruta.CiudadOrigen;
             comboBoxCiudadDest.SelectedItem = ruta.CiudadDestino;
             comboBoxTipoServ.SelectedItem = ruta.Servicio;
-            numericUpDownPBKg.Value = ruta.PrecioBaseKg;
-            numericUpDownPBPas.Value = ruta.PrecioBasePasaje;
+            textBoxPBKg.Text = ruta.PrecioBaseKg.ToString();
+            textBoxPBPas.Text = ruta.PrecioBasePasaje.ToString();
+            checkBoxAct.Checked = ruta.Habilitado;
 
             textBoxCodigo.Enabled = false;
             comboBoxCiudadOrigen.Enabled = false;
             comboBoxCiudadDest.Enabled = false;
             comboBoxTipoServ.Enabled = false;
-            numericUpDownPBKg.Enabled = false;
-            numericUpDownPBPas.Enabled = false;
+            textBoxPBKg.Enabled = false;
+            textBoxPBPas.Enabled = false;
+            checkBoxAct.Enabled = false;
 
-            comboBoxTipoServ.DataSource = TipoServicioDAO.selectAll();
-            comboBoxCiudadOrigen.DataSource = CiudadDAO.SelectAll();
-            comboBoxCiudadDest.DataSource = CiudadDAO.SelectAll();
+            comboBoxServMod.DataSource = TipoServicioDAO.selectAll();
+            comboBoxCiudOrigMod.DataSource = CiudadDAO.SelectAll();
+            comboBoxDestMod.DataSource = CiudadDAO.SelectAll();
+            comboBoxServMod.SelectedIndex = -1;
+            comboBoxCiudOrigMod.SelectedIndex = -1;
+            comboBoxDestMod.SelectedIndex = -1;
         }
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
