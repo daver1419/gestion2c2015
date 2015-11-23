@@ -188,7 +188,7 @@ CREATE TABLE [NORMALIZADOS].[Ruta_Aerea]
 	[Ciudad_Destino] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Ciudad](Id) NOT NULL,
 	[Precio_BasePasaje] [numeric](18, 2) NOT NULL,
 	[Precio_BaseKG] [numeric](18, 2) NOT NULL,
-	[Tipo_Servicio] [numeric](18,0),
+	[Tipo_Servicio] [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Servicio](Id) NOT NULL,,
 	[Habilitada] [bit] DEFAULT 1,
 	UNIQUE(Ciudad_Origen,Ciudad_destino,Tipo_Servicio),
 	CHECK(Precio_BaseKG >= 0),
@@ -1530,31 +1530,32 @@ BEGIN
 END
 
 --------------------------------------------------------------------------------
---			FUNCION devuelve cantidad de butacas disponibles
+--			FUNCION devuelve cantidad de butacas ocupadas
 --------------------------------------------------------------------------------
 
-CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@matricula nvarchar(255), @codigo_ruta [numeric](18,0),
-												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255))
+CREATE FUNCTION NORMALIZADOS.GetCantidadButacasOcupadas(@fecha_salida datetime,
+												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255), 
+												@tipo_servicio nvarchar(255))
 RETURNS int
 AS 
 	BEGIN
+		
+		DECLARE @butacas_ocupadas int
 
-		DECLARE @butacas_disponibles int
+		SELECT @butacas_ocupadas = COUNT(*) FROM NORMALIZADOS.Pasaje P
+		JOIN NORMALIZADOS.Compra C ON P.Compra = C.Id
+		JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+		JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
+		JOIN NORMALIZADOS.Ciudad C1 ON R.Ciudad_Origen = C1.ID
+		JOIN NORMALIZADOS.Ciudad C2 ON R.Ciudad_Destino = C2.ID
+		JOIN NORMALIZADOS.Servicio S ON R.Tipo_Servicio = S.ID
+		WHERE V.Fecha_Salida = CONVERT(datetime,@fecha_salida,21) AND C1.Nombre LIKE '%'+@ciudad_origen AND C2.Nombre LIKE '%'+@ciudad_destino AND S.Descripcion = @tipo_servicio 
 
-			SELECT @butacas_disponibles = COUNT(*) FROM NORMALIZADOS.Pasaje P
-			JOIN NORMALIZADOS.Compra C ON P.Compra = C.Id
-			JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
-			JOIN NORMALIZADOS.Butaca B ON P.Butaca = B.Id
-			JOIN NORMALIZADOS.Aeronave A ON A.Numero = B.Aeronave
-			JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
-			JOIN NORMALIZADOS.Ciudad C1 ON R.Ciudad_Origen = C1.ID
-			JOIN NORMALIZADOS.Ciudad C2 ON R.Ciudad_Destino = C2.ID
-			WHERE A.Matricula = @matricula AND R.Ruta_Codigo = @codigo_ruta 
-			AND LTRIM(RTRIM(C1.Nombre)) = @ciudad_origen AND LTRIM(RTRIM(C2.Nombre)) = @ciudad_destino
-
-		RETURN @butacas_disponibles
+		RETURN @butacas_ocupadas
 	END
 GO
+
+--select NORMALIZADOS.GetCantidadButacasOcupadas('2016-02-01 06:00:00.000','Nueva York', 'Londres', 'Turista')
 
 ------------------------------------------------------------------
 --              FUNCION devuelve la cantidad total de butacas
@@ -1578,21 +1579,56 @@ AS
 GO
 
 ------------------------------------------------------------------
---         SP devuelve la cantidad de butacas ocupadas
+--         FUNCION devuelve la cantidad de butacas disponibles
 --				de una aeronave
 ------------------------------------------------------------------
-CREATE FUNCTION NORMALIZADOS.GetCantidadButacasOcupadas(@matricula nvarchar(255), @codigo_ruta [numeric](18,0),
-												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255))
+CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@fecha_salida datetime,
+												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255), 
+												@tipo_servicio nvarchar(255))
 RETURNS int
 AS 
 	BEGIN
-		DECLARE @butacas_ocupadas int
-	
-		SET @butacas_ocupadas = NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(@matricula)-NORMALIZADOS.GetCantidadButacasDisponibles(@matricula,@codigo_ruta,@ciudad_origen,@ciudad_destino)
-	
-		RETURN @butacas_ocupadas
+		
+		DECLARE @butacas_disponibles int
+
+		SELECT @butacas_disponibles = (NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(A.Matricula)-COUNT(*)) FROM NORMALIZADOS.Pasaje P
+		JOIN NORMALIZADOS.Compra C ON P.Compra = C.Id
+		JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+		JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
+		JOIN NORMALIZADOS.Ciudad C1 ON R.Ciudad_Origen = C1.ID
+		JOIN NORMALIZADOS.Ciudad C2 ON R.Ciudad_Destino = C2.ID
+		JOIN NORMALIZADOS.Servicio S ON R.Tipo_Servicio = S.ID
+		JOIN NORMALIZADOS.Aeronave A ON A.Numero = V.Aeronave
+		WHERE V.Fecha_Salida = CONVERT(datetime,@fecha_salida,21) AND C1.Nombre LIKE '%'+@ciudad_origen AND C2.Nombre LIKE '%'+@ciudad_destino AND S.Descripcion = @tipo_servicio 
+		GROUP BY A.Matricula
+
+		RETURN @butacas_disponibles
 	END
 GO
+
+--select NORMALIZADOS.GetCantidadButacasDisponibles('2016-02-01 06:00:00.000','Nueva York', 'Londres', 'Turista')
+
+------------------------------------------------------------------
+--         SP cantidad de butacas totales, ocupadas y disponibles por viaje
+------------------------------------------------------------------
+
+CREATE PROCEDURE [NORMALIZADOS].[GetAllButacas]
+AS
+BEGIN
+	SELECT V.Fecha_Llegada, V.Fecha_Llegada_Estimada, V.Fecha_Llegada, C1.Nombre AS Ciudad_Origen, C2.Nombre AS Ciudad_Destino, S.Descripcion AS Tipo_Servicio, 
+	NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(A.Matricula) AS Total_Butacas, 
+	NORMALIZADOS.GetCantidadButacasDisponibles(V.Fecha_Salida,C1.Nombre, C2.Nombre, S.Descripcion) AS Butacas_Disponibles,
+	NORMALIZADOS.GetCantidadButacasOcupadas(V.Fecha_Salida,C1.Nombre, C2.Nombre, S.Descripcion) AS Butacas_Ocupadas
+	FROM NORMALIZADOS.Pasaje P
+	JOIN NORMALIZADOS.Compra C ON P.Compra = C.Id
+	JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+	JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
+	JOIN NORMALIZADOS.Ciudad C1 ON R.Ciudad_Origen = C1.ID
+	JOIN NORMALIZADOS.Ciudad C2 ON R.Ciudad_Destino = C2.ID
+	JOIN NORMALIZADOS.Servicio S ON R.Tipo_Servicio = S.ID
+	JOIN NORMALIZADOS.Aeronave A ON A.Numero = V.Aeronave
+END
+
 ------------------------------------------------------------------
 --         SP verifica si existe una ruta con ciudad de origen, destino y servicio
 ------------------------------------------------------------------
