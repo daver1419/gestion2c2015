@@ -188,7 +188,7 @@ CREATE TABLE [NORMALIZADOS].[Ruta_Aerea]
 	[Ciudad_Destino] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Ciudad](Id) NOT NULL,
 	[Precio_BasePasaje] [numeric](18, 2) NOT NULL,
 	[Precio_BaseKG] [numeric](18, 2) NOT NULL,
-	[Tipo_Servicio] [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Servicio](Id) NOT NULL,,
+	[Tipo_Servicio] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Servicio](Id) NOT NULL,
 	[Habilitada] [bit] DEFAULT 1,
 	UNIQUE(Ciudad_Origen,Ciudad_destino,Tipo_Servicio),
 	CHECK(Precio_BaseKG >= 0),
@@ -1549,7 +1549,7 @@ AS
 		JOIN NORMALIZADOS.Ciudad C1 ON R.Ciudad_Origen = C1.ID
 		JOIN NORMALIZADOS.Ciudad C2 ON R.Ciudad_Destino = C2.ID
 		JOIN NORMALIZADOS.Servicio S ON R.Tipo_Servicio = S.ID
-		WHERE V.Fecha_Salida = CONVERT(datetime,@fecha_salida,21) AND C1.Nombre LIKE '%'+@ciudad_origen AND C2.Nombre LIKE '%'+@ciudad_destino AND S.Descripcion = @tipo_servicio 
+		WHERE V.Fecha_Salida = CONVERT(datetime,@fecha_salida,21) AND C1.Nombre LIKE '_'+@ciudad_origen AND C2.Nombre LIKE '_'+@ciudad_destino AND S.Descripcion = @tipo_servicio 
 
 		RETURN @butacas_ocupadas
 	END
@@ -1599,7 +1599,7 @@ AS
 		JOIN NORMALIZADOS.Ciudad C2 ON R.Ciudad_Destino = C2.ID
 		JOIN NORMALIZADOS.Servicio S ON R.Tipo_Servicio = S.ID
 		JOIN NORMALIZADOS.Aeronave A ON A.Numero = V.Aeronave
-		WHERE V.Fecha_Salida = CONVERT(datetime,@fecha_salida,21) AND C1.Nombre LIKE '%'+@ciudad_origen AND C2.Nombre LIKE '%'+@ciudad_destino AND S.Descripcion = @tipo_servicio 
+		WHERE V.Fecha_Salida = CONVERT(datetime,@fecha_salida,21) AND C1.Nombre LIKE '_'+@ciudad_origen AND C2.Nombre LIKE '_'+@ciudad_destino AND S.Descripcion = @tipo_servicio 
 		GROUP BY A.Matricula
 
 		RETURN @butacas_disponibles
