@@ -1050,14 +1050,12 @@ BEGIN
 END
 GO
 
-
-/*
 CREATE FUNCTION NORMALIZADOS.TOP5_Aeronaves_Dias_Fuera_De_Servicio(@Desde datetime, @Hasta datetime)
 RETURNS @Top5 TABLE (Matricula nvarchar(255), Numero int, [Dias fuera de servicio] int)
 AS
 BEGIN
 	INSERT INTO @Top5 
-		SELECT TOP 5 N.Matricula, N.Numero, 
+		SELECT TOP 5 A.Matricula, A.Numero, 
 		SUM(
 			DATEDIFF(DAY,
 				CASE WHEN(B.Fecha_Fuera_Servicio < @Desde) THEN @Desde ELSE B.Fecha_Fuera_Servicio END,
@@ -1065,38 +1063,12 @@ BEGIN
 				
 			 )
 			 ) AS Dias
-		FROM NORMALIZADOS.Aeronave N
+		FROM NORMALIZADOS.Aeronave A
 		JOIN NORMALIZADOS.Baja_Temporal_Aeronave B 
-			ON B.Aeronave = N.Id
+			ON B.Aeronave = A.Numero
 			AND NOT (B.Fecha_Fuera_Servicio > @Hasta)
 			AND NOT (B.Fecha_Vuelta_Al_Servicio < @Desde)
-		GROUP BY N.Matricula, N.Numero
-		ORDER BY Dias DESC
-	
-	RETURN
-END
-GO
-*/
-
-CREATE FUNCTION NORMALIZADOS.TOP5_Aeronaves_Dias_Fuera_De_Servicio(@Desde datetime, @Hasta datetime)
-RETURNS @Top5 TABLE (Matricula nvarchar(255), Numero int, [Dias fuera de servicio] int)
-AS
-BEGIN
-	INSERT INTO @Top5 
-		SELECT TOP 5 N.Matricula, N.Numero, 
-		SUM(
-			DATEDIFF(DAY,
-				CASE WHEN(B.Fecha_Fuera_Servicio < @Desde) THEN @Desde ELSE B.Fecha_Fuera_Servicio END,
-				CASE WHEN(B.Fecha_Vuelta_Al_Servicio > @Hasta) THEN @Hasta ELSE B.Fecha_Vuelta_Al_Servicio END 
-				
-			 )
-			 ) AS Dias
-		FROM NORMALIZADOS.Aeronave N
-		JOIN NORMALIZADOS.Baja_Temporal_Aeronave B 
-			ON B.Aeronave = N.Id
-			AND NOT (B.Fecha_Fuera_Servicio > @Hasta)
-			AND NOT (B.Fecha_Vuelta_Al_Servicio < @Desde)
-		GROUP BY N.Matricula, N.Numero
+		GROUP BY A.Matricula, A.Numero
 		ORDER BY Dias DESC
 	
 	RETURN
