@@ -1,4 +1,3 @@
-
 USE [GD2C2015]
 GO
 
@@ -1010,6 +1009,27 @@ END
 GO
 
 ------------------------------------------------------------------
+--              FUNCION devuelve la cantidad total de butacas
+--						para una aeronave
+------------------------------------------------------------------
+
+CREATE FUNCTION NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(@matricula nvarchar(255))
+RETURNS int
+AS 
+	BEGIN
+
+		DECLARE @cantidad_butacas int
+
+			SELECT @cantidad_butacas = COUNT(*) 
+			FROM NORMALIZADOS.Butaca B
+			JOIN NORMALIZADOS.Aeronave A ON A.Numero = B.Aeronave
+			WHERE A.Matricula = @matricula
+
+		RETURN @cantidad_butacas
+	END
+GO
+
+------------------------------------------------------------------
 --                       ESTADISTICAS                           --
 ------------------------------------------------------------------
 CREATE FUNCTION NORMALIZADOS.TOP5_Destinos_Con_Mas_Pasajes(@Desde datetime, @Hasta datetime)
@@ -1071,6 +1091,29 @@ BEGIN
 		GROUP BY A.Matricula, A.Numero
 		ORDER BY Dias DESC
 	
+	RETURN
+END
+GO
+
+CREATE FUNCTION NORMALIZADOS.TOP5_Destinos_Con_Aeronaves_Mas_Vacias(@Desde datetime, @Hasta datetime)
+RETURNS @Top5 TABLE (Ciudad nvarchar(255), [Porcentaje promedio de butacas libres] int)
+AS
+BEGIN
+	INSERT INTO @Top5 
+		SELECT TOP 5 C.Nombre, FLOOR(AVG((T.Butacas-T.Ocupadas)/T.Butacas)*100) AS Porcentaje_Libre
+		FROM(
+			SELECT NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(A.Matricula) AS Butacas, COUNT(*) AS Ocupadas, V.Ruta_Aerea AS Ruta_Aerea
+			FROM NORMALIZADOS.Viaje V 
+			JOIN NORMALIZADOS.Aeronave A ON V.Aeronave = A.Numero AND V.Fecha_Salida BETWEEN @Desde AND @Hasta
+			JOIN NORMALIZADOS.Compra C ON C.Viaje = V.Id
+			JOIN NORMALIZADOS.Pasaje P ON C.Id = P.Compra
+			WHERE P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
+			GROUP BY A.Numero, V.Id, V.Ruta_Aerea, A.Matricula
+		)T
+		JOIN NORMALIZADOS.Ruta_Aerea R ON T.Ruta_Aerea = R.Id 
+		JOIN NORMALIZADOS.Ciudad C ON R.Ciudad_Destino = C.Id
+		GROUP BY C.Nombre
+		ORDER BY Porcentaje_Libre DESC
 	RETURN
 END
 GO
@@ -1147,27 +1190,6 @@ BEGIN
 END
 GO	
 		
-CREATE FUNCTION NORMALIZADOS.TOP5_Destinos_Con_Aeronaves_Mas_Vacias(@Desde datetime, @Hasta datetime)
-RETURNS @Top5 TABLE (Ciudad nvarchar(255), [Porcentaje promedio de butacas libres] int)
-AS
-BEGIN
-	INSERT INTO @Top5 
-		SELECT TOP 5 C.Nombre, FLOOR(AVG((T.Butacas-T.Ocupadas)/T.Butacas)*100) AS Porcentaje_Libre
-		FROM(
-			SELECT M.Cantidad_Butacas AS Butacas, COUNT(*) AS Ocupadas, V.Ruta_Aerea AS Ruta_Aerea
-			FROM NORMALIZADOS.Viaje V 
-			JOIN NORMALIZADOS.Aeronave M ON V.Aeronave = M.Id AND V.Fecha_Salida BETWEEN @Desde AND @Hasta
-			JOIN NORMALIZADOS.Pasaje P ON P.Cancelacion IS NULL AND P.Viaje = V.Id
-			GROUP BY M.Id, V.Id, V.Ruta_Aerea, M.Cantidad_Butacas
-		)T
-		JOIN NORMALIZADOS.Ruta_Aerea R ON T.Ruta_Aerea = R.Id 
-		JOIN NORMALIZADOS.Ciudad C ON R.Ciudad_Destino = C.Id
-		GROUP BY C.Nombre
-		ORDER BY Porcentaje_Libre DESC
-	RETURN
-END
-GO
-
 ------------------------------------------------------------------
 --                 FUNCIONES PARA COMPRAS                       --
 ------------------------------------------------------------------
@@ -1565,27 +1587,6 @@ AS
 GO
 
 --select NORMALIZADOS.GetCantidadButacasOcupadas('2016-02-01 06:00:00.000','Nueva York', 'Londres', 'Turista')
-
-------------------------------------------------------------------
---              FUNCION devuelve la cantidad total de butacas
---						para una aeronave
-------------------------------------------------------------------
-
-CREATE FUNCTION NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(@matricula nvarchar(255))
-RETURNS int
-AS 
-	BEGIN
-
-		DECLARE @cantidad_butacas int
-
-			SELECT @cantidad_butacas = COUNT(*) 
-			FROM NORMALIZADOS.Butaca B
-			JOIN NORMALIZADOS.Aeronave A ON A.Numero = B.Aeronave
-			WHERE A.Matricula = @matricula
-
-		RETURN @cantidad_butacas
-	END
-GO
 
 ------------------------------------------------------------------
 --         FUNCION devuelve la cantidad de butacas disponibles
