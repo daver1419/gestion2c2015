@@ -1,3 +1,4 @@
+
 USE [GD2C2015]
 GO
 
@@ -744,25 +745,28 @@ BEGIN
 	SELECT @Total = ISNULL(SUM(P.Puntos),0) --Si es nulo le damos el valor 0.
 		FROM
 		(
-			SELECT P.Cliente AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(P.Precio),0) AS Puntos  
+			SELECT P.Pasajero AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(P.Precio),0) AS Puntos  
 					FROM NORMALIZADOS.Pasaje P
+					JOIN NORMALIZADOS.Compra C
+					ON P.Compra = C.ID
 					JOIN NORMALIZADOS.Viaje V ON 
-						P.Cliente = @Cliente --Es del cliente
-						AND P.Cancelacion IS NULL  --No fue cancelado
-						AND P.Viaje = V.Id
-						AND V.Fecha_Llegada IS NOT NULL --La llegada del viaje fue registrada 
-						AND V.Fecha_Llegada <= @Fecha --El viaje se realizó antes de la fecha
-						AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No está vencido
+					C.Viaje = V.ID
+					AND V.Fecha_Llegada IS NOT NULL --La llegada del viaje fue registrada 
+					AND V.Fecha_Llegada <= @Fecha --El viaje se realizó antes de la fecha
+					AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No está vencido
+					WHERE P.ID NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
+
 			UNION ALL
 					SELECT E.Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(E.Precio),0)
 					FROM NORMALIZADOS.Encomienda E 
+					JOIN NORMALIZADOS.Compra C
+					ON E.Compra = C.ID
 					JOIN NORMALIZADOS.Viaje V ON 
-						E.Cliente = @Cliente --Es del cliente
-						AND E.Cancelacion IS NULL  --No fue cancelado
-						AND E.Viaje = V.Id
-						AND V.Fecha_Llegada IS NOT NULL --La llegada del viaje fue registrada 
-						AND V.Fecha_Llegada <= @Fecha --El viaje ya se realizó 
-						AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No esta vencido
+					C.Viaje = V.ID
+					AND V.Fecha_Llegada IS NOT NULL --La llegada del viaje fue registrada 
+					AND V.Fecha_Llegada <= @Fecha --El viaje ya se realizó 
+					AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No esta vencido
+					WHERE E.ID NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
 			) P
 		
 	RETURN @Total
@@ -815,7 +819,8 @@ BEGIN
 	RETURN
 
 END
-GO 
+GO
+
 
 ------------------------------------------------------------------
 --            TRIGGER QUE DESCUENTA STOCK Y PUNTOS
@@ -1016,15 +1021,15 @@ BEGIN
 			COUNT(*) AS Pasajes FROM NORMALIZADOS.Ciudad C 
 			JOIN NORMALIZADOS.Ruta_Aerea R ON R.Ciudad_Destino = C.Id 
 			JOIN NORMALIZADOS.Viaje V ON V.Ruta_Aerea = R.Id 
-			JOIN NORMALIZADOS.Pasaje P ON P.Viaje=V.Id AND P.Cancelacion IS NULL 
-			JOIN NORMALIZADOS.Compra Com ON Com.PNR = P.Compra 
+			JOIN NORMALIZADOS.Compra Com ON Com.Viaje = V.Id 
+			JOIN NORMALIZADOS.Pasaje P ON P.Compra = Com.Id
+			WHERE P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)			
 			AND Com.Fecha BETWEEN @Desde AND @Hasta
-			 GROUP BY C.Nombre ORDER BY Pasajes DESC
-			 
+			GROUP BY C.Nombre 
+			ORDER BY Pasajes DESC			 
 	RETURN
 END
 GO
-
 
 CREATE FUNCTION NORMALIZADOS.TOP5_Destinos_Pasajes_Cancelados(@Desde datetime, @Hasta datetime)
 RETURNS @Top5 TABLE (Ciudad nvarchar(255), [Cantidad de pasajes cancelados] int)
@@ -1035,14 +1040,43 @@ BEGIN
 			COUNT(*) AS Pasajes FROM NORMALIZADOS.Ciudad C 
 			JOIN NORMALIZADOS.Ruta_Aerea R ON R.Ciudad_Destino = C.Id 
 			JOIN NORMALIZADOS.Viaje V ON V.Ruta_Aerea = R.Id 
-			JOIN NORMALIZADOS.Pasaje P ON P.Viaje=V.Id AND P.Cancelacion IS NOT NULL 
-			JOIN NORMALIZADOS.Compra Com ON Com.PNR = P.Compra 
+			JOIN NORMALIZADOS.Compra Com ON Com.Viaje = V.Id 
+			JOIN NORMALIZADOS.Pasaje P ON P.Compra = Com.Id
+			WHERE P.Id IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)			
 			AND Com.Fecha BETWEEN @Desde AND @Hasta
-			 GROUP BY C.Nombre ORDER BY Pasajes DESC
-			 
+			GROUP BY C.Nombre 
+			ORDER BY Pasajes DESC				 
 	RETURN
 END
 GO
+
+
+/*
+CREATE FUNCTION NORMALIZADOS.TOP5_Aeronaves_Dias_Fuera_De_Servicio(@Desde datetime, @Hasta datetime)
+RETURNS @Top5 TABLE (Matricula nvarchar(255), Numero int, [Dias fuera de servicio] int)
+AS
+BEGIN
+	INSERT INTO @Top5 
+		SELECT TOP 5 N.Matricula, N.Numero, 
+		SUM(
+			DATEDIFF(DAY,
+				CASE WHEN(B.Fecha_Fuera_Servicio < @Desde) THEN @Desde ELSE B.Fecha_Fuera_Servicio END,
+				CASE WHEN(B.Fecha_Vuelta_Al_Servicio > @Hasta) THEN @Hasta ELSE B.Fecha_Vuelta_Al_Servicio END 
+				
+			 )
+			 ) AS Dias
+		FROM NORMALIZADOS.Aeronave N
+		JOIN NORMALIZADOS.Baja_Temporal_Aeronave B 
+			ON B.Aeronave = N.Id
+			AND NOT (B.Fecha_Fuera_Servicio > @Hasta)
+			AND NOT (B.Fecha_Vuelta_Al_Servicio < @Desde)
+		GROUP BY N.Matricula, N.Numero
+		ORDER BY Dias DESC
+	
+	RETURN
+END
+GO
+*/
 
 CREATE FUNCTION NORMALIZADOS.TOP5_Aeronaves_Dias_Fuera_De_Servicio(@Desde datetime, @Hasta datetime)
 RETURNS @Top5 TABLE (Matricula nvarchar(255), Numero int, [Dias fuera de servicio] int)
@@ -1069,6 +1103,8 @@ BEGIN
 END
 GO
 
+--------------------------------------------------------------------
+/*
 CREATE FUNCTION NORMALIZADOS.TOP5_Clientes_Puntos_Generados(@Desde datetime, @Hasta datetime)
 RETURNS @Top5 TABLE (Dni numeric(18,0), Apellido nvarchar(255), Nombre nvarchar(255), Puntos int)
 AS
@@ -1102,7 +1138,8 @@ BEGIN
 	RETURN
 END
 GO
-
+*/
+---------------------------------------------------------
 CREATE FUNCTION NORMALIZADOS.TOP5_Clientes_Puntos_a_la_Fecha(@Fecha datetime) 
 RETURNS @Top5 TABLE (Dni numeric(18,0), Apellido nvarchar(255), Nombre nvarchar(255), Puntos int)
 AS
