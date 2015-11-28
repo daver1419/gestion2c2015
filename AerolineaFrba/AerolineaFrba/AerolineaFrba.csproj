@@ -213,6 +213,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="DTO\AeronaveDTO.cs" />
+    <Compile Include="DTO\BajaTemporalDTO.cs" />
     <Compile Include="DTO\ButacaDTO.cs" />
     <Compile Include="DTO\CiudadDTO.cs" />
     <Compile Include="DTO\AeronaveFiltersDTO.cs" />

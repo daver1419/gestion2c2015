@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AerolineaFrba.DTO;
+using AerolineaFrba.DAO;
 
 namespace AerolineaFrba.Abm_Aeronave
 {
@@ -15,6 +16,7 @@ namespace AerolineaFrba.Abm_Aeronave
     {
         AeronaveDTO Aeronave;
         bool Reemplazar;
+        private BajaTemporalDTO bajaTemporal;
 
         public BajaTemporal(AeronaveDTO unaAeronave, bool reemplazar)
         {
@@ -26,8 +28,34 @@ namespace AerolineaFrba.Abm_Aeronave
         private void Guardar_Click(object sender, EventArgs e)
         {
             if (validar()) return;
-            //Acá hay que lanzar el procedure que da de baja temporalmente y reemplaza el aeronave en funcion del flag
-            //A diferencia de la baja definitiva hay que pasarle dos fechas.
+            bajaTemporal.NroAeronave=Aeronave.Numero;
+            bajaTemporal.FechaDesde=DateFuera.Value;
+            bajaTemporal.FechaHasta=DateVuelta.Value;
+            bajaTemporal.Motivo=TextMotivo.Text;
+            if (Reemplazar)
+            { 
+                //NV SP que reemplaza aeronave
+                if(1==1)
+                {
+                    
+                }
+                else
+                {
+                
+                }
+            }
+            else
+            {
+                if(AeronaveDAO.BajaTempCancelar(bajaTemporal))
+                {
+                    MessageBox.Show("La aeronave quedo fuera de servicio exitosamente, los pasajes/encomiendas fueron cancelados");
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("No se pudo dar de baja la aeronave");
+                }
+            }
         }
 
         private void Limpiar_Click(object sender, EventArgs e)

@@ -278,6 +278,21 @@ namespace AerolineaFrba.DAO
                 comm.ExecuteNonQuery();
             }
         }
+        public static bool BajaTempCancelar(BajaTemporalDTO BajaTemporal)
+        {
+            int retValue = 0;
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[SP_Baja_Temporal_Aeronave_Cancelar]", conn);
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.Parameters.AddWithValue("@nroAeronave", BajaTemporal.NroAeronave);
+                comm.Parameters.AddWithValue("@fechaDesde", BajaTemporal.FechaDesde);
+                comm.Parameters.AddWithValue("@fechaHasta", BajaTemporal.FechaHasta);
+                comm.Parameters.AddWithValue("@motivo", BajaTemporal.Motivo);
+                retValue=comm.ExecuteNonQuery();
+            }
+            return retValue > 0;
+        }
 
     }
 }
