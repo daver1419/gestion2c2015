@@ -742,7 +742,7 @@ RETURNS int
 AS 
 BEGIN
 	DECLARE @Total int
-	SELECT @Total = ISNULL(SUM(P.Puntos),0) --Si es nulo le damos el valor 0.
+	SELECT @Total = ISNULL(SUM(P.Puntos)-(SELECT SUM(R.Puntos * Can.Cantidad) FROM Canje Can JOIN Recompensa R ON Can.Recompensa = R.Id WHERE Can.Cliente = @Cliente AND Can.Fecha < @Fecha),0) --Si es nulo le damos el valor 0.
 		FROM
 		(
 			SELECT P.Pasajero AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(P.Precio),0) AS Puntos  
