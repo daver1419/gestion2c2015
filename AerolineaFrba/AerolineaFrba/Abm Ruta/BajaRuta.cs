@@ -48,11 +48,13 @@ namespace AerolineaFrba.Abm_Ruta
             //Ignora los clicks que no son sobre los elementos de la columna de botones
             if (e.RowIndex < 0 || e.ColumnIndex != dataGridView1.Columns.IndexOf(dataGridView1.Columns["ColumnElim"]))
                 return;
+            RutaDTO unaRuta = (RutaDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
+
             DialogResult dialogResult = MessageBox.Show("Seguro que quieres dar de baja esta ruta?", "Confirmacion Baja", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
                 //PONER validacion por si tiene un viaje asignado
-                if (!RutaDAO.Eliminar(ruta))
+                if (!RutaDAO.Eliminar(unaRuta))
                 {
                     MessageBox.Show("No se pudo eliminar la ruta");
                 }

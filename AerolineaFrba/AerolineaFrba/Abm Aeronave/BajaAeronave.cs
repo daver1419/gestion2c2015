@@ -92,8 +92,14 @@ namespace AerolineaFrba.Abm_Aeronave
                     MessageBoxButtons.YesNo);
                 if (confirmResult == DialogResult.Yes)
                 {
-                    //lanzar procedure que da de baja definitivamente y usa flag reemplazar
-                    //para saber si reemplaza la aeronave o cancela los pasajes.
+                    if (reemplazar)
+                    {
+
+                    }
+                    else
+                    {
+                        AeronaveDAO.BajaDefCancelar(aeronave);
+                    }
                     Reload();
                 }
             }

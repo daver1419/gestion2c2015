@@ -268,6 +268,16 @@ namespace AerolineaFrba.DAO
 
             }
         }
+        public static void BajaDefCancelar(AeronaveDTO aeronave)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[SP_Baja_Def_Aeronave_Cancelar]", conn);
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.Parameters.AddWithValue("@nroAeronave", aeronave.Numero);
+                comm.ExecuteNonQuery();
+            }
+        }
 
     }
 }

@@ -69,14 +69,21 @@ namespace AerolineaFrba.Abm_Ruta
 
             if (!RutaDAO.ExistTuplaRuta(ruta))
             {
-                if (!RutaDAO.Actualizar(ruta))
+                if (!RutaDAO.ExistRutaEnAlgunViaje(ruta))
                 {
-                    MessageBox.Show("No se pudo actualizar la ruta");
+                    if (!RutaDAO.Actualizar(ruta))
+                    {
+                        MessageBox.Show("No se pudo actualizar la ruta");
+                    }
+                    else
+                    {
+                        MessageBox.Show("La ruta se ha actualizado exitosamente");
+                        this.Close();
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("La ruta se ha actualizado exitosamente");
-                    this.Close();
+                    MessageBox.Show("No se puede modificar la ruta. Esta asociada al menos a un viaje");
                 }
             }
             else

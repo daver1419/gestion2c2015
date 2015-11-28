@@ -204,10 +204,30 @@ namespace AerolineaFrba.DAO
             {
                 SqlCommand comm = new SqlCommand("[NORMALIZADOS].[EliminarRuta]", conn);
                 comm.CommandType = CommandType.StoredProcedure;
-                comm.Parameters.AddWithValue("@IdRuta", ruta.IdRuta);
+                comm.Parameters.AddWithValue("@codigoRuta", ruta.Codigo);
                 retValue = comm.ExecuteNonQuery();
             }
             return retValue > 0;
+        }
+        /// <summary>
+        /// Verifica si la ruta se encuentra asociada a algun viaje
+        /// </summary>
+        /// <param name="ruta"></param>
+        /// <returns></returns>
+        public static bool ExistRutaEnAlgunViaje(RutaDTO ruta)
+        {
+            int ret = 0;
+
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[ExisteRutaEnViaje]", conn);
+                com.CommandType = CommandType.StoredProcedure;
+                com.Parameters.AddWithValue("@rutaId", ruta.IdRuta);
+                com.Parameters.Add("@Tiene_viajes", SqlDbType.Bit).Direction = ParameterDirection.Output;
+                com.ExecuteNonQuery();
+                ret = Convert.ToInt32(com.Parameters["@Tiene_viajes"].Value);
+            }
+            return ret == 1;
         }
     }
 }
