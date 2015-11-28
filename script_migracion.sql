@@ -1526,7 +1526,7 @@ BEGIN
 	SELECT Id,Nombre
 	FROM [NORMALIZADOS].Ciudad
 END
-
+GO
 --------------------------------------------------------------------------------
 --			FUNCION devuelve cantidad de butacas ocupadas
 --------------------------------------------------------------------------------
@@ -1605,7 +1605,7 @@ BEGIN
 	JOIN NORMALIZADOS.Servicio S ON R.Tipo_Servicio = S.ID
 	JOIN NORMALIZADOS.Aeronave A ON A.Numero = V.Aeronave
 END
-
+GO
 ------------------------------------------------------------------
 --         SP verifica si existe una ruta con ciudad de origen, destino y servicio
 ------------------------------------------------------------------
@@ -1679,6 +1679,7 @@ BEGIN
 
 	SELECT @@ROWCOUNT
 END
+GO
 ------------------------------------------------------------------
 --         SP actualiza ruta/s con el mismo codigo
 ------------------------------------------------------------------
@@ -1753,3 +1754,4 @@ BEGIN
 	SET Habilitada=0
 	WHERE Id=@IdRuta
 END
+GO
