@@ -176,7 +176,7 @@ namespace AerolineaFrba
                         break;
 
                     case FuncionalidadDTO.Funcionalidad.LISTADO_ESTADISTICO:
-                        new Listado_Estadistico.Form1(){ Icon = this.Icon, StartPosition = FormStartPosition.CenterScreen }.ShowDialog(this);
+                        new Listado_Estadistico.FormEstadisticas(){ Icon = this.Icon, StartPosition = FormStartPosition.CenterScreen }.ShowDialog(this);
                         break;
                 }
 
