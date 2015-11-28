@@ -1154,7 +1154,7 @@ BEGIN
 END
 GO
 */
----------------------------------------------------------
+		
 CREATE FUNCTION NORMALIZADOS.TOP5_Clientes_Puntos_a_la_Fecha(@Fecha datetime) 
 RETURNS @Top5 TABLE (Dni numeric(18,0), Apellido nvarchar(255), Nombre nvarchar(255), Puntos int)
 AS
@@ -1162,34 +1162,38 @@ BEGIN
 
 	INSERT INTO @Top5 
 	
-		SELECT TOP 5 C.Dni, C.Apellido, C.Nombre, ISNULL(SUM(P.Puntos),0) AS TotalPuntos
+		SELECT TOP 5 C.Dni, C.Apellido, C.Nombre, ISNULL(SUM(P.Puntos) - 
+		(SELECT SUM(R.Puntos * Can.Cantidad) FROM Canje Can JOIN Recompensa R ON Can.Recompensa = R.Id WHERE Can.Cliente = C.Id AND Can.Fecha < @Fecha)
+		,0) AS TotalPuntos
 		FROM
 			(
-			SELECT P.Cliente AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(P.Precio),0) AS Puntos  
+			SELECT P.Pasajero AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(P.Precio), 0) AS Puntos  
 					FROM NORMALIZADOS.Pasaje P
-					JOIN NORMALIZADOS.Viaje V ON 
-						P.Cancelacion IS NULL
-						AND P.Viaje = V.Id
-						AND  V.Fecha_Llegada IS NOT NULL AND V.Fecha_Llegada <= @Fecha
-						AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No venció
+					JOIN NORMALIZADOS.Compra C ON C.Id = P.Compra
+					JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+					WHERE P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
+					AND V.Fecha_Llegada IS NOT NULL AND V.Fecha_Llegada <= @Fecha
+					AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No venció
+										
 			UNION ALL
-					SELECT E.Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(E.Precio),0)
-					FROM NORMALIZADOS.Encomienda E 
-					JOIN NORMALIZADOS.Viaje V ON  
-						E.Cancelacion IS NULL  
-						AND E.Viaje = V.Id
-						AND  V.Fecha_Llegada IS NOT NULL AND V.Fecha_Llegada <= @Fecha 
-						AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No venció
+
+			SELECT E.Cliente AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(E.Precio), 0) AS Puntos  
+					FROM NORMALIZADOS.Encomienda E
+					JOIN NORMALIZADOS.Compra C ON C.Id = E.Compra
+					JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+					WHERE E.Id NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
+					AND V.Fecha_Llegada IS NOT NULL AND V.Fecha_Llegada <= @Fecha
+					AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No venció
 			) P
 		JOIN NORMALIZADOS.Cliente C ON C.Id = P.Cliente
-		GROUP BY C.Dni, C.Apellido, C.Nombre
+		GROUP BY C.Dni, C.Apellido, C.Nombre, C.Id
 		ORDER BY TotalPuntos DESC
 		
 	RETURN
 
 END
 GO	
-		
+
 ------------------------------------------------------------------
 --                 FUNCIONES PARA COMPRAS                       --
 ------------------------------------------------------------------
