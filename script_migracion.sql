@@ -777,9 +777,7 @@ GO
 /*CREATE FUNCTION [NORMALIZADOS].[Listado_Puntos](@Cliente numeric(18,0))
 RETURNS @Listado TABLE
 	 (Descripcion nvarchar(255), Puntos int, Fecha datetime)
-
 AS
-
 BEGIN
 	
 		INSERT INTO @Listado
@@ -814,9 +812,7 @@ BEGIN
 						JOIN NORMALIZADOS.Recompensa R ON Ca.Cliente = @Cliente AND R.Id = Ca.Recompensa
 						
 				 ORDER BY Fecha DESC
-
 	RETURN
-
 END
 GO
 */
@@ -844,7 +840,6 @@ BEGIN
     SET @Contador_Transact = @@TRANCOUNT;
 		
 	
-
 	SET NOCOUNT ON
 	
 	BEGIN TRY
@@ -895,11 +890,8 @@ BEGIN
 		--Obtengo primer registro de puntos
 		FETCH NEXT FROM Puntos
 		INTO @IdPasajeEncomienda, @Restantes, @FechaCompra
-
-
 		WHILE @@FETCH_STATUS = 0 AND @Puntos_Usados>0 --Mientras haya registros y los puntos que use no hayan sido quitados
 		BEGIN
-
 			--Si con los puntos actuales es suficiente, los quito y actualizo
 			IF @Restantes > @Puntos_Usados
 			BEGIN			
@@ -1180,8 +1172,6 @@ BEGIN
 	RETURN @ButacasSinUsar
 END
 GO
-
-
 CREATE FUNCTION NORMALIZADOS.Kgs_Sin_Usar(@idViaje int)
 RETURNS numeric(18,0)
 AS 
@@ -1223,7 +1213,6 @@ AS
 BEGIN
 DECLARE @Arrivo datetime
 SET @Arrivo = DATEADD(HOUR, 24, @Fecha)
-
 	INSERT INTO @Aeronaves_Disponibles
 		SELECT DISTINCT A.Id, A.Matricula, A.Numero, A.Fecha_Alta, A.Modelo, A.Fabricante, A.Fecha_Baja_Definitiva, A.Cantidad_Butacas, A.KG_Disponibles, A.Tipo_Servicio FROM NORMALIZADOS.Aeronave A
 		LEFT JOIN NORMALIZADOS.Baja_Temporal_Aeronave B ON  B.Aeronave = A.Id AND NOT (@Arrivo < B.Fecha_Fuera_Servicio OR @Fecha > B.Fecha_Vuelta_Al_Servicio)
@@ -1745,13 +1734,107 @@ BEGIN
 END
 GO
 ------------------------------------------------------------------
---         SP devuelve rutas de acuerdo a los filtros
+--         SP cancela pasajes y encomiendas asociados a una ruta
 ------------------------------------------------------------------
-CREATE PROCEDURE [NORMALIZADOS].[EliminarRuta](@IdRuta numeric(18,0))
+CREATE PROCEDURE [NORMALIZADOS].[CancelarPasajesYEncomiendas](@codigoRuta numeric(18,0),@Motivo nvarchar(255),@NroAeronave int)
 AS
 BEGIN
+	IF EXISTS(SELECT 1
+				FROM [NORMALIZADOS].Pasaje P
+				JOIN [NORMALIZADOS].Compra C
+					ON P.Compra=C.Id
+				JOIN [NORMALIZADOS].Viaje V
+					ON V.Id=C.Viaje
+				JOIN [NORMALIZADOS].Ruta_Aerea RA
+					ON RA.Id=V.Ruta_Aerea
+				WHERE (RA.Ruta_Codigo=@codigoRuta OR @codigoRuta IS NULL )
+					AND (V.Aeronave=@NroAeronave OR @NroAeronave IS NULL )
+					AND P.Id NOT IN (SELECT Pasaje FROM [NORMALIZADOS].[Pasajes_Cancelados])
+					AND V.Fecha_Salida>GETDATE()
+				union
+				SELECT 1
+				FROM [NORMALIZADOS].Encomienda E
+				JOIN [NORMALIZADOS].Compra C
+					ON E.Id=C.Id
+				JOIN [NORMALIZADOS].Viaje V
+					ON V.Id=C.Viaje
+				JOIN [NORMALIZADOS].Ruta_Aerea RA
+					ON RA.Id=V.Ruta_Aerea
+				WHERE (RA.Ruta_Codigo=@codigoRuta OR @codigoRuta IS NULL )
+					AND (V.Aeronave=@NroAeronave OR @NroAeronave IS NULL )
+					AND E.Id NOT IN (SELECT Encomienda FROM [NORMALIZADOS].[Encomiendas_Canceladas])
+					AND V.Fecha_Salida>GETDATE())
+	BEGIN
+		DECLARE @idCancelacion numeric(18,0)
+
+		INSERT INTO [NORMALIZADOS].[Detalle_Cancelacion](Fecha,Motivo)
+			VALUES(GETDATE(),@Motivo)
+	
+		SET @idCancelacion=SCOPE_IDENTITY()
+
+		INSERT INTO [NORMALIZADOS].[Pasajes_Cancelados](Pasaje,Cancelacion)
+			SELECT P.Id,@idCancelacion
+			FROM [NORMALIZADOS].[Pasaje] P
+			JOIN [NORMALIZADOS].[Compra] C
+				ON P.Compra=C.Id
+			JOIN [NORMALIZADOS].[Viaje] V
+				ON V.Id=C.Viaje
+			JOIN [NORMALIZADOS].Ruta_Aerea RA
+					ON RA.Id=V.Ruta_Aerea
+			WHERE (RA.Ruta_Codigo=@codigoRuta OR @codigoRuta IS NULL )
+					AND (V.Aeronave=@NroAeronave OR @NroAeronave IS NULL 
+					AND V.Fecha_Salida>GETDATE())
+
+		INSERT INTO [NORMALIZADOS].[Encomiendas_Canceladas](Encomienda,Cancelacion)
+			SELECT E.Id,@idCancelacion
+			FROM [NORMALIZADOS].[Encomienda] E
+			JOIN [NORMALIZADOS].[Compra] C
+				ON E.Compra=C.Id
+			JOIN [NORMALIZADOS].[Viaje] V
+				ON V.Id=C.Viaje
+			JOIN [NORMALIZADOS].Ruta_Aerea RA
+					ON RA.Id=V.Ruta_Aerea
+			WHERE (RA.Ruta_Codigo=@codigoRuta OR @codigoRuta IS NULL )
+					AND (V.Aeronave=@NroAeronave OR @NroAeronave IS NULL 
+					AND V.Fecha_Salida>GETDATE())
+	END
+END
+GO
+------------------------------------------------------------------
+--         SP elimina rutas con un codigo
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[EliminarRuta](@codigoRuta numeric(18,0))
+AS
+BEGIN
+	BEGIN TRAN transEliminar
+
 	UPDATE [NORMALIZADOS].[Ruta_Aerea]
 	SET Habilitada=0
-	WHERE Id=@IdRuta
+	WHERE Ruta_Codigo=@codigoRuta
+
+	EXEC [NORMALIZADOS].[CancelarPasajesYEncomiendas] @codigoRuta,'Baja de ruta',NULL
+
+	COMMIT TRAN transEliminar
+	SELECT @@ROWCOUNT
+END
+GO
+------------------------------------------------------------------
+--         SP verifica si existe la ruta en algun viaje
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[ExisteRutaEnViaje]
+@rutaId numeric(18,0),
+@Tiene_Viajes int OUTPUT
+AS
+BEGIN
+	IF (EXISTS	(select 1 
+		from [NORMALIZADOS].Viaje V
+		WHERE V.Ruta_Aerea = @rutaId))
+		BEGIN
+			SET @Tiene_Viajes = 1;
+		END
+		ELSE
+		BEGIN
+			SET @Tiene_Viajes = 0;
+		END
 END
 GO
