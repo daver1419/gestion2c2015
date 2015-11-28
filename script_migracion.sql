@@ -774,7 +774,7 @@ END
 GO
 
 --Devuelve una tabla con los detalles de todos los puntos (disponibles, canjeados y vencidos)
-CREATE FUNCTION [NORMALIZADOS].[Listado_Puntos](@Cliente numeric(18,0))
+/*CREATE FUNCTION [NORMALIZADOS].[Listado_Puntos](@Cliente numeric(18,0))
 RETURNS @Listado TABLE
 	 (Descripcion nvarchar(255), Puntos int, Fecha datetime)
 
@@ -819,12 +819,12 @@ BEGIN
 
 END
 GO
-
+*/
 
 ------------------------------------------------------------------
 --            TRIGGER QUE DESCUENTA STOCK Y PUNTOS
 ------------------------------------------------------------------
-
+/*
 CREATE TRIGGER NORMALIZADOS.PERSISTIR_STOCK_PUNTOS  ON [NORMALIZADOS].[Canje]
 INSTEAD OF INSERT
 AS
@@ -962,7 +962,7 @@ BEGIN
 	END CATCH   
 END
 GO
-
+*/
 ------------------------------------------------------------------
 -- Las llegadas se registran durante el día pero se ingresan al
 -- sistema todas juntas.
@@ -1118,43 +1118,6 @@ BEGIN
 END
 GO
 
---------------------------------------------------------------------
-/*
-CREATE FUNCTION NORMALIZADOS.TOP5_Clientes_Puntos_Generados(@Desde datetime, @Hasta datetime)
-RETURNS @Top5 TABLE (Dni numeric(18,0), Apellido nvarchar(255), Nombre nvarchar(255), Puntos int)
-AS
-BEGIN
-	INSERT INTO @Top5 
-	
-		SELECT TOP 5 C.Dni, C.Apellido, C.Nombre, ISNULL(SUM(P.Puntos),0) AS TotalPuntos
-		FROM
-			(
-			SELECT P.Cliente AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(P.Precio),0) AS Puntos  
-					FROM NORMALIZADOS.Pasaje P
-					JOIN NORMALIZADOS.Viaje V ON 
-						P.Cancelacion IS NULL
-						AND P.Viaje = V.Id
-						AND V.Fecha_Llegada IS NOT NULL
-						AND V.Fecha_Llegada BETWEEN @Desde AND @Hasta
-						
-			UNION ALL
-					SELECT E.Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(E.Precio),0)
-					FROM NORMALIZADOS.Encomienda E 
-					JOIN NORMALIZADOS.Viaje V ON  
-						E.Cancelacion IS NULL  
-						AND E.Viaje = V.Id						
-						AND V.Fecha_Llegada IS NOT NULL
-						AND V.Fecha_Llegada BETWEEN @Desde AND @Hasta
-
-			) P
-		JOIN NORMALIZADOS.Cliente C ON C.Id = P.Cliente
-		GROUP BY C.Dni, C.Apellido, C.Nombre
-		ORDER BY TotalPuntos DESC					
-	RETURN
-END
-GO
-*/
-		
 CREATE FUNCTION NORMALIZADOS.TOP5_Clientes_Puntos_a_la_Fecha(@Fecha datetime) 
 RETURNS @Top5 TABLE (Dni numeric(18,0), Apellido nvarchar(255), Nombre nvarchar(255), Puntos int)
 AS
@@ -1197,7 +1160,7 @@ GO
 ------------------------------------------------------------------
 --                 FUNCIONES PARA COMPRAS                       --
 ------------------------------------------------------------------
-
+/*
 CREATE FUNCTION NORMALIZADOS.Butacas_Sin_Usar(@idViaje int)
 RETURNS numeric(18,0)
 AS 
@@ -1238,11 +1201,11 @@ BEGIN
 	RETURN @KgsSinUsar
 END
 GO
-
+*/
 --------------------------------------------------------------------------------
 -- FUNCION QUE BUSCA AERONAVES DISPONIBLES
 --------------------------------------------------------------------------------
-
+/*
 CREATE FUNCTION NORMALIZADOS.Aeronaves_Disponibles(@Fecha datetime)
 RETURNS @Aeronaves_Disponibles TABLE(
 	[Id][int], 
@@ -1269,7 +1232,7 @@ SET @Arrivo = DATEADD(HOUR, 24, @Fecha)
 	RETURN
 END
 GO
-
+*/
 --------------------------------------------------------------------------------
 --			FUNCION QUE BUSCA AERONAVES DISPONIBLES PARA UN VIAJE
 --------------------------------------------------------------------------------
