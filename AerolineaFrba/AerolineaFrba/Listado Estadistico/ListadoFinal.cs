@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AerolineaFrba.DAO;
 
 namespace AerolineaFrba.Listado_Estadistico
 {
@@ -33,10 +34,10 @@ namespace AerolineaFrba.Listado_Estadistico
             switch (Listado)
             {
                 case "Top 5 de los destinos con más pasajes comprados":
-                    //gridListado.DataSource = ListadoDb.ObtenerReservasCanceladas(Anio, Trimestre);
+                    gridListado.DataSource = ListadoDAO.DestinosConMasPasajes(Anio, Semestre);
                     gridListado.Columns[1].Width = 230;
                     gridListado.Columns[0].Width = 230;
-                    gridListado.Columns[1].HeaderText = "Cantidad de Reservas canceladas";
+                    //gridListado.Columns[1].HeaderText = "Cantidad de Reservas canceladas";
                     break;
 
                 case "Top 5 de los destinos con aeronaves más vacías":

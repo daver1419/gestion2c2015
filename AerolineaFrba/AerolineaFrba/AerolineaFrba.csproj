@@ -198,6 +198,7 @@
     <Compile Include="DAO\AeronaveDAO.cs" />
     <Compile Include="DAO\ButacaDAO.cs" />
     <Compile Include="DAO\CiudadDAO.cs" />
+    <Compile Include="DAO\ListadoDAO.cs" />
     <Compile Include="DAO\ModeloDAO.cs" />
     <Compile Include="DAO\RutaDAO.cs" />
     <Compile Include="DAO\TipoButacaDAO.cs" />
