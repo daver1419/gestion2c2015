@@ -1,3 +1,6 @@
+DROP PROCEDURE [NORMALIZADOS].[SP_AeronaveTieneViajesProgramadosEntre]
+DROP PROCEDURE [NORMALIZADOS].[GenerarViaje]
+DROP PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronaves_Sin_Viajes_Programados]
 DROP PROCEDURE [NORMALIZADOS].[ExisteRutaEnViaje]
 DROP PROCEDURE [NORMALIZADOS].[CancelarPasajesEncomiendasAeronaves]
 DROP PROCEDURE [NORMALIZADOS].[SP_DarDeBajaTempAeronave]
