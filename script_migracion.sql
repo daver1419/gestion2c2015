@@ -1436,6 +1436,51 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Aeronave_Con_Viajes]
 			SET @Tiene_Viajes = 0;
 		END
 GO
+--------------------------------------------------------------------------------
+--				SP busqueda aeronaves sin viajes programados entre
+--					ciertas fechas
+--------------------------------------------------------------------------------
+ALTER PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronaves_Sin_Viajes_Programados]
+	@Modelo nvarchar(255),
+	@Matricula nvarchar(255),
+	@Kg_Disponibles numeric(18,0),
+	@Fabricante nvarchar(255),
+	@Tipo_Servicio nvarchar(255),
+	@Fecha_Alta datetime,
+	@Fecha_Alta_Fin datetime,
+	@FechaDesde datetime,
+	@FechaHasta datetime
+
+	AS
+	BEGIN
+		SELECT DISTINCT A.*, S.Descripcion, F.Nombre, M.Modelo_Desc
+		FROM [NORMALIZADOS].Aeronave A
+		JOIN [NORMALIZADOS].Servicio S
+		ON A.Tipo_Servicio = S.Id
+		JOIN [NORMALIZADOS].Fabricante F
+		ON A.Fabricante = F.Id
+		JOIN [NORMALIZADOS].[Modelo] M
+		ON M.Id = A.Modelo
+		WHERE (M.Modelo_Desc like @Modelo OR @Modelo is null)
+			AND (A.Matricula like @Matricula OR @Matricula like '')
+			AND (A.Kg_Disponibles = @Kg_Disponibles OR @Kg_Disponibles = 0)
+			AND (F.Nombre like @Fabricante OR @Fabricante is null)
+			AND (S.Descripcion like @Tipo_Servicio OR @Tipo_Servicio is null)
+			AND (A.Fecha_Alta > @Fecha_Alta OR @Fecha_Alta is null) 
+			AND (A.Fecha_Alta < @Fecha_Alta_Fin OR @Fecha_Alta_Fin is null) 
+			AND (A.Numero NOT IN(  SELECT Aeronave
+									FROM [NORMALIZADOS].[Baja_Temporal_Aeronave]
+									WHERE (@FechaDesde BETWEEN Fecha_Fuera_Servicio AND Fecha_Vuelta_Al_Servicio)	
+										AND (@FechaHasta  BETWEEN Fecha_Fuera_Servicio AND Fecha_Vuelta_Al_Servicio)
+									))
+			AND NOT EXISTS(SELECT 1
+							FROM [NORMALIZADOS].[Viaje]
+							WHERE Aeronave=A.Numero
+								AND ((Fecha_Salida > @FechaDesde AND Fecha_Llegada < @FechaDesde)
+								OR (Fecha_Salida < @FechaHasta AND Fecha_Llegada > @FechaHasta))
+							)
+	END
+GO
 
 CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronave]
 	@Modelo nvarchar(255),
@@ -1512,6 +1557,48 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Baja_Aeronave]
 			)
  
 GO
+--------------------------------------------------------------------------------
+--				SP reemplaza una aeronave
+--------------------------------------------------------------------------------
+/*
+CREATE PROCEDURE [NORMALIZADOS].[SP_Reemplazar_Aeronave](
+@nroAeronave int,
+@fechaDesde datetime,
+@fechaHasta datetime
+)
+AS
+BEGIN
+	DECLARE @ciudad int
+	SELECT TOP 1 @ciudad=RA.Ciudad_Origen
+	FROM [NORMALIZADOS].[Viaje] V
+	JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+		ON V.Ruta_Aerea=RA.Id
+	WHERE V.Aeronave=@nroAeronave
+		AND @fechaDesde<Fecha_Salida
+	ORDER BY Fecha_Salida ASC
+
+	DECLARE @aeronaveReemplazante int
+	IF EXISTS(
+		SELECT 1
+		FROM [NORMALIZADOS].[Aeronave] A
+		JOIN [NORMALIZADOS].[Viaje] V
+			ON A.Numero=V.Aeronave
+		JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+			ON RA.Id=V.Ruta_Aerea
+		WHERE A.Numero<> @nroAeronave
+			AND RA.Ciudad_Destino=@ciudad
+			AND 
+			AND A.Numero NOT IN (SELECT A2.Numero
+								FROM [NORMALIZADOS].[Aeronave] A2
+								JOIN [NORMALIZADOS].[Viaje] V2
+									ON A2.Numero=V2.Aeronave
+									AND V2.Fecha_Salida >@fechaDesde
+								)
+	ORDER BY V.Fecha_Salida DESC
+	)
+END
+GO
+*/
 --------------------------------------------------------------------------------
 --				SP cancela pasajes y encomiendas 
 --					 de aeronave
@@ -2019,3 +2106,49 @@ BEGIN
 		END
 END
 GO
+------------------------------------------------------------------
+--         SP genera viaje
+------------------------------------------------------------------
+
+CREATE PROCEDURE [NORMALIZADOS].[GenerarViaje]
+(@fechaSalida datetime,
+@fechaLlegada datetime,
+@fechaLlegadaEstimada datetime,
+@rutaId numeric(18,0),
+@nroAeronave int
+)
+AS
+BEGIN
+	INSERT INTO [NORMALIZADOS].[Viaje](Fecha_Salida,
+										Fecha_Llegada,
+										Fecha_Llegada_Estimada,
+										Ruta_Aerea,
+										Aeronave)
+		VALUES(@fechaSalida,
+				@fechaLlegada,
+				@fechaLlegadaEstimada,
+				@rutaId,
+				@nroAeronave)
+
+	SELECT @@ROWCOUNT
+END
+GO
+------------------------------------------------------------------
+--         SP devuelve 1 si la aeronave tiene viajes programados
+--				entre las fechas 
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SP_AeronaveTieneViajesProgramadosEntre](
+@nroAeronave int,
+@fechaDesde datetime,
+@fechaHasta datetime
+)
+AS
+BEGIN
+	SELECT 1
+	FROM [NORMALIZADOS].[Aeronave] A
+	JOIN [NORMALIZADOS].[Viaje] V
+		ON A.Numero=V.Aeronave
+		AND( (@fechaDesde BETWEEN V.Fecha_Salida AND V.Fecha_Llegada)
+		OR (@fechaHasta BETWEEN V.Fecha_Salida AND V.Fecha_Llegada))
+	WHERE A.Numero=@nroAeronave
+END
