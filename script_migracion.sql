@@ -1178,7 +1178,7 @@ BEGIN
 			INSERT INTO @Top5 
 			
 				SELECT TOP 5 C.Dni, C.Apellido, C.Nombre, ISNULL(SUM(P.Puntos) - 
-				(SELECT SUM(R.Puntos * Can.Cantidad) FROM Canje Can JOIN Recompensa R ON Can.Recompensa = R.Id WHERE Can.Cliente = C.Id AND YEAR(Can.Fecha) = @Anio)
+				isnull((SELECT SUM(R.Puntos * Can.Cantidad) FROM NORMALIZADOS.Canje Can JOIN NORMALIZADOS.Recompensa R ON Can.Recompensa = R.Id WHERE Can.Cliente = C.Id AND YEAR(Can.Fecha) = @Anio),0)
 				,0) AS TotalPuntos
 				FROM
 					(
@@ -1207,7 +1207,7 @@ BEGIN
 			INSERT INTO @Top5 
 			
 				SELECT TOP 5 C.Dni, C.Apellido, C.Nombre, ISNULL(SUM(P.Puntos) - 
-				(SELECT SUM(R.Puntos * Can.Cantidad) FROM Canje Can JOIN Recompensa R ON Can.Recompensa = R.Id WHERE Can.Cliente = C.Id AND ((YEAR(Can.Fecha) = @Anio AND MONTH(Can.Fecha) < 7) OR (YEAR(Can.Fecha) = @Anio - 1 AND MONTH(Can.Fecha) > 6)))
+				ISNULL((SELECT SUM(R.Puntos * Can.Cantidad) FROM NORMALIZADOS.Canje Can JOIN NORMALIZADOS.Recompensa R ON Can.Recompensa = R.Id WHERE Can.Cliente = C.Id AND ((YEAR(Can.Fecha) = @Anio AND MONTH(Can.Fecha) < 7) OR (YEAR(Can.Fecha) = @Anio - 1 AND MONTH(Can.Fecha) > 6))),0)
 				,0) AS TotalPuntos
 				FROM
 					(
@@ -1236,7 +1236,7 @@ BEGIN
 	RETURN
 
 END
-GO	
+GO		
 
 ------------------------------------------------------------------
 --                 FUNCIONES PARA COMPRAS                       --
