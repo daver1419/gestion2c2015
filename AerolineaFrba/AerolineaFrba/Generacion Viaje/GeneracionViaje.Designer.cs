@@ -218,8 +218,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button buttonLimpiar;
         private System.Windows.Forms.Button buttonGenerar;
-        private System.Windows.Forms.DateTimePicker dateTimePickerFechSal;
-        private System.Windows.Forms.DateTimePicker dateTimePickerFechLleg;
+        public System.Windows.Forms.DateTimePicker dateTimePickerFechSal;
+        public System.Windows.Forms.DateTimePicker dateTimePickerFechLleg;
         private System.Windows.Forms.DateTimePicker dateTimePickerFechLLEstim;
         public System.Windows.Forms.TextBox textBoxRuta;
         public System.Windows.Forms.TextBox textBoxAeronave;

@@ -31,15 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.ComboModelo = new System.Windows.Forms.ComboBox();
-            this.DateVueltaFin = new System.Windows.Forms.DateTimePicker();
-            this.label3 = new System.Windows.Forms.Label();
-            this.DateVuelta = new System.Windows.Forms.DateTimePicker();
-            this.DateFueraFin = new System.Windows.Forms.DateTimePicker();
-            this.label2 = new System.Windows.Forms.Label();
-            this.DateFuera = new System.Windows.Forms.DateTimePicker();
-            this.DateBajaFin = new System.Windows.Forms.DateTimePicker();
-            this.label1 = new System.Windows.Forms.Label();
-            this.DateBaja = new System.Windows.Forms.DateTimePicker();
             this.DateAltaFin = new System.Windows.Forms.DateTimePicker();
             this.ComboTipoServicio = new System.Windows.Forms.ComboBox();
             this.TextMatricula = new System.Windows.Forms.TextBox();
@@ -57,6 +48,7 @@
             this.tablaDatos = new System.Windows.Forms.DataGridView();
             this.Seleccionar = new System.Windows.Forms.DataGridViewButtonColumn();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tablaDatos)).BeginInit();
@@ -66,15 +58,6 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.ComboModelo);
-            this.groupBox1.Controls.Add(this.DateVueltaFin);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.DateVuelta);
-            this.groupBox1.Controls.Add(this.DateFueraFin);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.DateFuera);
-            this.groupBox1.Controls.Add(this.DateBajaFin);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.DateBaja);
             this.groupBox1.Controls.Add(this.DateAltaFin);
             this.groupBox1.Controls.Add(this.ComboTipoServicio);
             this.groupBox1.Controls.Add(this.TextMatricula);
@@ -89,7 +72,7 @@
             this.groupBox1.Controls.Add(this.KG);
             this.groupBox1.Location = new System.Drawing.Point(31, 21);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(563, 318);
+            this.groupBox1.Size = new System.Drawing.Size(639, 274);
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtro de Búsqueda";
@@ -97,91 +80,10 @@
             // ComboModelo
             // 
             this.ComboModelo.FormattingEnabled = true;
-            this.ComboModelo.Location = new System.Drawing.Point(134, 159);
+            this.ComboModelo.Location = new System.Drawing.Point(134, 97);
             this.ComboModelo.Name = "ComboModelo";
             this.ComboModelo.Size = new System.Drawing.Size(193, 21);
             this.ComboModelo.TabIndex = 41;
-            // 
-            // DateVueltaFin
-            // 
-            this.DateVueltaFin.Checked = false;
-            this.DateVueltaFin.Location = new System.Drawing.Point(357, 103);
-            this.DateVueltaFin.Name = "DateVueltaFin";
-            this.DateVueltaFin.ShowCheckBox = true;
-            this.DateVueltaFin.Size = new System.Drawing.Size(193, 20);
-            this.DateVueltaFin.TabIndex = 40;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 109);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(111, 13);
-            this.label3.TabIndex = 39;
-            this.label3.Text = "Fecha Vuelta Servicio";
-            // 
-            // DateVuelta
-            // 
-            this.DateVuelta.Checked = false;
-            this.DateVuelta.Location = new System.Drawing.Point(134, 103);
-            this.DateVuelta.Name = "DateVuelta";
-            this.DateVuelta.ShowCheckBox = true;
-            this.DateVuelta.Size = new System.Drawing.Size(193, 20);
-            this.DateVuelta.TabIndex = 38;
-            // 
-            // DateFueraFin
-            // 
-            this.DateFueraFin.Checked = false;
-            this.DateFueraFin.Location = new System.Drawing.Point(357, 77);
-            this.DateFueraFin.Name = "DateFueraFin";
-            this.DateFueraFin.ShowCheckBox = true;
-            this.DateFueraFin.Size = new System.Drawing.Size(193, 20);
-            this.DateFueraFin.TabIndex = 37;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 83);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(108, 13);
-            this.label2.TabIndex = 36;
-            this.label2.Text = "Fecha Fuera Servicio";
-            // 
-            // DateFuera
-            // 
-            this.DateFuera.Checked = false;
-            this.DateFuera.Location = new System.Drawing.Point(134, 77);
-            this.DateFuera.Name = "DateFuera";
-            this.DateFuera.ShowCheckBox = true;
-            this.DateFuera.Size = new System.Drawing.Size(193, 20);
-            this.DateFuera.TabIndex = 35;
-            // 
-            // DateBajaFin
-            // 
-            this.DateBajaFin.Checked = false;
-            this.DateBajaFin.Location = new System.Drawing.Point(357, 51);
-            this.DateBajaFin.Name = "DateBajaFin";
-            this.DateBajaFin.ShowCheckBox = true;
-            this.DateBajaFin.Size = new System.Drawing.Size(193, 20);
-            this.DateBajaFin.TabIndex = 34;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 57);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(108, 13);
-            this.label1.TabIndex = 33;
-            this.label1.Text = "Fecha Baja Definitiva";
-            // 
-            // DateBaja
-            // 
-            this.DateBaja.Checked = false;
-            this.DateBaja.Location = new System.Drawing.Point(134, 51);
-            this.DateBaja.Name = "DateBaja";
-            this.DateBaja.ShowCheckBox = true;
-            this.DateBaja.Size = new System.Drawing.Size(193, 20);
-            this.DateBaja.TabIndex = 32;
             // 
             // DateAltaFin
             // 
@@ -195,14 +97,14 @@
             // ComboTipoServicio
             // 
             this.ComboTipoServicio.FormattingEnabled = true;
-            this.ComboTipoServicio.Location = new System.Drawing.Point(134, 217);
+            this.ComboTipoServicio.Location = new System.Drawing.Point(134, 183);
             this.ComboTipoServicio.Name = "ComboTipoServicio";
             this.ComboTipoServicio.Size = new System.Drawing.Size(193, 21);
             this.ComboTipoServicio.TabIndex = 28;
             // 
             // TextMatricula
             // 
-            this.TextMatricula.Location = new System.Drawing.Point(134, 185);
+            this.TextMatricula.Location = new System.Drawing.Point(134, 140);
             this.TextMatricula.Name = "TextMatricula";
             this.TextMatricula.Size = new System.Drawing.Size(193, 20);
             this.TextMatricula.TabIndex = 27;
@@ -210,7 +112,7 @@
             // ComboFabricante
             // 
             this.ComboFabricante.FormattingEnabled = true;
-            this.ComboFabricante.Location = new System.Drawing.Point(134, 132);
+            this.ComboFabricante.Location = new System.Drawing.Point(134, 59);
             this.ComboFabricante.Name = "ComboFabricante";
             this.ComboFabricante.Size = new System.Drawing.Size(193, 21);
             this.ComboFabricante.TabIndex = 25;
@@ -218,7 +120,7 @@
             // TipoServicio
             // 
             this.TipoServicio.AutoSize = true;
-            this.TipoServicio.Location = new System.Drawing.Point(16, 220);
+            this.TipoServicio.Location = new System.Drawing.Point(16, 186);
             this.TipoServicio.Name = "TipoServicio";
             this.TipoServicio.Size = new System.Drawing.Size(82, 13);
             this.TipoServicio.TabIndex = 22;
@@ -227,7 +129,7 @@
             // Matricula
             // 
             this.Matricula.AutoSize = true;
-            this.Matricula.Location = new System.Drawing.Point(16, 192);
+            this.Matricula.Location = new System.Drawing.Point(16, 147);
             this.Matricula.Name = "Matricula";
             this.Matricula.Size = new System.Drawing.Size(50, 13);
             this.Matricula.TabIndex = 21;
@@ -236,7 +138,7 @@
             // Fabricante
             // 
             this.Fabricante.AutoSize = true;
-            this.Fabricante.Location = new System.Drawing.Point(16, 135);
+            this.Fabricante.Location = new System.Drawing.Point(16, 67);
             this.Fabricante.Name = "Fabricante";
             this.Fabricante.Size = new System.Drawing.Size(57, 13);
             this.Fabricante.TabIndex = 20;
@@ -245,7 +147,7 @@
             // Modelo
             // 
             this.Modelo.AutoSize = true;
-            this.Modelo.Location = new System.Drawing.Point(16, 166);
+            this.Modelo.Location = new System.Drawing.Point(16, 105);
             this.Modelo.Name = "Modelo";
             this.Modelo.Size = new System.Drawing.Size(42, 13);
             this.Modelo.TabIndex = 19;
@@ -271,7 +173,7 @@
             // 
             // NumericKG
             // 
-            this.NumericKG.Location = new System.Drawing.Point(134, 249);
+            this.NumericKG.Location = new System.Drawing.Point(134, 215);
             this.NumericKG.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -284,7 +186,7 @@
             // KG
             // 
             this.KG.AutoSize = true;
-            this.KG.Location = new System.Drawing.Point(16, 249);
+            this.KG.Location = new System.Drawing.Point(16, 215);
             this.KG.Name = "KG";
             this.KG.Size = new System.Drawing.Size(67, 13);
             this.KG.TabIndex = 23;
@@ -292,7 +194,7 @@
             // 
             // Limpiar
             // 
-            this.Limpiar.Location = new System.Drawing.Point(415, 360);
+            this.Limpiar.Location = new System.Drawing.Point(488, 333);
             this.Limpiar.Name = "Limpiar";
             this.Limpiar.Size = new System.Drawing.Size(75, 23);
             this.Limpiar.TabIndex = 11;
@@ -302,7 +204,7 @@
             // 
             // Buscar
             // 
-            this.Buscar.Location = new System.Drawing.Point(107, 360);
+            this.Buscar.Location = new System.Drawing.Point(106, 333);
             this.Buscar.Name = "Buscar";
             this.Buscar.Size = new System.Drawing.Size(75, 23);
             this.Buscar.TabIndex = 10;
@@ -315,9 +217,9 @@
             this.tablaDatos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.tablaDatos.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Seleccionar});
-            this.tablaDatos.Location = new System.Drawing.Point(31, 394);
+            this.tablaDatos.Location = new System.Drawing.Point(31, 410);
             this.tablaDatos.Name = "tablaDatos";
-            this.tablaDatos.Size = new System.Drawing.Size(563, 156);
+            this.tablaDatos.Size = new System.Drawing.Size(650, 156);
             this.tablaDatos.TabIndex = 12;
             this.tablaDatos.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.tablaDatos_CellContentClick);
             // 
@@ -330,11 +232,24 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.ForeColor = System.Drawing.Color.Red;
+            this.label4.Location = new System.Drawing.Point(28, 377);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(657, 13);
+            this.label4.TabIndex = 13;
+            this.label4.Text = "Se muestran solamente las aeronaves que no tienen viajes programados entre las fe" +
+    "chas ingresadas anteriormente";
+            // 
             // ListadoAeronaves
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(621, 562);
+            this.ClientSize = new System.Drawing.Size(709, 583);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.tablaDatos);
             this.Controls.Add(this.Limpiar);
             this.Controls.Add(this.Buscar);
@@ -348,6 +263,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.tablaDatos)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -355,15 +271,6 @@
 
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ComboBox ComboModelo;
-        private System.Windows.Forms.DateTimePicker DateVueltaFin;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.DateTimePicker DateVuelta;
-        private System.Windows.Forms.DateTimePicker DateFueraFin;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.DateTimePicker DateFuera;
-        private System.Windows.Forms.DateTimePicker DateBajaFin;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DateTimePicker DateBaja;
         private System.Windows.Forms.DateTimePicker DateAltaFin;
         private System.Windows.Forms.ComboBox ComboTipoServicio;
         private System.Windows.Forms.TextBox TextMatricula;
@@ -381,5 +288,6 @@
         private System.Windows.Forms.DataGridView tablaDatos;
         private System.Windows.Forms.DataGridViewButtonColumn Seleccionar;
         private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.Label label4;
     }
 }

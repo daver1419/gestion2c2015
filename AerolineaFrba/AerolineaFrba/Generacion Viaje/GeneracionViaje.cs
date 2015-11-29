@@ -20,6 +20,7 @@ namespace AerolineaFrba.Generacion_Viaje
         public GeneracionViaje()
         {
             InitializeComponent();
+            this.Viaje = new ViajeDTO();
         }
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
@@ -69,16 +70,17 @@ namespace AerolineaFrba.Generacion_Viaje
 
         private void buttonGenerar_Click(object sender, EventArgs e)
         {
+
             if (validarFechas())
             {
                 Viaje.FechaSalida = dateTimePickerFechSal.Value;
                 Viaje.FechaLlegada = dateTimePickerFechLleg.Value;
                 Viaje.FechaLlegadaEstimada = dateTimePickerFechLLEstim.Value;
-                RutaDTO ruta=new RutaDTO();
-                ruta.IdRuta=Int32.Parse( textBoxRuta.Text);
+                RutaDTO ruta = new RutaDTO();
+                ruta.IdRuta = Int32.Parse(textBoxRuta.Text);
                 Viaje.Ruta = ruta;
                 AeronaveDTO aeronave = new AeronaveDTO();
-                aeronave.Numero =Int32.Parse( textBoxAeronave.Text);
+                aeronave.Numero = Int32.Parse(textBoxAeronave.Text);
                 Viaje.Aeronave = aeronave;
 
                 if (!ViajeDAO.Generar(Viaje))
@@ -88,6 +90,7 @@ namespace AerolineaFrba.Generacion_Viaje
                 else
                 {
                     MessageBox.Show("Se genero el viaje con exito");
+                    this.Close();
                 }
             }
         }
