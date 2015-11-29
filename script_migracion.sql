@@ -1120,7 +1120,7 @@ END
 GO
 
 CREATE FUNCTION NORMALIZADOS.TOP5_Destinos_Con_Aeronaves_Mas_Vacias(@Anio int, @Semestre int)
-RETURNS @Top5 TABLE (Ciudad nvarchar(255), [Porcentaje promedio de butacas libres] int)
+RETURNS @Top5 TABLE (Ciudad nvarchar(255), [Cantidad de butacas libres] int)
 AS
 BEGIN
 	DECLARE @Desde int
@@ -1137,7 +1137,7 @@ BEGIN
 		END	
 
 	INSERT INTO @Top5 
-		SELECT TOP 5 C.Nombre, FLOOR(AVG((T.Butacas-T.Ocupadas)/T.Butacas)*100) AS Porcentaje_Libre
+		SELECT TOP 5 C.Nombre, sum(T.Butacas)-sum(T.Ocupadas) AS Porcentaje_Libre
 		FROM(
 			SELECT NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(A.Matricula) AS Butacas, COUNT(*) AS Ocupadas, V.Ruta_Aerea AS Ruta_Aerea
 			FROM NORMALIZADOS.Viaje V 
