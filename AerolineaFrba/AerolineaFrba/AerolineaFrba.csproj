@@ -207,6 +207,7 @@
     <Compile Include="DAO\FabricanteDAO.cs" />
     <Compile Include="DAO\FuncionalidadDAO.cs" />
     <Compile Include="DAO\RolDAO.cs" />
+    <Compile Include="DAO\ViajeDAO.cs" />
     <Compile Include="Devolucion\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -227,11 +228,24 @@
     <Compile Include="DTO\FuncionalidadDTO.cs" />
     <Compile Include="DTO\RolDTO.cs" />
     <Compile Include="DTO\UsuarioDTO.cs" />
-    <Compile Include="Generacion Viaje\Form1.cs">
+    <Compile Include="DTO\ViajeDTO.cs" />
+    <Compile Include="Generacion Viaje\GeneracionViaje.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Generacion Viaje\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Generacion Viaje\GeneracionViaje.Designer.cs">
+      <DependentUpon>GeneracionViaje.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Generacion Viaje\ListadoAeronaves.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Generacion Viaje\ListadoAeronaves.Designer.cs">
+      <DependentUpon>ListadoAeronaves.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Generacion Viaje\ListadoRutas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Generacion Viaje\ListadoRutas.Designer.cs">
+      <DependentUpon>ListadoRutas.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\Utility.cs" />
     <Compile Include="Listado Estadistico\ListadoFinal.cs">
@@ -339,6 +353,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Ruta\ModificacionRuta.resx">
       <DependentUpon>ModificacionRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generacion Viaje\GeneracionViaje.resx">
+      <DependentUpon>GeneracionViaje.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generacion Viaje\ListadoAeronaves.resx">
+      <DependentUpon>ListadoAeronaves.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generacion Viaje\ListadoRutas.resx">
+      <DependentUpon>ListadoRutas.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Listado Estadistico\FormEstadisticas.resx">
       <DependentUpon>FormEstadisticas.cs</DependentUpon>

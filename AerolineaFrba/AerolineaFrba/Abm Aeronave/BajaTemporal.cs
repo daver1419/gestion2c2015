@@ -35,13 +35,13 @@ namespace AerolineaFrba.Abm_Aeronave
             if (Reemplazar)
             { 
                 //NV SP que reemplaza aeronave
-                if(1==1)
+                if(true)//AeronaveDAO.Reemplazar(Aeronave))
                 {
-                    
+                    MessageBox.Show("Se reemplazo la aeronave con exito");
                 }
                 else
                 {
-                
+                    MessageBox.Show("No se pudo encontrar la aeronave");
                 }
             }
             else

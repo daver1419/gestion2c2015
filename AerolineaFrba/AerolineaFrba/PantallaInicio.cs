@@ -141,7 +141,7 @@ namespace AerolineaFrba
 
                     case FuncionalidadDTO.Funcionalidad.GENERAR_VIAJE:
 
-                        new Generacion_Viaje.Form1() { Icon = this.Icon }.ShowDialog(this);
+                        new Generacion_Viaje.GeneracionViaje() { Icon = this.Icon }.ShowDialog(this);
 
                         break;
 
