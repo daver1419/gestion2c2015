@@ -31,5 +31,11 @@ namespace AerolineaFrba.Listado_Estadistico
                 MessageBox.Show("Complete el año y el semestre");
             }
         }
+
+        private void Limpiar_Click(object sender, EventArgs e)
+        {
+            comboAnio.SelectedIndex = -1;
+            comboSemestre.SelectedIndex = -1;
+        }
     }
 }

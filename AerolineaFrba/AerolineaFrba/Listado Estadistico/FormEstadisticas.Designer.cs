@@ -30,10 +30,11 @@
         {
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.comboAnio = new System.Windows.Forms.ComboBox();
-            this.comboSemestre = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.listOpciones = new System.Windows.Forms.ListBox();
+            this.comboSemestre = new System.Windows.Forms.ComboBox();
+            this.comboAnio = new System.Windows.Forms.ComboBox();
+            this.Limpiar = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -53,32 +54,6 @@
             this.label2.Size = new System.Drawing.Size(110, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "Seleccionar Semestre";
-            // 
-            // comboAnio
-            // 
-            this.comboAnio.FormattingEnabled = true;
-            this.comboAnio.Items.AddRange(new object[] {
-            "2015",
-            "2014",
-            "2013",
-            "2012",
-            "2011",
-            "2010"});
-            this.comboAnio.Location = new System.Drawing.Point(210, 53);
-            this.comboAnio.Name = "comboAnio";
-            this.comboAnio.Size = new System.Drawing.Size(121, 21);
-            this.comboAnio.TabIndex = 2;
-            // 
-            // comboSemestre
-            // 
-            this.comboSemestre.FormattingEnabled = true;
-            this.comboSemestre.Items.AddRange(new object[] {
-            "1",
-            "2"});
-            this.comboSemestre.Location = new System.Drawing.Point(210, 100);
-            this.comboSemestre.Name = "comboSemestre";
-            this.comboSemestre.Size = new System.Drawing.Size(121, 21);
-            this.comboSemestre.TabIndex = 3;
             // 
             // label3
             // 
@@ -104,11 +79,73 @@
             this.listOpciones.TabIndex = 5;
             this.listOpciones.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
+            // comboSemestre
+            // 
+            this.comboSemestre.FormattingEnabled = true;
+            this.comboSemestre.Items.AddRange(new object[] {
+            "1",
+            "2"});
+            this.comboSemestre.Location = new System.Drawing.Point(210, 100);
+            this.comboSemestre.Name = "comboSemestre";
+            this.comboSemestre.Size = new System.Drawing.Size(121, 21);
+            this.comboSemestre.TabIndex = 3;
+            // 
+            // comboAnio
+            // 
+            this.comboAnio.FormattingEnabled = true;
+            this.comboAnio.Items.AddRange(new object[] {
+            "2030",
+            "2029",
+            "2028",
+            "2027",
+            "2026",
+            "2025",
+            "2024",
+            "2023",
+            "2022",
+            "2021",
+            "2020",
+            "2019",
+            "2018",
+            "2017",
+            "2016",
+            "2015",
+            "2014",
+            "2013",
+            "2012",
+            "2011",
+            "2010",
+            "2009",
+            "2008",
+            "2007",
+            "2006",
+            "2005",
+            "2004",
+            "2003",
+            "2002",
+            "2001",
+            "2000"});
+            this.comboAnio.Location = new System.Drawing.Point(210, 53);
+            this.comboAnio.Name = "comboAnio";
+            this.comboAnio.Size = new System.Drawing.Size(121, 21);
+            this.comboAnio.TabIndex = 2;
+            // 
+            // Limpiar
+            // 
+            this.Limpiar.Location = new System.Drawing.Point(174, 302);
+            this.Limpiar.Name = "Limpiar";
+            this.Limpiar.Size = new System.Drawing.Size(75, 23);
+            this.Limpiar.TabIndex = 8;
+            this.Limpiar.Text = "Limpiar";
+            this.Limpiar.UseVisualStyleBackColor = true;
+            this.Limpiar.Click += new System.EventHandler(this.Limpiar_Click);
+            // 
             // FormEstadisticas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(462, 337);
+            this.Controls.Add(this.Limpiar);
             this.Controls.Add(this.listOpciones);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.comboSemestre);
@@ -126,9 +163,10 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox comboAnio;
-        private System.Windows.Forms.ComboBox comboSemestre;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ListBox listOpciones;
+        private System.Windows.Forms.ComboBox comboSemestre;
+        private System.Windows.Forms.ComboBox comboAnio;
+        private System.Windows.Forms.Button Limpiar;
     }
 }
