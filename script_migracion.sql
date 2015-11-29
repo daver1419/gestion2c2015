@@ -1172,32 +1172,66 @@ BEGIN
 			SET @Hasta = 12
 		END	
 		
-	INSERT INTO @Top5 
-	
-		SELECT TOP 5 C.Dni, C.Apellido, C.Nombre, ISNULL(SUM(P.Puntos) - 
-		(SELECT SUM(R.Puntos * Can.Cantidad) FROM Canje Can JOIN Recompensa R ON Can.Recompensa = R.Id WHERE Can.Cliente = C.Id AND MONTH(Can.Fecha) BETWEEN @Desde AND @Hasta AND (YEAR(Can.Fecha) = @Anio OR YEAR(Can.Fecha) = @Anio - 1))
-		,0) AS TotalPuntos
-		FROM
-			(
-			SELECT P.Pasajero AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(P.Precio), 0) AS Puntos  
-					FROM NORMALIZADOS.Pasaje P
-					JOIN NORMALIZADOS.Compra C ON C.Id = P.Compra
-					JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
-					WHERE P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
-					AND V.Fecha_Llegada IS NOT NULL AND MONTH(V.Fecha_Llegada) BETWEEN @Desde AND @Hasta AND (YEAR(V.Fecha_Llegada) = @Anio OR YEAR(V.Fecha_Llegada) = @Anio - 1)
-										
-			UNION ALL
+		
+	IF(@Desde = 7)	
+		BEGIN
+			INSERT INTO @Top5 
+			
+				SELECT TOP 5 C.Dni, C.Apellido, C.Nombre, ISNULL(SUM(P.Puntos) - 
+				(SELECT SUM(R.Puntos * Can.Cantidad) FROM Canje Can JOIN Recompensa R ON Can.Recompensa = R.Id WHERE Can.Cliente = C.Id AND YEAR(Can.Fecha) = @Anio)
+				,0) AS TotalPuntos
+				FROM
+					(
+					SELECT P.Pasajero AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(P.Precio), 0) AS Puntos  
+							FROM NORMALIZADOS.Pasaje P
+							JOIN NORMALIZADOS.Compra C ON C.Id = P.Compra
+							JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+							WHERE P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
+							AND V.Fecha_Llegada IS NOT NULL AND YEAR(V.Fecha_Llegada) = @Anio
+												
+					UNION ALL
 
-			SELECT E.Cliente AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(E.Precio), 0) AS Puntos  
-					FROM NORMALIZADOS.Encomienda E
-					JOIN NORMALIZADOS.Compra C ON C.Id = E.Compra
-					JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
-					WHERE E.Id NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
-					AND V.Fecha_Llegada IS NOT NULL AND MONTH(V.Fecha_Llegada) BETWEEN @Desde AND @Hasta AND (YEAR(V.Fecha_Llegada) = @Anio OR YEAR(V.Fecha_Llegada) = @Anio - 1)
-			) P
-		JOIN NORMALIZADOS.Cliente C ON C.Id = P.Cliente
-		GROUP BY C.Dni, C.Apellido, C.Nombre, C.Id
-		ORDER BY TotalPuntos DESC
+					SELECT E.Cliente AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(E.Precio), 0) AS Puntos  
+							FROM NORMALIZADOS.Encomienda E
+							JOIN NORMALIZADOS.Compra C ON C.Id = E.Compra
+							JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+							WHERE E.Id NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
+							AND V.Fecha_Llegada IS NOT NULL AND YEAR(V.Fecha_Llegada) = @Anio
+					) P
+				JOIN NORMALIZADOS.Cliente C ON C.Id = P.Cliente
+				GROUP BY C.Dni, C.Apellido, C.Nombre, C.Id
+				ORDER BY TotalPuntos DESC
+		END
+	ELSE
+		BEGIN
+			INSERT INTO @Top5 
+			
+				SELECT TOP 5 C.Dni, C.Apellido, C.Nombre, ISNULL(SUM(P.Puntos) - 
+				(SELECT SUM(R.Puntos * Can.Cantidad) FROM Canje Can JOIN Recompensa R ON Can.Recompensa = R.Id WHERE Can.Cliente = C.Id AND ((YEAR(Can.Fecha) = @Anio AND MONTH(Can.Fecha) < 7) OR (YEAR(Can.Fecha) = @Anio - 1 AND MONTH(Can.Fecha) > 6)))
+				,0) AS TotalPuntos
+				FROM
+					(
+					SELECT P.Pasajero AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(P.Precio), 0) AS Puntos  
+							FROM NORMALIZADOS.Pasaje P
+							JOIN NORMALIZADOS.Compra C ON C.Id = P.Compra
+							JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+							WHERE P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
+							AND V.Fecha_Llegada IS NOT NULL AND MONTH(V.Fecha_Llegada) BETWEEN @Desde AND @Hasta AND (YEAR(V.Fecha_Llegada) = @Anio OR YEAR(V.Fecha_Llegada) = @Anio - 1)
+												
+					UNION ALL
+
+					SELECT E.Cliente AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(E.Precio), 0) AS Puntos  
+							FROM NORMALIZADOS.Encomienda E
+							JOIN NORMALIZADOS.Compra C ON C.Id = E.Compra
+							JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+							WHERE E.Id NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
+							AND V.Fecha_Llegada IS NOT NULL 
+							AND ((YEAR(V.Fecha_Llegada) = @Anio AND MONTH(V.Fecha_Llegada) < 7) OR (YEAR(V.Fecha_Llegada) = @Anio - 1 AND MONTH(V.Fecha_Llegada) > 6))
+					) P
+				JOIN NORMALIZADOS.Cliente C ON C.Id = P.Cliente
+				GROUP BY C.Dni, C.Apellido, C.Nombre, C.Id
+				ORDER BY TotalPuntos DESC		
+		END
 		
 	RETURN
 
@@ -1440,7 +1474,7 @@ GO
 --				SP busqueda aeronaves sin viajes programados entre
 --					ciertas fechas
 --------------------------------------------------------------------------------
-ALTER PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronaves_Sin_Viajes_Programados]
+CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronaves_Sin_Viajes_Programados]
 	@Modelo nvarchar(255),
 	@Matricula nvarchar(255),
 	@Kg_Disponibles numeric(18,0),
