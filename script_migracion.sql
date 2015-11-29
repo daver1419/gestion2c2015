@@ -1863,18 +1863,17 @@ AS
 	BEGIN
 		
 		DECLARE @butacas_disponibles int
-
-		SELECT @butacas_disponibles = (NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(A.Matricula)-COUNT(*)) FROM NORMALIZADOS.Pasaje P
-		JOIN NORMALIZADOS.Compra C ON P.Compra = C.Id
-		JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+		
+		SELECT @butacas_disponibles = (NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(A.Matricula)-
+										NORMALIZADOS.GetCantidadButacasOcupadas(@fecha_salida,@ciudad_origen,@ciudad_destino,@tipo_servicio))
+		FROM NORMALIZADOS.Viaje V
+		JOIN NORMALIZADOS.Aeronave A ON V.Aeronave = A.Numero
 		JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
 		JOIN NORMALIZADOS.Ciudad C1 ON R.Ciudad_Origen = C1.ID
 		JOIN NORMALIZADOS.Ciudad C2 ON R.Ciudad_Destino = C2.ID
 		JOIN NORMALIZADOS.Servicio S ON R.Tipo_Servicio = S.ID
-		JOIN NORMALIZADOS.Aeronave A ON A.Numero = V.Aeronave
 		WHERE V.Fecha_Salida = CONVERT(datetime,@fecha_salida,21) AND C1.Nombre LIKE '_'+@ciudad_origen AND C2.Nombre LIKE '_'+@ciudad_destino AND S.Descripcion = @tipo_servicio 
-		GROUP BY A.Matricula
-
+	
 		RETURN @butacas_disponibles
 	END
 GO
@@ -1884,7 +1883,7 @@ GO
 ------------------------------------------------------------------
 --         SP cantidad de butacas totales, ocupadas y disponibles por viaje
 ------------------------------------------------------------------
-
+/*
 CREATE PROCEDURE [NORMALIZADOS].[GetAllButacas]
 AS
 BEGIN
@@ -1902,6 +1901,7 @@ BEGIN
 	JOIN NORMALIZADOS.Aeronave A ON A.Numero = V.Aeronave
 END
 GO
+*/
 ------------------------------------------------------------------
 --         SP verifica si existe una ruta con ciudad de origen, destino y servicio
 ------------------------------------------------------------------
