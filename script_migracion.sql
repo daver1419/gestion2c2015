@@ -2186,3 +2186,39 @@ BEGIN
 		OR (@fechaHasta BETWEEN V.Fecha_Salida AND V.Fecha_Llegada))
 	WHERE A.Numero=@nroAeronave
 END
+GO
+------------------------------------------------------------------
+--         SP retorna una aeronave de acuerdo a una matricula
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SP_Get_Aeronave_By_Matricula]
+@matricula nvarchar(255)
+AS
+BEGIN
+	SELECT A.*,S.Descripcion, F.Nombre, M.Modelo_Desc
+	FROM [NORMALIZADOS].[Aeronave] A
+	JOIN [NORMALIZADOS].Servicio S
+	ON A.Tipo_Servicio = S.Id
+	JOIN [NORMALIZADOS].Fabricante F
+	ON A.Fabricante = F.Id
+	JOIN [NORMALIZADOS].[Modelo] M
+	ON M.Id = A.Modelo
+	WHERE Matricula=@matricula
+END
+GO
+------------------------------------------------------------------
+--         SP devuelve 1 si la ruta destino para una aeronave 
+--			en un viaje coincide con el aeropuerto destino
+			
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SP_Aeronave_Arribo_Correctamente]
+@nroAeronave int,
+@aeropuertoDestino int
+AS
+BEGIN
+	SELECT 1
+	FROM [NORMALIZADOS].[Viaje] V
+	JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+		ON V.Ruta_Aerea=RA.Id
+		AND RA.Ciudad_Destino=@aeropuertoDestino
+	WHERE V.Aeronave=@nroAeronave
+END
