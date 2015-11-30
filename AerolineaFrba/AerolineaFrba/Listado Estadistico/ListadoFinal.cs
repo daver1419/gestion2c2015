@@ -33,13 +33,13 @@ namespace AerolineaFrba.Listado_Estadistico
             {
                 case "Top 5 de los destinos con más pasajes comprados":
                     gridListado.DataSource = ListadoDAO.DestinosConMasPasajes(Anio, Semestre);
-                    //gridListado.Columns[1].Width = 230;
+                    gridListado.Columns[1].Width = 150;
                     //gridListado.Columns[0].Width = 230;
                     break;
 
                 case "Top 5 de los destinos con aeronaves más vacías":
                     gridListado.DataSource = ListadoDAO.DestionsConMasAeronavesVacias(Anio, Semestre);
-                    //gridListado.Columns[1].Width = 230;
+                    gridListado.Columns[1].Width = 180;
                     //gridListado.Columns[0].Width = 230;
                     break;
 
@@ -49,11 +49,12 @@ namespace AerolineaFrba.Listado_Estadistico
 
                 case "Top 5 de los destinos con pasajes cancelados":
                     gridListado.DataSource = ListadoDAO.DestinosConMasPasajesCancelados(Anio, Semestre);
+                    gridListado.Columns[1].Width = 200;
                     break;
 
                 case "Top 5 de las aeronaves con mayor cantidad de días fuera de servicio":
                     gridListado.DataSource = ListadoDAO.AeronavesConMasDiasFueraServicio(Anio, Semestre);
-                    //gridListado.Columns[1].Width = 230;
+                    gridListado.Columns[2].Width = 150;
                     //gridListado.Columns[0].Width = 230;
                     break;
 
