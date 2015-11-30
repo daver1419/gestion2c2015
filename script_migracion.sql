@@ -1786,7 +1786,7 @@ AS
 BEGIN
 	SELECT Id 
 	FROM [NORMALIZADOS].Ciudad
-	WHERE Nombre=@descripcion
+	WHERE Nombre LIKE '_'+@descripcion
 END
 GO
 --------------------------------------------------------------------------------
@@ -1797,7 +1797,7 @@ AS
 BEGIN
 	SELECT Id,Nombre
 	FROM [NORMALIZADOS].Ciudad
-	WHERE Nombre=@descripcion
+	WHERE Nombre LIKE '_'+@descripcion
 END
 GO
 --------------------------------------------------------------------------------
