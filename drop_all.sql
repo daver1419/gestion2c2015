@@ -1,3 +1,5 @@
+DROP PROCEDURE [NORMALIZADOS].[SP_Aeronave_Arribo_Correctamente]
+DROP PROCEDURE [NORMALIZADOS].[SP_Get_Aeronave_By_Matricula]
 DROP PROCEDURE [NORMALIZADOS].[SP_AeronaveTieneViajesProgramadosEntre]
 DROP PROCEDURE [NORMALIZADOS].[GenerarViaje]
 DROP PROCEDURE [NORMALIZADOS].[SP_Busqueda_Aeronaves_Sin_Viajes_Programados]
