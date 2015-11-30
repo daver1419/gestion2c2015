@@ -20,7 +20,6 @@ namespace AerolineaFrba.DAO
                 SqlCommand comm = new SqlCommand("[NORMALIZADOS].[GenerarViaje]", conn);
                 comm.CommandType = CommandType.StoredProcedure;
                 comm.Parameters.AddWithValue("@fechaSalida", viaje.FechaSalida);
-                comm.Parameters.AddWithValue("@fechaLlegada", viaje.FechaLlegada);
                 comm.Parameters.AddWithValue("@fechaLlegadaEstimada", viaje.FechaLlegadaEstimada);
                 comm.Parameters.AddWithValue("@rutaId", viaje.Ruta.IdRuta);
                 comm.Parameters.AddWithValue("@nroAeronave", viaje.Aeronave.Numero);

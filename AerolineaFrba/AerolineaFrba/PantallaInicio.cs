@@ -152,7 +152,7 @@ namespace AerolineaFrba
 
                     case FuncionalidadDTO.Funcionalidad.REGISTRO_LLEGADA_DESTINO:
 
-                        new  Registro_Llegada_Destino.Form1() { Icon = this.Icon, StartPosition = FormStartPosition.CenterParent }.ShowDialog(this);
+                        new  Registro_Llegada_Destino.RegistroLlegadaDestino() { Icon = this.Icon, StartPosition = FormStartPosition.CenterParent }.ShowDialog(this);
 
                         break;
 

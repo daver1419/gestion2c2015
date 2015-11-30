@@ -60,7 +60,7 @@ namespace AerolineaFrba.Abm_Ruta
                 }
                 else
                 {
-                    MessageBox.Show("Se dio baja la ruta con exito");
+                    MessageBox.Show("Se dio baja la ruta con exito. Se cancelaron todos los pasajes y encomiendas que fueron vendidos");
                     this.Close();
                 }
             }

@@ -351,5 +351,27 @@ namespace AerolineaFrba.DAO
             }
             return retValue > 0;
         }
+        public static List<AeronaveDTO> GetByMatricula(AeronaveDTO aeronave)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[SP_Get_Aeronave_By_Matricula]", conn);
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.Parameters.AddWithValue("@matricula", aeronave.Matricula);
+                SqlDataReader dataReader = comm.ExecuteReader();
+                return getAeronaves(dataReader);
+            }
+        }
+        public static bool ArriboCorrectamente(AeronaveDTO aeronave,CiudadDTO aeropDestino)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[SP_Aeronave_Arribo_Correctamente]", conn);
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.Parameters.AddWithValue("@aeropuertoDestino", aeropDestino.IdCiudad);
+                comm.Parameters.AddWithValue("@nroAeronave", aeronave.Numero);
+                return comm.ExecuteReader().HasRows;
+            }
+        }
     }
 }

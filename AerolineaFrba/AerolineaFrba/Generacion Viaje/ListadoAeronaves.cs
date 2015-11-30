@@ -66,7 +66,7 @@ namespace AerolineaFrba.Generacion_Viaje
             if (DateAltaFin.Checked) aeronaveFilters.Fecha_Alta_Fin = DateAltaFin.Value;
             else aeronaveFilters.Fecha_Alta_Fin = null;
 
-            this.tablaDatos.DataSource = AeronaveDAO.GetByFiltersSinViajesProgramados(aeronaveFilters,this.FormPadre.dateTimePickerFechSal.Value,this.FormPadre.dateTimePickerFechLleg.Value);
+            this.tablaDatos.DataSource = AeronaveDAO.GetByFiltersSinViajesProgramados(aeronaveFilters,this.FormPadre.dateTimePickerFechSal.Value,this.FormPadre.dateTimePickerFechLLEstim.Value);
             if (Equals(this.tablaDatos.Rows.Count, 0))
             {
                 MessageBox.Show("No se encontraron datos");

@@ -30,8 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.textBoxDescr = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.btnLimpiar = new System.Windows.Forms.Button();
             this.btnBuscar = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -51,7 +51,14 @@
             this.groupBox1.Size = new System.Drawing.Size(559, 85);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "groupBox1";
+            this.groupBox1.Text = "Filtro";
+            // 
+            // textBoxDescr
+            // 
+            this.textBoxDescr.Location = new System.Drawing.Point(141, 34);
+            this.textBoxDescr.Name = "textBoxDescr";
+            this.textBoxDescr.Size = new System.Drawing.Size(100, 20);
+            this.textBoxDescr.TabIndex = 1;
             // 
             // label1
             // 
@@ -61,13 +68,6 @@
             this.label1.Size = new System.Drawing.Size(63, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Descripcion";
-            // 
-            // textBoxDescr
-            // 
-            this.textBoxDescr.Location = new System.Drawing.Point(141, 34);
-            this.textBoxDescr.Name = "textBoxDescr";
-            this.textBoxDescr.Size = new System.Drawing.Size(100, 20);
-            this.textBoxDescr.TabIndex = 1;
             // 
             // btnLimpiar
             // 
@@ -109,7 +109,7 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
-            // ModificacionCiudad
+            // ModificacionListado
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -118,7 +118,7 @@
             this.Controls.Add(this.btnBuscar);
             this.Controls.Add(this.btnLimpiar);
             this.Controls.Add(this.groupBox1);
-            this.Name = "ModificacionCiudad";
+            this.Name = "ModificacionListado";
             this.Text = "ModificacionCiudad";
             this.Load += new System.EventHandler(this.ModificacionCiudad_Load);
             this.groupBox1.ResumeLayout(false);

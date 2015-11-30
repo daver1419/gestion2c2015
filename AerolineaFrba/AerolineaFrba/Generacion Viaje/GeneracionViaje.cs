@@ -26,7 +26,6 @@ namespace AerolineaFrba.Generacion_Viaje
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
             dateTimePickerFechSal.Value = DateTime.Now;
-            dateTimePickerFechLleg.Value = DateTime.Now;
             dateTimePickerFechLLEstim.Value = DateTime.Now;
             textBoxRuta.Text = "";
             textBoxAeronave.Text = "";
@@ -55,11 +54,6 @@ namespace AerolineaFrba.Generacion_Viaje
                 errorProvider1.SetError(dateTimePickerFechSal, "Debe ingresar fecha de salida mayor al actual");
                 ret = false;
             }
-            if (dateTimePickerFechLleg.Value < dateTimePickerFechSal.Value)
-            {
-                errorProvider1.SetError(dateTimePickerFechLleg, "La fecha de llegada no puede ser menor a la de salida");
-                ret = false;
-            }
             if (dateTimePickerFechLLEstim.Value < dateTimePickerFechSal.Value)
             {
                 errorProvider1.SetError(dateTimePickerFechLLEstim, "La fecha de llegada no puede ser menor a la de salida");
@@ -74,7 +68,6 @@ namespace AerolineaFrba.Generacion_Viaje
             if (validarFechas())
             {
                 Viaje.FechaSalida = dateTimePickerFechSal.Value;
-                Viaje.FechaLlegada = dateTimePickerFechLleg.Value;
                 Viaje.FechaLlegadaEstimada = dateTimePickerFechLLEstim.Value;
                 RutaDTO ruta = new RutaDTO();
                 ruta.IdRuta = Int32.Parse(textBoxRuta.Text);

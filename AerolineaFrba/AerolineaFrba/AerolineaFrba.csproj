@@ -281,11 +281,11 @@
     <Compile Include="Registro de Usuario\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Registro Llegada Destino\Form1.cs">
+    <Compile Include="Registro Llegada Destino\RegistroLlegadaDestino.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Registro Llegada Destino\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Registro Llegada Destino\RegistroLlegadaDestino.Designer.cs">
+      <DependentUpon>RegistroLlegadaDestino.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Abm Aeronave\AgregarButaca.resx">
       <DependentUpon>AgregarButaca.cs</DependentUpon>
@@ -384,6 +384,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Registro Llegada Destino\RegistroLlegadaDestino.resx">
+      <DependentUpon>RegistroLlegadaDestino.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
