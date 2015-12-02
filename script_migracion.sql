@@ -2222,3 +2222,80 @@ BEGIN
 		AND RA.Ciudad_Destino=@aeropuertoDestino
 	WHERE V.Aeronave=@nroAeronave
 END
+
+------------------------------------------------------------------
+--       Funciones y SP para Consulta de millas 
+------------------------------------------------------------------
+CREATE FUNCTION NORMALIZADOS.Canjes_Puntos_By_Dni(@Dni numeric(18,0),@nombre nvarchar(255),@apellido nvarchar(255))
+RETURNS int
+AS
+	BEGIN
+		DECLARE @Total int
+		
+		SELECT @Total = SUM(C.Cantidad * R.Puntos)
+		FROM NORMALIZADOS.Canje C
+		JOIN NORMALIZADOS.Recompensa R
+		ON C.Recompensa = R.Id
+		JOIN NORMALIZADOS.Cliente Cli
+		ON Cli.Id = C.Cliente
+		WHERE Cli.Dni = @Dni AND Cli.Nombre = @nombre AND Cli.Apellido = @apellido
+		AND DATEDIFF(DAY,DATEADD(DAY,365,GETDATE()), C.Fecha) < 365
+		GROUP BY Cli.Dni, Cli.Nombre, Cli.Apellido
+
+		RETURN @Total
+	END
+GO
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Get_Millas_By_Dni](@Dni numeric(18,0))
+AS
+	BEGIN
+		SELECT C.Dni, (isnull((NORMALIZADOS.Puntos_Generados(SUM(P.Precio))+NORMALIZADOS.Puntos_Generados(SUM(E.Precio))),0)
+		- isnull(NORMALIZADOS.Canjes_Puntos_By_Dni(C.Dni, C.Nombre, C.Apellido),0)) AS Millas 
+		FROM NORMALIZADOS.Cliente C
+		JOIN NORMALIZADOS.Pasaje P ON P.Pasajero = C.Id
+		JOIN NORMALIZADOS.Encomienda E ON C.Id = E.Cliente
+		JOIN NORMALIZADOS.Compra Com ON P.Compra = Com.Id
+		JOIN NORMALIZADOS.Viaje V ON V.Id = Com.Viaje
+		WHERE C.Dni = @Dni AND DATEDIFF(DAY,DATEADD(DAY,365,GETDATE()), Com.Fecha) < 365 AND V.Fecha_Llegada IS NOT NULL
+		AND P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados)
+		GROUP BY C.Dni, C.Nombre, C.Apellido
+	END
+GO
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Get_Canjes_By_Dni](@Dni numeric(18,0))
+AS
+	BEGIN
+		SELECT C.Recompensa, C.Cantidad, '-'+CAST(SUM(C.Cantidad * R.Puntos) AS nvarchar(20)) AS Puntos, C.Fecha
+		FROM NORMALIZADOS.Canje C
+		JOIN NORMALIZADOS.Recompensa R
+		ON C.Recompensa = R.Id
+		JOIN NORMALIZADOS.Cliente Cli
+		ON Cli.Id = C.Cliente
+		WHERE Cli.Dni = @Dni AND DATEDIFF(DAY,DATEADD(DAY,365,GETDATE()), C.Fecha) < 365
+		GROUP BY C.Cliente, C.Recompensa, C.Cantidad, C.Fecha
+		ORDER BY 4
+	END
+GO
+
+CREATE PROCEDURE [NORMALIZADOS].[SP_Get_Detalle_Puntos_By_Dni](@Dni numeric(18,0))
+AS
+	BEGIN
+		SELECT P.Codigo, P.Precio, C.Fecha AS Fecha_De_Compra, C1.Nombre AS Origen, C2.Nombre AS Destino
+		FROM NORMALIZADOS.Pasaje P
+		JOIN NORMALIZADOS.Compra C
+		ON P.Compra = C.Id
+		JOIN NORMALIZADOS.Viaje V
+		ON C.Viaje = V.Id
+		JOIN NORMALIZADOS.Ruta_Aerea R
+		ON V.Ruta_Aerea = R.Id
+		JOIN NORMALIZADOS.Ciudad C1
+		ON C1.Id = R.Ciudad_Origen
+		JOIN NORMALIZADOS.Ciudad C2
+		ON C2.Id = R.Ciudad_Destino
+		JOIN NORMALIZADOS.Cliente Cli
+		ON Cli.Id = P.Pasajero
+		WHERE P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados) AND Cli.Dni = @Dni
+		AND DATEDIFF(DAY,DATEADD(DAY,365,GETDATE()), C.Fecha) < 365 AND V.Fecha_Llegada IS NOT NULL
+		ORDER BY 3
+	END
+GO
