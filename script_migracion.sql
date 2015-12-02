@@ -2250,7 +2250,7 @@ GO
 CREATE PROCEDURE [NORMALIZADOS].[SP_Get_Millas_By_Dni](@Dni numeric(18,0))
 AS
 	BEGIN
-		SELECT C.Dni, (isnull((NORMALIZADOS.Puntos_Generados(SUM(P.Precio))+NORMALIZADOS.Puntos_Generados(SUM(E.Precio))),0)
+		SELECT (isnull((NORMALIZADOS.Puntos_Generados(SUM(P.Precio))+NORMALIZADOS.Puntos_Generados(SUM(E.Precio))),0)
 		- isnull(NORMALIZADOS.Canjes_Puntos_By_Dni(C.Dni, C.Nombre, C.Apellido),0)) AS Millas 
 		FROM NORMALIZADOS.Cliente C
 		JOIN NORMALIZADOS.Pasaje P ON P.Pasajero = C.Id
