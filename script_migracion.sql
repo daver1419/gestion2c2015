@@ -2222,6 +2222,7 @@ BEGIN
 		AND RA.Ciudad_Destino=@aeropuertoDestino
 	WHERE V.Aeronave=@nroAeronave
 END
+GO
 
 ------------------------------------------------------------------
 --       Funciones y SP para Consulta de millas 
