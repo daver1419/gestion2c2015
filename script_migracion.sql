@@ -2240,7 +2240,7 @@ AS
 		JOIN NORMALIZADOS.Cliente Cli
 		ON Cli.Id = C.Cliente
 		WHERE Cli.Dni = @Dni AND Cli.Nombre = @nombre AND Cli.Apellido = @apellido
-		AND DATEDIFF(DAY,DATEADD(DAY,365,GETDATE()), C.Fecha) < 365
+		AND DATEDIFF(DAY,GETDATE(), C.Fecha) < 365
 		GROUP BY Cli.Dni, Cli.Nombre, Cli.Apellido
 
 		RETURN @Total
@@ -2257,7 +2257,7 @@ AS
 		JOIN NORMALIZADOS.Encomienda E ON C.Id = E.Cliente
 		JOIN NORMALIZADOS.Compra Com ON P.Compra = Com.Id
 		JOIN NORMALIZADOS.Viaje V ON V.Id = Com.Viaje
-		WHERE C.Dni = @Dni AND DATEDIFF(DAY,DATEADD(DAY,365,GETDATE()), Com.Fecha) < 365 AND V.Fecha_Llegada IS NOT NULL
+		WHERE C.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), Com.Fecha) < 365 AND V.Fecha_Llegada IS NOT NULL
 		AND P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados)
 		GROUP BY C.Dni, C.Nombre, C.Apellido
 	END
@@ -2266,14 +2266,14 @@ GO
 CREATE PROCEDURE [NORMALIZADOS].[SP_Get_Canjes_By_Dni](@Dni numeric(18,0))
 AS
 	BEGIN
-		SELECT C.Recompensa, C.Cantidad, '-'+CAST(SUM(C.Cantidad * R.Puntos) AS nvarchar(20)) AS Puntos, C.Fecha
+		SELECT R.Descripcion, C.Cantidad, '-'+CAST(SUM(C.Cantidad * R.Puntos) AS nvarchar(20)) AS Puntos, C.Fecha
 		FROM NORMALIZADOS.Canje C
 		JOIN NORMALIZADOS.Recompensa R
 		ON C.Recompensa = R.Id
 		JOIN NORMALIZADOS.Cliente Cli
 		ON Cli.Id = C.Cliente
-		WHERE Cli.Dni = @Dni AND DATEDIFF(DAY,DATEADD(DAY,365,GETDATE()), C.Fecha) < 365
-		GROUP BY C.Cliente, C.Recompensa, C.Cantidad, C.Fecha
+		WHERE Cli.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), C.Fecha) < 365
+		GROUP BY C.Cliente, R.Descripcion, C.Cantidad, C.Fecha
 		ORDER BY 4
 	END
 GO
@@ -2281,22 +2281,95 @@ GO
 CREATE PROCEDURE [NORMALIZADOS].[SP_Get_Detalle_Puntos_By_Dni](@Dni numeric(18,0))
 AS
 	BEGIN
-		SELECT P.Codigo, P.Precio, C.Fecha AS Fecha_De_Compra, C1.Nombre AS Origen, C2.Nombre AS Destino
-		FROM NORMALIZADOS.Pasaje P
-		JOIN NORMALIZADOS.Compra C
-		ON P.Compra = C.Id
-		JOIN NORMALIZADOS.Viaje V
-		ON C.Viaje = V.Id
-		JOIN NORMALIZADOS.Ruta_Aerea R
-		ON V.Ruta_Aerea = R.Id
-		JOIN NORMALIZADOS.Ciudad C1
-		ON C1.Id = R.Ciudad_Origen
-		JOIN NORMALIZADOS.Ciudad C2
-		ON C2.Id = R.Ciudad_Destino
-		JOIN NORMALIZADOS.Cliente Cli
-		ON Cli.Id = P.Pasajero
-		WHERE P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados) AND Cli.Dni = @Dni
-		AND DATEDIFF(DAY,DATEADD(DAY,365,GETDATE()), C.Fecha) < 365 AND V.Fecha_Llegada IS NOT NULL
-		ORDER BY 3
+	
+		SELECT S.Codigo, S.Puntos_Generados, S.Fecha_De_Compra, S.Origen, Destino
+		FROM(
+			SELECT P.Codigo AS Codigo, NORMALIZADOS.Puntos_Generados(P.Precio) AS Puntos_Generados, C.Fecha AS Fecha_De_Compra, C1.Nombre AS Origen, C2.Nombre AS Destino
+			FROM NORMALIZADOS.Pasaje P
+			JOIN NORMALIZADOS.Compra C
+			ON P.Compra = C.Id
+			JOIN NORMALIZADOS.Viaje V
+			ON C.Viaje = V.Id
+			JOIN NORMALIZADOS.Ruta_Aerea R
+			ON V.Ruta_Aerea = R.Id
+			JOIN NORMALIZADOS.Ciudad C1
+			ON C1.Id = R.Ciudad_Origen
+			JOIN NORMALIZADOS.Ciudad C2
+			ON C2.Id = R.Ciudad_Destino
+			JOIN NORMALIZADOS.Cliente Cli
+			ON Cli.Id = P.Pasajero
+			WHERE P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados) AND Cli.Dni = @Dni
+			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND V.Fecha_Llegada IS NOT NULL
+			
+			UNION ALL
+			
+			SELECT E.Codigo AS Codigo, NORMALIZADOS.Puntos_Generados(E.Precio) AS Puntos_Generados, C.Fecha AS Fecha_De_Compra, C1.Nombre AS Origen, C2.Nombre AS Destino
+			FROM NORMALIZADOS.Encomienda E
+			JOIN NORMALIZADOS.Compra C
+			ON E.Compra = C.Id
+			JOIN NORMALIZADOS.Viaje V
+			ON C.Viaje = V.Id
+			JOIN NORMALIZADOS.Ruta_Aerea R
+			ON V.Ruta_Aerea = R.Id
+			JOIN NORMALIZADOS.Ciudad C1
+			ON C1.Id = R.Ciudad_Origen
+			JOIN NORMALIZADOS.Ciudad C2
+			ON C2.Id = R.Ciudad_Destino
+			JOIN NORMALIZADOS.Cliente Cli
+			ON Cli.Id = E.Cliente
+			WHERE E.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Encomiendas_Canceladas) AND Cli.Dni = @Dni
+			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND V.Fecha_Llegada IS NOT NULL
+		) S
+		ORDER BY Fecha_De_Compra
+	END
+GO
+
+CREATE PROCEDURE NORMALIZADOS.SP_Canje_Millas(@dni numeric(18,0), @producto nvarchar(255), @cantidad int)
+AS
+	BEGIN
+
+		DECLARE @cliID numeric(18,0)
+
+		DECLARE @recID int
+		DECLARE @puntosP int
+
+		DECLARE @puntosCambio int
+
+		DECLARE @millasDisponibles int
+
+		DECLARE @stock int
+
+		SELECT @cliID = C.Id
+		FROM NORMALIZADOS.Cliente C
+		WHERE C.Dni = @dni
+
+		SELECT @recID = R.Id, @puntosP = R.Puntos
+		FROM NORMALIZADOS.Recompensa R
+		WHERE R.Descripcion LIKE @producto
+
+		SET @puntosCambio = @puntosP * @cantidad
+
+		EXEC @millasDisponibles = NORMALIZADOS.SP_Get_Millas_By_Dni @dni
+
+		IF(@millasDisponibles>@puntosCambio)
+			BEGIN
+				BEGIN TRAN T1
+					INSERT INTO NORMALIZADOS.Canje (Cliente, Recompensa, Cantidad, Fecha)
+					VALUES (@cliID, @recID, @cantidad, GETDATE());	
+
+					SELECT @stock = Stock FROM NORMALIZADOS.Recompensa WHERE Id = @recID
+
+					UPDATE NORMALIZADOS.Recompensa
+					SET Stock = @stock - 2
+					WHERE Id = @recID
+				COMMIT TRAN T1
+			END
+
+		ELSE
+			BEGIN
+				RAISERROR ('No es posible realizar el canje', 16, 1)
+				ROLLBACK
+				RETURN
+			END
 	END
 GO
