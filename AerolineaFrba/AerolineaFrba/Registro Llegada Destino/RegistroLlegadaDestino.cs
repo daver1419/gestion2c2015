@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AerolineaFrba.DAO;
 using AerolineaFrba.DTO;
-using System.Text.RegularExpressions;
+using AerolineaFrba.Helpers;
 
 namespace AerolineaFrba.Registro_Llegada_Destino
 {
@@ -37,12 +37,6 @@ namespace AerolineaFrba.Registro_Llegada_Destino
             comboBoxAeroOrigen.SelectedIndex = -1;
         }
 
-        private static bool buenFormatoMatricula(Control mitextbox)
-        {
-            Regex regex = new Regex(@"[a-zA-Z]{3}[\-]{1}[0-9]{3}$");
-            return regex.IsMatch(mitextbox.Text);
-        }
-
         public bool validar()
         {
             errorProvider1.Clear();
@@ -54,7 +48,7 @@ namespace AerolineaFrba.Registro_Llegada_Destino
                 ret = false;
             }
 
-            if (this.textBoxMatricula.Text == "" || !buenFormatoMatricula(this.textBoxMatricula))
+            if (this.textBoxMatricula.Text == "" || !Utility.buenFormatoMatricula(this.textBoxMatricula))
             {
                 errorProvider1.SetError(textBoxMatricula, "Debe ingresar una matricula en el formato XXX-000");
                 ret = false;

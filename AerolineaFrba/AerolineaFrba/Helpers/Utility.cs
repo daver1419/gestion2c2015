@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace AerolineaFrba.Helpers
 {
@@ -28,6 +29,12 @@ namespace AerolineaFrba.Helpers
 
                 }
             }
+        }
+
+        public static bool buenFormatoMatricula(Control mitextbox)
+        {
+            Regex regex = new Regex(@"[a-zA-Z]{3}[\-]{1}[0-9]{3}$");
+            return regex.IsMatch(mitextbox.Text);
         }
 
         public static void ShowError(string title, string text)

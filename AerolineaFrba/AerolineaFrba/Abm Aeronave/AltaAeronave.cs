@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using AerolineaFrba.DAO;
 using AerolineaFrba.DTO;
 using System.Text.RegularExpressions;
+using AerolineaFrba.Helpers;
 
 namespace AerolineaFrba.Abm_Aeronave
 {
@@ -106,7 +107,7 @@ namespace AerolineaFrba.Abm_Aeronave
                 errorProvider1.SetError(ComboModelo, "Debe seleccionar un modelo");
                 ret = true;
             }
-            if (this.TextMatricula.Text == "" || !buenFormatoMatricula(this.TextMatricula))
+            if (this.TextMatricula.Text == "" || !Utility.buenFormatoMatricula(this.TextMatricula))
             {
                 errorProvider1.SetError(TextMatricula, "Debe ingresar una matricula en el formato XXX-000");
                 ret = true;
@@ -122,12 +123,6 @@ namespace AerolineaFrba.Abm_Aeronave
                 ret = true;
             }
             return ret;
-        }
-
-        private static bool buenFormatoMatricula(Control mitextbox)
-        {
-            Regex regex = new Regex(@"[a-zA-Z]{3}[\-]{1}[0-9]{3}$");
-            return regex.IsMatch(mitextbox.Text);
         }
     }
 }

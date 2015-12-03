@@ -10,11 +10,19 @@ using System.Windows.Forms;
 
 namespace AerolineaFrba.Consulta_Millas
 {
-    public partial class Form1 : Form
+    public partial class ConsultaMillas : Form
     {
-        public Form1()
+        public ConsultaMillas()
         {
             InitializeComponent();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+
     }
 }

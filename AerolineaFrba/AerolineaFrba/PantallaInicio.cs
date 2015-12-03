@@ -165,7 +165,7 @@ namespace AerolineaFrba
 
                     case FuncionalidadDTO.Funcionalidad.CONSULTA_MILLAS:
 
-                        new Consulta_Millas.Form1() { Icon = this.Icon, StartPosition = FormStartPosition.CenterScreen }.ShowDialog(this);
+                        new Consulta_Millas.ConsultaMillas() { Icon = this.Icon, StartPosition = FormStartPosition.CenterScreen }.ShowDialog(this);
 
                         break;
 

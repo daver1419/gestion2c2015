@@ -189,16 +189,17 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Conexion\Conexion.cs" />
-    <Compile Include="Consulta Millas\Form1.cs">
+    <Compile Include="Consulta Millas\ConsultaMillas.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Consulta Millas\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Consulta Millas\ConsultaMillas.Designer.cs">
+      <DependentUpon>ConsultaMillas.cs</DependentUpon>
     </Compile>
     <Compile Include="DAO\AeronaveDAO.cs" />
     <Compile Include="DAO\ButacaDAO.cs" />
     <Compile Include="DAO\CiudadDAO.cs" />
     <Compile Include="DAO\ListadoDAO.cs" />
+    <Compile Include="DAO\MillasDAO.cs" />
     <Compile Include="DAO\ModeloDAO.cs" />
     <Compile Include="DAO\RutaDAO.cs" />
     <Compile Include="DAO\TipoButacaDAO.cs" />
@@ -353,6 +354,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Ruta\ModificacionRuta.resx">
       <DependentUpon>ModificacionRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Consulta Millas\ConsultaMillas.resx">
+      <DependentUpon>ConsultaMillas.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Generacion Viaje\GeneracionViaje.resx">
       <DependentUpon>GeneracionViaje.cs</DependentUpon>
