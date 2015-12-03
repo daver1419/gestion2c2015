@@ -37,6 +37,24 @@ namespace AerolineaFrba.Helpers
             return regex.IsMatch(mitextbox.Text);
         }
 
+        public static bool esDecimal(Control mitextbox)
+        {
+            Regex regex = new Regex(@"^[0-9]{1,9}([\.\,][0-9]{1,3})?$");
+            return regex.IsMatch(mitextbox.Text);
+        }
+
+        public static bool esNumero(Control mitextbox)
+        {
+            Regex regex = new Regex(@"^[0-9]+$");
+            return regex.IsMatch(mitextbox.Text);
+        }
+
+        public static bool esDNI(Control mitextbox)
+        {
+            Regex regex = new Regex(@"^[0-9]{1,8}$");
+            return regex.IsMatch(mitextbox.Text);
+        }
+
         public static void ShowError(string title, string text)
         {
 
