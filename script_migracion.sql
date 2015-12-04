@@ -2263,6 +2263,7 @@ AS
 	END
 GO
 
+--Procedure que trae los canjes realizados en el ultimo anio de un cliente dado su DNI.
 CREATE PROCEDURE [NORMALIZADOS].[SP_Get_Canjes_By_Dni](@Dni numeric(18,0))
 AS
 	BEGIN
@@ -2272,19 +2273,21 @@ AS
 		ON C.Recompensa = R.Id
 		JOIN NORMALIZADOS.Cliente Cli
 		ON Cli.Id = C.Cliente
-		WHERE Cli.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), C.Fecha) < 365
+		WHERE Cli.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), C.Fecha) < 365 AND C.Fecha < GETDATE()
 		GROUP BY C.Cliente, R.Descripcion, C.Cantidad, C.Fecha
 		ORDER BY 4
 	END
 GO
 
+-- Procedure que trae las millas generadas en el ultimo anio para un cliente dado por su DNI. Donde la aeronave haya arribado
+-- y el pasaje o la encomienda no haya sido cancelado/a.
 CREATE PROCEDURE [NORMALIZADOS].[SP_Get_Detalle_Puntos_By_Dni](@Dni numeric(18,0))
 AS
 	BEGIN
 	
-		SELECT S.Codigo, S.Puntos_Generados, S.Fecha_De_Compra, S.Origen, Destino
+		SELECT S.Codigo, S.Puntos, S.Fecha_De_Compra, S.Origen, Destino
 		FROM(
-			SELECT P.Codigo AS Codigo, NORMALIZADOS.Puntos_Generados(P.Precio) AS Puntos_Generados, C.Fecha AS Fecha_De_Compra, C1.Nombre AS Origen, C2.Nombre AS Destino
+			SELECT P.Codigo AS Codigo, NORMALIZADOS.Puntos_Generados(P.Precio) AS Puntos, C.Fecha AS Fecha_De_Compra, C1.Nombre AS Origen, C2.Nombre AS Destino
 			FROM NORMALIZADOS.Pasaje P
 			JOIN NORMALIZADOS.Compra C
 			ON P.Compra = C.Id
@@ -2299,11 +2302,11 @@ AS
 			JOIN NORMALIZADOS.Cliente Cli
 			ON Cli.Id = P.Pasajero
 			WHERE P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados) AND Cli.Dni = @Dni
-			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND V.Fecha_Llegada IS NOT NULL
+			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND C.Fecha < GETDATE() AND V.Fecha_Llegada IS NOT NULL
 			
 			UNION ALL
 			
-			SELECT E.Codigo AS Codigo, NORMALIZADOS.Puntos_Generados(E.Precio) AS Puntos_Generados, C.Fecha AS Fecha_De_Compra, C1.Nombre AS Origen, C2.Nombre AS Destino
+			SELECT E.Codigo AS Codigo, NORMALIZADOS.Puntos_Generados(E.Precio) AS Puntos, C.Fecha AS Fecha_De_Compra, C1.Nombre AS Origen, C2.Nombre AS Destino
 			FROM NORMALIZADOS.Encomienda E
 			JOIN NORMALIZADOS.Compra C
 			ON E.Compra = C.Id
@@ -2318,7 +2321,7 @@ AS
 			JOIN NORMALIZADOS.Cliente Cli
 			ON Cli.Id = E.Cliente
 			WHERE E.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Encomiendas_Canceladas) AND Cli.Dni = @Dni
-			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND V.Fecha_Llegada IS NOT NULL
+			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND C.Fecha < GETDATE() AND V.Fecha_Llegada IS NOT NULL
 		) S
 		ORDER BY Fecha_De_Compra
 	END
