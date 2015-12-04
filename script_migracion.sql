@@ -2376,3 +2376,13 @@ AS
 			END
 	END
 GO
+
+
+
+CREATE PROCEDURE SP_Get_Recompensas
+AS
+	BEGIN
+		SELECT Descripcion, Puntos, Stock
+		FROM NORMALIZADOS.Recompensa
+	END
+GO
