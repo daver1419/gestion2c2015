@@ -176,11 +176,11 @@
     <Compile Include="Abm Ruta\ModificacionRuta.Designer.cs">
       <DependentUpon>ModificacionRuta.cs</DependentUpon>
     </Compile>
-    <Compile Include="Canje Millas\Form1.cs">
+    <Compile Include="Canje Millas\ListadoDeRecompensas.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Canje Millas\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Canje Millas\ListadoDeRecompensas.Designer.cs">
+      <DependentUpon>ListadoDeRecompensas.cs</DependentUpon>
     </Compile>
     <Compile Include="Compra\Form1.cs">
       <SubType>Form</SubType>
@@ -355,6 +355,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Ruta\ModificacionRuta.resx">
       <DependentUpon>ModificacionRuta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Canje Millas\ListadoDeRecompensas.resx">
+      <DependentUpon>ListadoDeRecompensas.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Consulta Millas\ConsultaMillas.resx">
       <DependentUpon>ConsultaMillas.cs</DependentUpon>

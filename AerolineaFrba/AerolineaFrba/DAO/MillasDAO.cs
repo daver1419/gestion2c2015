@@ -15,6 +15,41 @@ namespace AerolineaFrba.DAO
         {
         }
 
+        public static string getMillas(string dni)
+        {
+            string Millas = "0";
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[SP_Get_Millas_By_Dni]", conn);
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.Parameters.AddWithValue("@dni", dni);
+                SqlDataReader dataReaderPuntos = comm.ExecuteReader();
+                if (dataReaderPuntos.HasRows)
+                {
+                    while (dataReaderPuntos.Read())
+                    {
+                        Millas = Convert.ToString(dataReaderPuntos["Millas"]);
+                    }
+                }
+            }
+            return Millas;
+        }
+
+        public static DataTable getRecompensas()
+        {
+            DataTable dt = new DataTable();
+            SqlDataAdapter da = new SqlDataAdapter();
+            using (SqlConnection Conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Get_Recompensas]", Conn);
+                com.CommandType = CommandType.StoredProcedure;
+
+                da.SelectCommand = com;
+                da.Fill(dt);
+                return dt;
+            }
+        }
+
         public static List<MillasDTO> getListadoMillas(string dni)
         {
             using (SqlConnection conn = Conexion.Conexion.obtenerConexion())

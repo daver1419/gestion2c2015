@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AerolineaFrba.Helpers;
 using AerolineaFrba.DAO;
-using AerolineaFrba.DTO;
 
-namespace AerolineaFrba.Consulta_Millas
+namespace AerolineaFrba.Canje_Millas
 {
-    public partial class ConsultaMillas : Form
+    public partial class ListadoDeRecompensas : Form
     {
-        public ConsultaMillas()
+        public ListadoDeRecompensas()
         {
             InitializeComponent();
         }
@@ -23,12 +22,9 @@ namespace AerolineaFrba.Consulta_Millas
         private void button1_Click(object sender, EventArgs e)
         {
             if (validar()) return;
-            List<MillasDTO> listadoMillas = MillasDAO.getListadoMillas(this.textDNI.Text);
-            listadoMillas = (from m in listadoMillas
-                          orderby m.Fecha
-                          select m).ToList();
-            dataGridView1.DataSource = listadoMillas;
-            this.textBox2.Text = UpdateDataGridViewRowColors();
+            this.textBox2.Text = MillasDAO.getMillas(this.textDNI.Text);
+            UpdateDataGridViewRowColors();
+
         }
 
         private bool validar()
@@ -43,42 +39,40 @@ namespace AerolineaFrba.Consulta_Millas
             return ret;
         }
 
-        private string UpdateDataGridViewRowColors()
+        private void UpdateDataGridViewRowColors()
         {
-            int PuntosGenerados = 0;
-
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
-                int RowType = Convert.ToInt32(row.Cells[0].Value);
+                int MillasNecesarias = Convert.ToInt32(row.Cells[1].Value);
+                int MillasDisponibles = Convert.ToInt32(this.textBox2.Text);
 
-                if (RowType == 2)
+                if (MillasNecesarias > MillasDisponibles)
                 {
                     row.DefaultCellStyle.BackColor = Color.Red;
                     row.DefaultCellStyle.ForeColor = Color.White;
                 }
-                else if (RowType == 1)
+                else if (MillasNecesarias < MillasDisponibles)
                 {
                     row.DefaultCellStyle.BackColor = Color.Green;
                     row.DefaultCellStyle.ForeColor = Color.Black;
                 }
 
-                PuntosGenerados = PuntosGenerados + Convert.ToInt32(row.Cells[2].Value);
-
             }
-            dataGridView1.Columns[0].Visible = false;
+        }
 
-            return PuntosGenerados.ToString();
+        private void ListadoDeRecompensas_Load(object sender, EventArgs e)
+        {
+            dataGridView1.DataSource = MillasDAO.getRecompensas();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             this.errorProvider1.Clear();
-            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = MillasDAO.getRecompensas();
             dataGridView1.DefaultCellStyle.BackColor = Color.White;
             dataGridView1.DefaultCellStyle.ForeColor = Color.Black;
             this.textBox2.Text = "";
             this.textDNI.Text = "";
         }
-
     }
 }

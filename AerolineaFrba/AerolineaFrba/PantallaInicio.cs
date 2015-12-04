@@ -171,7 +171,7 @@ namespace AerolineaFrba
 
                     case FuncionalidadDTO.Funcionalidad.CANJE_MILLAS:
 
-                        new Canje_Millas.Form1() { Icon = this.Icon, StartPosition = FormStartPosition.CenterScreen }.ShowDialog(this);
+                        new Canje_Millas.ListadoDeRecompensas() { Icon = this.Icon, StartPosition = FormStartPosition.CenterScreen }.ShowDialog(this);
 
                         break;
 
