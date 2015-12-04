@@ -2257,8 +2257,8 @@ AS
 		JOIN NORMALIZADOS.Encomienda E ON C.Id = E.Cliente
 		JOIN NORMALIZADOS.Compra Com ON P.Compra = Com.Id
 		JOIN NORMALIZADOS.Viaje V ON V.Id = Com.Viaje
-		WHERE C.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), Com.Fecha) < 365 AND V.Fecha_Llegada IS NOT NULL
-		AND P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados)
+		WHERE C.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), Com.Fecha) < 365 AND V.Fecha_Llegada IS NOT NULL AND Com.Fecha < GETDATE()
+		AND P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados) AND E.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Encomiendas_Canceladas)
 		GROUP BY C.Dni, C.Nombre, C.Apellido
 	END
 GO
