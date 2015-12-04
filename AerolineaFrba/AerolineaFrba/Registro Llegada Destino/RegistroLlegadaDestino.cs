@@ -35,6 +35,9 @@ namespace AerolineaFrba.Registro_Llegada_Destino
             textBoxMatricula.Text = "";
             comboBoxAeroDest.SelectedIndex = -1;
             comboBoxAeroOrigen.SelectedIndex = -1;
+            dataGridView1.DataSource = null;
+            labelInforme.Text = "";
+            labelInforme.Hide();
         }
 
         public bool validar()
@@ -64,18 +67,27 @@ namespace AerolineaFrba.Registro_Llegada_Destino
                 aeronave.Matricula = textBoxMatricula.Text;
                 IList<AeronaveDTO> listaAeronaves=AeronaveDAO.GetByMatricula(aeronave);
                 this.dataGridView1.DataSource = listaAeronaves;
-                if (!AeronaveDAO.ArriboCorrectamente(listaAeronaves.FirstOrDefault(), (CiudadDTO)comboBoxAeroDest.SelectedItem))
+                if (!RegistroLlegadaDestinoDAO.ArriboCorrectamente(listaAeronaves.FirstOrDefault(), (CiudadDTO)comboBoxAeroOrigen.SelectedItem, (CiudadDTO)comboBoxAeroDest.SelectedItem))
                 {
                     labelInforme.Show();
                     labelInforme.ForeColor = System.Drawing.Color.Red;
-                    labelInforme.Text="La aeronave no llego al aeropuerto donde debia arribar correctamente";
+                    labelInforme.Text = "La aeronave no llego al aeropuerto donde debia arribar correctamente";
                 }
                 else
                 {
                     labelInforme.Show();
+                    labelInforme.ForeColor = System.Drawing.Color.Green;
                     labelInforme.Text = "La aeronave llego al aeropuerto destino correctamente";
                 }
 
+                if (!RegistroLlegadaDestinoDAO.Save(listaAeronaves.FirstOrDefault(), (CiudadDTO)comboBoxAeroOrigen.SelectedItem, (CiudadDTO)comboBoxAeroDest.SelectedItem,dateTimePicker1.Value))
+                {
+                    MessageBox.Show("No se pudo registrar la llegada a destino correctamente");
+                }
+                else
+                {
+                    MessageBox.Show("Se registro la llegada a destino exitosamente");
+                }
             }
         }
     }
