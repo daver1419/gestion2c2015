@@ -2240,7 +2240,7 @@ AS
 		JOIN NORMALIZADOS.Cliente Cli
 		ON Cli.Id = C.Cliente
 		WHERE Cli.Dni = @Dni AND Cli.Nombre = @nombre AND Cli.Apellido = @apellido
-		AND DATEDIFF(DAY,GETDATE(), C.Fecha) < 365
+		AND DATEDIFF(DAY,GETDATE(), C.Fecha) < 365 AND C.Fecha < GETDATE()
 		GROUP BY Cli.Dni, Cli.Nombre, Cli.Apellido
 
 		RETURN @Total
