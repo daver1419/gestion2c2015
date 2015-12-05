@@ -182,6 +182,18 @@
     <Compile Include="Canje Millas\ListadoDeRecompensas.Designer.cs">
       <DependentUpon>ListadoDeRecompensas.cs</DependentUpon>
     </Compile>
+    <Compile Include="Compra\CompraPasajeEncomienda.cs" />
+    <Compile Include="Compra\CompraPasajeEncomienda.Designer.cs">
+      <DependentUpon>CompraPasajeEncomienda.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Compra\IngresoDatos.cs" />
+    <Compile Include="Compra\IngresoDatos.Designer.cs">
+      <DependentUpon>IngresoDatos.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Compra\IngresoDni.cs" />
+    <Compile Include="Compra\IngresoDni.Designer.cs">
+      <DependentUpon>IngresoDni.cs</DependentUpon>
+    </Compile>
     <Compile Include="Conexion\Conexion.cs" />
     <Compile Include="Consulta Millas\ConsultaMillas.cs">
       <SubType>Form</SubType>
@@ -192,6 +204,7 @@
     <Compile Include="DAO\AeronaveDAO.cs" />
     <Compile Include="DAO\ButacaDAO.cs" />
     <Compile Include="DAO\CiudadDAO.cs" />
+    <Compile Include="DAO\ClienteDAO.cs" />
     <Compile Include="DAO\ListadoDAO.cs" />
     <Compile Include="DAO\MillasDAO.cs" />
     <Compile Include="DAO\ModeloDAO.cs" />
@@ -215,6 +228,7 @@
     <Compile Include="DTO\ButacaDTO.cs" />
     <Compile Include="DTO\CiudadDTO.cs" />
     <Compile Include="DTO\AeronaveFiltersDTO.cs" />
+    <Compile Include="DTO\ClienteDTO.cs" />
     <Compile Include="DTO\MillasDTO.cs" />
     <Compile Include="DTO\ModeloDTO.cs" />
     <Compile Include="DTO\RecompensaDTO.cs" />
@@ -356,6 +370,15 @@
     <EmbeddedResource Include="Canje Millas\ListadoDeRecompensas.resx">
       <DependentUpon>ListadoDeRecompensas.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Compra\CompraPasajeEncomienda.resx">
+      <DependentUpon>CompraPasajeEncomienda.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Compra\IngresoDatos.resx">
+      <DependentUpon>IngresoDatos.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Compra\IngresoDni.resx">
+      <DependentUpon>IngresoDni.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Consulta Millas\ConsultaMillas.resx">
       <DependentUpon>ConsultaMillas.cs</DependentUpon>
     </EmbeddedResource>
@@ -405,9 +428,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Compra\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

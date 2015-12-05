@@ -26,14 +26,14 @@ namespace AerolineaFrba.DTO
 
         public override bool Equals(object obj)
         {
-            var item = obj as AeronaveDTO;
+            var item = obj as ClienteDTO;
 
             if (item == null)
             {
                 return false;
             }
 
-            return item.Matricula == this.Matricula;
+            return item.IdCliente == this.IdCliente;
         }
     }
 }
