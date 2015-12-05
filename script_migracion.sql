@@ -2412,7 +2412,7 @@ AS
 					SELECT @stock = Stock FROM NORMALIZADOS.Recompensa WHERE Id = @recID
 
 					UPDATE NORMALIZADOS.Recompensa
-					SET Stock = @stock - 2
+					SET Stock = @stock - @cantidad
 					WHERE Id = @recID
 				COMMIT TRAN T1
 			END
