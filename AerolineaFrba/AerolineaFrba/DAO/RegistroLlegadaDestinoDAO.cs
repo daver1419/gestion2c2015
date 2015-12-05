@@ -34,6 +34,13 @@ namespace AerolineaFrba.DAO
             }
             return retValue > 0;
         }
+        /// <summary>
+        /// Devuelve true si la aeronave arribo correctamente
+        /// </summary>
+        /// <param name="aeronave"></param>
+        /// <param name="ciudadOrigen"></param>
+        /// <param name="aeropDestino"></param>
+        /// <returns></returns>
         public static bool ArriboCorrectamente(AeronaveDTO aeronave,CiudadDTO ciudadOrigen ,CiudadDTO aeropDestino)
         {
             using (SqlConnection conn = Conexion.Conexion.obtenerConexion())

@@ -159,7 +159,7 @@ namespace AerolineaFrba
 
                     case FuncionalidadDTO.Funcionalidad.COMPRA_PASAJE_ENCOMIENDA:
 
-                        new Compra.Form1() { Icon = this.Icon, StartPosition = FormStartPosition.CenterParent }.ShowDialog(this);
+                        new Compra.CompraPasajeEncomienda() { Icon = this.Icon, StartPosition = FormStartPosition.CenterParent }.ShowDialog(this);
 
                         break;
 
