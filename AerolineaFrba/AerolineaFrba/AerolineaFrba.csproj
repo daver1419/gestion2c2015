@@ -188,6 +188,12 @@
     <Compile Include="Compra\CompraPasajeEncomienda.Designer.cs">
       <DependentUpon>CompraPasajeEncomienda.cs</DependentUpon>
     </Compile>
+    <Compile Include="Compra\FormaPago.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Compra\FormaPago.Designer.cs">
+      <DependentUpon>FormaPago.cs</DependentUpon>
+    </Compile>
     <Compile Include="Compra\IngresoDatos.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -199,6 +205,12 @@
     </Compile>
     <Compile Include="Compra\IngresoDni.Designer.cs">
       <DependentUpon>IngresoDni.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Compra\SeleccionButaca.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Compra\SeleccionButaca.Designer.cs">
+      <DependentUpon>SeleccionButaca.cs</DependentUpon>
     </Compile>
     <Compile Include="Conexion\Conexion.cs" />
     <Compile Include="Consulta Millas\ConsultaMillas.cs">
@@ -379,11 +391,17 @@
     <EmbeddedResource Include="Compra\CompraPasajeEncomienda.resx">
       <DependentUpon>CompraPasajeEncomienda.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Compra\FormaPago.resx">
+      <DependentUpon>FormaPago.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Compra\IngresoDatos.resx">
       <DependentUpon>IngresoDatos.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Compra\IngresoDni.resx">
       <DependentUpon>IngresoDni.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Compra\SeleccionButaca.resx">
+      <DependentUpon>SeleccionButaca.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Consulta Millas\ConsultaMillas.resx">
       <DependentUpon>ConsultaMillas.cs</DependentUpon>

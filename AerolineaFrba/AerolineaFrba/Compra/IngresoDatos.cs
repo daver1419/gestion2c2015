@@ -14,20 +14,16 @@ namespace AerolineaFrba.Compra
 {
     public partial class IngresoDatos : Form
     {
-        private ViajeDTO viaje;
         private string DNI;
 
-        public IngresoDatos(ViajeDTO unViaje,string unDNI)
+        public IngresoDatos(string unDNI)
         {
             InitializeComponent();
-            this.viaje = unViaje;
             this.DNI= unDNI;
         }
 
         private void IngresoDatos_Load(object sender, EventArgs e)
         {
-            labelKgs.Enabled = false;
-            numericUpDown1.Enabled = false;
 
             if (!string.IsNullOrEmpty( this.DNI))
             {
@@ -45,7 +41,40 @@ namespace AerolineaFrba.Compra
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private bool validar()
+        { 
+            //AGREGAR VALIDACIONES
+            return true;
+        }
+
+        private void buttonRegistrar_Click(object sender, EventArgs e)
+        {
+            if (validar())
+            {
+                ClienteDTO cliente = new ClienteDTO();
+                cliente.Nombre = textBoxNom.Text;
+                cliente.Apellido = textBoxApe.Text;
+                cliente.Direccion = textBoxDir.Text;
+                cliente.Dni =Convert.ToInt32( textBoxDni.Text);
+                cliente.Fecha_Nac = dateTimePicker1.Value;
+                cliente.Mail = textBoxMail.Text;
+                cliente.Telefono = Convert.ToInt32(textBoxTel.Text);
+
+                if (!ClienteDAO.Save(cliente))
+                {
+                    MessageBox.Show("No se pudo guardar el cliente");
+                }
+                else
+                {
+                    MessageBox.Show("Se guardo el cliente con exito");
+                }
+
+                SeleccionButaca ventana = new SeleccionButaca();
+                ventana.ShowDialog(this);
+            }
+        }
+
+        private void buttonLimpiar_Click(object sender, EventArgs e)
         {
 
         }

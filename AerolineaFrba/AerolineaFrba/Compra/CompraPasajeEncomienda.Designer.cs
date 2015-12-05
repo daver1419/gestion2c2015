@@ -36,12 +36,17 @@
             this.label3 = new System.Windows.Forms.Label();
             this.comboBoxCiudDest = new System.Windows.Forms.ComboBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.ColumnCompra = new System.Windows.Forms.DataGridViewButtonColumn();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.label4 = new System.Windows.Forms.Label();
             this.dateTimePickerSal = new System.Windows.Forms.DateTimePicker();
-            this.ColumnCompra = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.comboBoxCantPas = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.comboBoxKg = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
@@ -107,6 +112,11 @@
             this.dataGridView1.TabIndex = 6;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
+            // ColumnCompra
+            // 
+            this.ColumnCompra.HeaderText = "Comprar";
+            this.ColumnCompra.Name = "ColumnCompra";
+            // 
             // buttonLimpiar
             // 
             this.buttonLimpiar.Location = new System.Drawing.Point(50, 202);
@@ -146,16 +156,69 @@
             this.dateTimePickerSal.Size = new System.Drawing.Size(200, 20);
             this.dateTimePickerSal.TabIndex = 10;
             // 
-            // ColumnCompra
+            // label5
             // 
-            this.ColumnCompra.HeaderText = "Comprar";
-            this.ColumnCompra.Name = "ColumnCompra";
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(658, 252);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(140, 13);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Ingrese los siguientes datos:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(658, 280);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(142, 13);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "Cantidad Pasajes a comprar:";
+            // 
+            // comboBoxCantPas
+            // 
+            this.comboBoxCantPas.FormattingEnabled = true;
+            this.comboBoxCantPas.Items.AddRange(new object[] {
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"});
+            this.comboBoxCantPas.Location = new System.Drawing.Point(661, 307);
+            this.comboBoxCantPas.Name = "comboBoxCantPas";
+            this.comboBoxCantPas.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxCantPas.TabIndex = 13;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(661, 340);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(69, 13);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "Kgs a enviar:";
+            // 
+            // comboBoxKg
+            // 
+            this.comboBoxKg.FormattingEnabled = true;
+            this.comboBoxKg.Location = new System.Drawing.Point(661, 365);
+            this.comboBoxKg.Name = "comboBoxKg";
+            this.comboBoxKg.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxKg.TabIndex = 15;
             // 
             // CompraPasajeEncomienda
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(683, 423);
+            this.ClientSize = new System.Drawing.Size(810, 423);
+            this.Controls.Add(this.comboBoxKg);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.comboBoxCantPas);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.dateTimePickerSal);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.button1);
@@ -192,5 +255,10 @@
         private System.Windows.Forms.DateTimePicker dateTimePickerSal;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DataGridViewButtonColumn ColumnCompra;
+        private System.Windows.Forms.ComboBox comboBoxKg;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox comboBoxCantPas;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label5;
     }
 }

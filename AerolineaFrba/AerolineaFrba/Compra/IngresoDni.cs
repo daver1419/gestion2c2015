@@ -14,12 +14,10 @@ namespace AerolineaFrba.Compra
 {
     public partial class IngresoDni : Form
     {
-        private ViajeDTO viaje;
 
-        public IngresoDni(ViajeDTO unViaje)
+        public IngresoDni()
         {
             InitializeComponent();
-            this.viaje = unViaje;
         }
 
         private bool validar()
@@ -42,7 +40,7 @@ namespace AerolineaFrba.Compra
         {
             if (validar())
             {
-                IngresoDatos ventana = new IngresoDatos(viaje,textBox1.Text);
+                IngresoDatos ventana = new IngresoDatos(textBox1.Text);
             }
         }
     }

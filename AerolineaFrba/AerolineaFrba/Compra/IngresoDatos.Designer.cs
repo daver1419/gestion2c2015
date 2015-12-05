@@ -34,20 +34,16 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.labelKgs = new System.Windows.Forms.Label();
             this.textBoxNom = new System.Windows.Forms.TextBox();
             this.textBoxDni = new System.Windows.Forms.TextBox();
             this.textBoxDir = new System.Windows.Forms.TextBox();
             this.textBoxTel = new System.Windows.Forms.TextBox();
             this.textBoxMail = new System.Windows.Forms.TextBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.buttonAtras = new System.Windows.Forms.Button();
-            this.buttonSig = new System.Windows.Forms.Button();
-            this.buttonAgregarEnco = new System.Windows.Forms.Button();
+            this.buttonLimpiar = new System.Windows.Forms.Button();
+            this.buttonRegistrar = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxApe = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -104,15 +100,6 @@
             this.label6.TabIndex = 5;
             this.label6.Text = "Fecha de nacimiento";
             // 
-            // labelKgs
-            // 
-            this.labelKgs.AutoSize = true;
-            this.labelKgs.Location = new System.Drawing.Point(47, 254);
-            this.labelKgs.Name = "labelKgs";
-            this.labelKgs.Size = new System.Drawing.Size(85, 13);
-            this.labelKgs.TabIndex = 6;
-            this.labelKgs.Text = "Cantidad de Kgs";
-            // 
             // textBoxNom
             // 
             this.textBoxNom.Location = new System.Drawing.Point(221, 38);
@@ -148,13 +135,6 @@
             this.textBoxMail.Size = new System.Drawing.Size(100, 20);
             this.textBoxMail.TabIndex = 11;
             // 
-            // numericUpDown1
-            // 
-            this.numericUpDown1.Location = new System.Drawing.Point(221, 247);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(100, 20);
-            this.numericUpDown1.TabIndex = 12;
-            // 
             // dateTimePicker1
             // 
             this.dateTimePicker1.Location = new System.Drawing.Point(221, 211);
@@ -162,33 +142,25 @@
             this.dateTimePicker1.Size = new System.Drawing.Size(200, 20);
             this.dateTimePicker1.TabIndex = 13;
             // 
-            // buttonAtras
+            // buttonLimpiar
             // 
-            this.buttonAtras.Location = new System.Drawing.Point(50, 299);
-            this.buttonAtras.Name = "buttonAtras";
-            this.buttonAtras.Size = new System.Drawing.Size(75, 23);
-            this.buttonAtras.TabIndex = 14;
-            this.buttonAtras.Text = "Atras";
-            this.buttonAtras.UseVisualStyleBackColor = true;
+            this.buttonLimpiar.Location = new System.Drawing.Point(50, 264);
+            this.buttonLimpiar.Name = "buttonLimpiar";
+            this.buttonLimpiar.Size = new System.Drawing.Size(75, 23);
+            this.buttonLimpiar.TabIndex = 14;
+            this.buttonLimpiar.Text = "Limpiar";
+            this.buttonLimpiar.UseVisualStyleBackColor = true;
+            this.buttonLimpiar.Click += new System.EventHandler(this.buttonLimpiar_Click);
             // 
-            // buttonSig
+            // buttonRegistrar
             // 
-            this.buttonSig.Location = new System.Drawing.Point(401, 299);
-            this.buttonSig.Name = "buttonSig";
-            this.buttonSig.Size = new System.Drawing.Size(75, 23);
-            this.buttonSig.TabIndex = 15;
-            this.buttonSig.Text = "Siguiente";
-            this.buttonSig.UseVisualStyleBackColor = true;
-            this.buttonSig.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // buttonAgregarEnco
-            // 
-            this.buttonAgregarEnco.Location = new System.Drawing.Point(357, 244);
-            this.buttonAgregarEnco.Name = "buttonAgregarEnco";
-            this.buttonAgregarEnco.Size = new System.Drawing.Size(119, 23);
-            this.buttonAgregarEnco.TabIndex = 16;
-            this.buttonAgregarEnco.Text = "Agregar encomienda";
-            this.buttonAgregarEnco.UseVisualStyleBackColor = true;
+            this.buttonRegistrar.Location = new System.Drawing.Point(400, 264);
+            this.buttonRegistrar.Name = "buttonRegistrar";
+            this.buttonRegistrar.Size = new System.Drawing.Size(75, 23);
+            this.buttonRegistrar.TabIndex = 15;
+            this.buttonRegistrar.Text = "Registrar";
+            this.buttonRegistrar.UseVisualStyleBackColor = true;
+            this.buttonRegistrar.Click += new System.EventHandler(this.buttonRegistrar_Click);
             // 
             // label7
             // 
@@ -210,20 +182,17 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(530, 345);
+            this.ClientSize = new System.Drawing.Size(530, 322);
             this.Controls.Add(this.textBoxApe);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.buttonAgregarEnco);
-            this.Controls.Add(this.buttonSig);
-            this.Controls.Add(this.buttonAtras);
+            this.Controls.Add(this.buttonRegistrar);
+            this.Controls.Add(this.buttonLimpiar);
             this.Controls.Add(this.dateTimePicker1);
-            this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.textBoxMail);
             this.Controls.Add(this.textBoxTel);
             this.Controls.Add(this.textBoxDir);
             this.Controls.Add(this.textBoxDni);
             this.Controls.Add(this.textBoxNom);
-            this.Controls.Add(this.labelKgs);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
@@ -233,7 +202,6 @@
             this.Name = "IngresoDatos";
             this.Text = "Ingreso de Datos";
             this.Load += new System.EventHandler(this.IngresoDatos_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -247,17 +215,14 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label labelKgs;
         private System.Windows.Forms.TextBox textBoxNom;
         private System.Windows.Forms.TextBox textBoxDni;
         private System.Windows.Forms.TextBox textBoxDir;
         private System.Windows.Forms.TextBox textBoxTel;
         private System.Windows.Forms.TextBox textBoxMail;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
-        private System.Windows.Forms.Button buttonAtras;
-        private System.Windows.Forms.Button buttonSig;
-        private System.Windows.Forms.Button buttonAgregarEnco;
+        private System.Windows.Forms.Button buttonLimpiar;
+        private System.Windows.Forms.Button buttonRegistrar;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBoxApe;
     }
