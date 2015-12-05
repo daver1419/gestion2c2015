@@ -322,7 +322,6 @@ GO
 CREATE TABLE [NORMALIZADOS].[Viaje](
 	[Id] [int] PRIMARY KEY IDENTITY (0,1),
 	[Fecha_Salida] [datetime] NOT NULL,
-	[Fecha_Llegada] [datetime],
 	[Fecha_Llegada_Estimada] [datetime] NOT NULL,
 	[Ruta_Aerea] [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Ruta_Aerea](Id),
 	[Aeronave] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Aeronave] (Numero)
@@ -331,14 +330,13 @@ GO
 
 INSERT INTO [NORMALIZADOS].[Viaje](
 	[Fecha_Salida],
-	[Fecha_Llegada],
 	[Fecha_Llegada_Estimada],
 	[Ruta_Aerea],
 	[Aeronave]
 	)
 (
 
-	SELECT V.Fecha_Salida,V.Fecha_Llegada,V.Fecha_LLegada_Estimada,R.Id,A.Numero
+	SELECT V.Fecha_Salida,V.Fecha_LLegada_Estimada,R.Id,A.Numero
 	FROM [NORMALIZADOS].[#ViajeTemporal] V
 	JOIN [NORMALIZADOS].[Aeronave] A ON V.Aeronave_Matricula = A.Matricula
 	JOIN [NORMALIZADOS].[Ciudad] C1
@@ -348,10 +346,34 @@ INSERT INTO [NORMALIZADOS].[Viaje](
 	JOIN [NORMALIZADOS].[Ruta_Aerea] R ON  V.Ruta_Codigo = R.Ruta_Codigo AND R.Ciudad_Origen = C1.ID AND R.Ciudad_Destino = C2.ID
 
 )
+/******************************************************************
+					  REGISTRO_DE_LLEGADA_DESTINO
+*******************************************************************/
+CREATE TABLE [NORMALIZADOS].[Registro_De_Llegada_Destino]
+(
+	[Viaje] int FOREIGN KEY REFERENCES [NORMALIZADOS].[Viaje](Id),
+	[Aeropuerto_Destino] int FOREIGN KEY REFERENCES [NORMALIZADOS].[Ciudad](Id),
+	[Fecha_Llegada] datetime NOT NULL
+)
 GO
-
-
-
+INSERT INTO [NORMALIZADOS].[Registro_De_Llegada_Destino](Viaje,Aeropuerto_Destino,Fecha_Llegada)
+	SELECT V.Id,C2.Id,VT.Fecha_LLegada
+	FROM [NORMALIZADOS].[Viaje] V
+	JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+		ON V.Ruta_Aerea=RA.Id
+	JOIN [NORMALIZADOS].[Ciudad] C1
+		ON RA.Ciudad_Destino=C1.Id
+	JOIN [NORMALIZADOS].[Ciudad] C2
+		ON RA.Ciudad_Origen=C2.Id
+	JOIN [NORMALIZADOS].[Aeronave] A
+		ON V.Aeronave=A.Numero
+	JOIN [NORMALIZADOS].[#ViajeTemporal] VT
+		ON VT.Aeronave_Matricula=A.Matricula
+		AND VT.Ruta_Codigo=RA.Ruta_Codigo
+		AND VT.Ciudad_Destino=C1.Nombre
+		AND VT.Ciudad_Origen=C2.Nombre
+	WHERE V.Fecha_Salida=VT.Fecha_Salida
+GO
 /******************************************************************
 					  TIPO_BUTACA
 *******************************************************************/
@@ -2208,19 +2230,23 @@ GO
 ------------------------------------------------------------------
 --         SP devuelve 1 si la ruta destino para una aeronave 
 --			en un viaje coincide con el aeropuerto destino
-			
 ------------------------------------------------------------------
-CREATE PROCEDURE [NORMALIZADOS].[SP_Aeronave_Arribo_Correctamente]
-@nroAeronave int,
-@aeropuertoDestino int
+CREATE PROCEDURE [NORMALIZADOS].[SP_Arribo_OK]
+@paramNroAeronave int,
+@paramCiudadOrigen int,
+@paramAeropuertoDestino int
 AS
 BEGIN
 	SELECT 1
 	FROM [NORMALIZADOS].[Viaje] V
 	JOIN [NORMALIZADOS].[Ruta_Aerea] RA
 		ON V.Ruta_Aerea=RA.Id
-		AND RA.Ciudad_Destino=@aeropuertoDestino
-	WHERE V.Aeronave=@nroAeronave
+		AND RA.Ciudad_Destino=@paramAeropuertoDestino
+		AND RA.Ciudad_Origen=@paramCiudadOrigen
+	WHERE V.Aeronave=@paramNroAeronave
+		AND V.Id NOT IN (SELECT Viaje
+							FROM [NORMALIZADOS].[Registro_De_Llegada_Destino]
+						)
 END
 GO
 
@@ -2386,3 +2412,29 @@ AS
 		FROM NORMALIZADOS.Recompensa
 	END
 GO
+------------------------------------------------------------------
+--         SP registra llegada a destino de una aeronave
+--			en un determinado viaje
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SaveRegistroLlegadaDestino]
+@paramMatricula nvarchar(255),
+@paramAeropuertoDestino int,
+@paramCiudadOrigen int,
+@paramFechaLlegada datetime
+AS
+BEGIN
+	INSERT INTO [NORMALIZADOS].[Registro_De_Llegada_Destino](Viaje,Aeropuerto_Destino,Fecha_Llegada)
+	SELECT V.Id,@paramAeropuertoDestino,@paramFechaLlegada
+	FROM [NORMALIZADOS].[Viaje] V
+	JOIN [NORMALIZADOS].[Aeronave] A
+		ON V.Aeronave=A.Numero
+		AND A.Matricula=@paramMatricula
+	JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+		ON RA.Id=V.Ruta_Aerea
+		AND RA.Ciudad_Origen=@paramCiudadOrigen
+	WHERE V.Id NOT IN (SELECT Viaje
+						FROM [NORMALIZADOS].[Registro_De_Llegada_Destino]
+						)
+
+	SELECT @@ROWCOUNT
+END

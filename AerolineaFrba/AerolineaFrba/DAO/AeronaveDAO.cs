@@ -362,16 +362,5 @@ namespace AerolineaFrba.DAO
                 return getAeronaves(dataReader);
             }
         }
-        public static bool ArriboCorrectamente(AeronaveDTO aeronave,CiudadDTO aeropDestino)
-        {
-            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
-            {
-                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[SP_Aeronave_Arribo_Correctamente]", conn);
-                comm.CommandType = CommandType.StoredProcedure;
-                comm.Parameters.AddWithValue("@aeropuertoDestino", aeropDestino.IdCiudad);
-                comm.Parameters.AddWithValue("@nroAeronave", aeronave.Numero);
-                return comm.ExecuteReader().HasRows;
-            }
-        }
     }
 }

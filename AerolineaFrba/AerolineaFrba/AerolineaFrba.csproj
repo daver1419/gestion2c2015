@@ -201,6 +201,7 @@
     <Compile Include="DAO\ListadoDAO.cs" />
     <Compile Include="DAO\MillasDAO.cs" />
     <Compile Include="DAO\ModeloDAO.cs" />
+    <Compile Include="DAO\RegistroLlegadaDestinoDAO.cs" />
     <Compile Include="DAO\RutaDAO.cs" />
     <Compile Include="DAO\TipoButacaDAO.cs" />
     <Compile Include="DAO\RolxFuncDAO.cs" />
@@ -223,6 +224,7 @@
     <Compile Include="DTO\MillasDTO.cs" />
     <Compile Include="DTO\ModeloDTO.cs" />
     <Compile Include="DTO\RecompensaDTO.cs" />
+    <Compile Include="DTO\RegistroLlegadaDestinoDTO.cs" />
     <Compile Include="DTO\RutaDTO.cs" />
     <Compile Include="DTO\TipoButacaDTO.cs" />
     <Compile Include="DTO\RolxFuncDTO.cs" />
