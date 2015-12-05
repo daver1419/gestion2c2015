@@ -2333,8 +2333,10 @@ AS
 			ON C2.Id = R.Ciudad_Destino
 			JOIN NORMALIZADOS.Cliente Cli
 			ON Cli.Id = P.Pasajero
+			JOIN NORMALIZADOS.Registro_De_Llegada_Destino RD
+			ON RD.Viaje = V.Id
 			WHERE P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados) AND Cli.Dni = @Dni
-			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND C.Fecha < GETDATE() AND V.Fecha_Llegada IS NOT NULL
+			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND C.Fecha < GETDATE() AND V.Id IN (SELECT Viaje FROM NORMALIZADOS.Registro_De_Llegada_Destino)
 			
 			UNION ALL
 			
@@ -2352,8 +2354,10 @@ AS
 			ON C2.Id = R.Ciudad_Destino
 			JOIN NORMALIZADOS.Cliente Cli
 			ON Cli.Id = E.Cliente
+			JOIN NORMALIZADOS.Registro_De_Llegada_Destino RD
+			ON RD.Viaje = V.Id
 			WHERE E.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Encomiendas_Canceladas) AND Cli.Dni = @Dni
-			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND C.Fecha < GETDATE() AND V.Fecha_Llegada IS NOT NULL
+			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND C.Fecha < GETDATE() AND V.Id IN (SELECT Viaje FROM NORMALIZADOS.Registro_De_Llegada_Destino)
 		) S
 		ORDER BY Fecha_De_Compra
 	END
