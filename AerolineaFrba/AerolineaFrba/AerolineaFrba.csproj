@@ -182,15 +182,21 @@
     <Compile Include="Canje Millas\ListadoDeRecompensas.Designer.cs">
       <DependentUpon>ListadoDeRecompensas.cs</DependentUpon>
     </Compile>
-    <Compile Include="Compra\CompraPasajeEncomienda.cs" />
+    <Compile Include="Compra\CompraPasajeEncomienda.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Compra\CompraPasajeEncomienda.Designer.cs">
       <DependentUpon>CompraPasajeEncomienda.cs</DependentUpon>
     </Compile>
-    <Compile Include="Compra\IngresoDatos.cs" />
+    <Compile Include="Compra\IngresoDatos.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Compra\IngresoDatos.Designer.cs">
       <DependentUpon>IngresoDatos.cs</DependentUpon>
     </Compile>
-    <Compile Include="Compra\IngresoDni.cs" />
+    <Compile Include="Compra\IngresoDni.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Compra\IngresoDni.Designer.cs">
       <DependentUpon>IngresoDni.cs</DependentUpon>
     </Compile>
