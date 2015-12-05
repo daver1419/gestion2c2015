@@ -222,6 +222,7 @@
     <Compile Include="DTO\AeronaveFiltersDTO.cs" />
     <Compile Include="DTO\MillasDTO.cs" />
     <Compile Include="DTO\ModeloDTO.cs" />
+    <Compile Include="DTO\RecompensaDTO.cs" />
     <Compile Include="DTO\RutaDTO.cs" />
     <Compile Include="DTO\TipoButacaDTO.cs" />
     <Compile Include="DTO\RolxFuncDTO.cs" />

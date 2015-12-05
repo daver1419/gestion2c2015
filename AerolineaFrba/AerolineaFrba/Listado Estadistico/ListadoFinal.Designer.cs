@@ -35,6 +35,7 @@
             // 
             // gridListado
             // 
+            this.gridListado.AllowUserToAddRows = false;
             this.gridListado.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridListado.Location = new System.Drawing.Point(12, 57);
             this.gridListado.Name = "gridListado";

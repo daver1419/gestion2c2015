@@ -2382,7 +2382,7 @@ GO
 CREATE PROCEDURE NORMALIZADOS.SP_Get_Recompensas
 AS
 	BEGIN
-		SELECT Descripcion, Puntos, Stock
+		SELECT Id, Descripcion, Puntos, Stock
 		FROM NORMALIZADOS.Recompensa
 	END
 GO

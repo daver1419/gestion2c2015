@@ -28,7 +28,8 @@ namespace AerolineaFrba.Consulta_Millas
                           orderby m.Fecha
                           select m).ToList();
             dataGridView1.DataSource = listadoMillas;
-            this.textBox2.Text = UpdateDataGridViewRowColors();
+            this.textBox2.Text = MillasDAO.getMillas(this.textDNI.Text);
+            UpdateDataGridViewRowColors();
         }
 
         private bool validar()
@@ -43,10 +44,8 @@ namespace AerolineaFrba.Consulta_Millas
             return ret;
         }
 
-        private string UpdateDataGridViewRowColors()
+        private void UpdateDataGridViewRowColors()
         {
-            int PuntosGenerados = 0;
-
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
                 int RowType = Convert.ToInt32(row.Cells[0].Value);
@@ -62,12 +61,8 @@ namespace AerolineaFrba.Consulta_Millas
                     row.DefaultCellStyle.ForeColor = Color.Black;
                 }
 
-                PuntosGenerados = PuntosGenerados + Convert.ToInt32(row.Cells[2].Value);
-
             }
             dataGridView1.Columns[0].Visible = false;
-
-            return PuntosGenerados.ToString();
         }
 
         private void button2_Click(object sender, EventArgs e)

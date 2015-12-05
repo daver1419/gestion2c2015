@@ -15,6 +15,20 @@ namespace AerolineaFrba.DAO
         {
         }
 
+        public static bool doCanje(int dni, int id, int cantidad)
+        {
+            using (SqlConnection Conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[SP_Canje_Millas]", Conn);
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.Parameters.AddWithValue("@dni", dni);
+                comm.Parameters.AddWithValue("@producto", id);
+                comm.Parameters.AddWithValue("@cantidad", cantidad);
+
+                return comm.ExecuteNonQuery() > 0;
+            }
+        }
+
         public static string getMillas(string dni)
         {
             string Millas = "0";
@@ -35,19 +49,38 @@ namespace AerolineaFrba.DAO
             return Millas;
         }
 
-        public static DataTable getRecompensas()
+        public static List<RecompensaDTO> getRecompensas()
         {
-            DataTable dt = new DataTable();
-            SqlDataAdapter da = new SqlDataAdapter();
             using (SqlConnection Conn = Conexion.Conexion.obtenerConexion())
             {
                 SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Get_Recompensas]", Conn);
                 com.CommandType = CommandType.StoredProcedure;
+                SqlDataReader dataReaderRecompensas = com.ExecuteReader();
 
-                da.SelectCommand = com;
-                da.Fill(dt);
-                return dt;
+                return getRecompensasFromReader(dataReaderRecompensas);
             }
+        }
+
+        private static List<RecompensaDTO> getRecompensasFromReader(SqlDataReader dataReader)
+        {
+            List<RecompensaDTO> ListaRecompensas = new List<RecompensaDTO>();
+            if (dataReader.HasRows)
+            {
+                while (dataReader.Read())
+                {
+                    RecompensaDTO Recompensa = new RecompensaDTO();
+
+                    Recompensa.Id = Convert.ToInt32(dataReader["Id"]);
+                    Recompensa.Descripcion = Convert.ToString(dataReader["Descripcion"]);
+                    Recompensa.Stock = Convert.ToInt32(dataReader["Stock"]);
+                    Recompensa.Millas = Convert.ToInt32(dataReader["Puntos"]);
+
+                    ListaRecompensas.Add(Recompensa);
+                }
+                dataReader.Close();
+                dataReader.Dispose();
+            }
+            return ListaRecompensas;
         }
 
         public static List<MillasDTO> getListadoMillas(string dni)
