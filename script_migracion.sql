@@ -2354,6 +2354,28 @@ AS
 	END
 GO
 
+CREATE FUNCTION [NORMALIZADOS].[Get_Millas_By_Dni](@Dni numeric(18,0))
+RETURNS int
+AS
+	BEGIN
+		DECLARE @millas int
+
+		SELECT @millas= (isnull(NORMALIZADOS.Puntos_Generados(SUM(P.Precio)),0)+isnull(NORMALIZADOS.Puntos_Generados(SUM(E.Precio)),0)
+		- isnull(NORMALIZADOS.Canjes_Puntos_By_Dni(C.Dni, C.Nombre, C.Apellido),0))
+		FROM NORMALIZADOS.Cliente C
+		JOIN NORMALIZADOS.Pasaje P ON P.Pasajero = C.Id
+		JOIN NORMALIZADOS.Encomienda E ON C.Id = E.Cliente
+		JOIN NORMALIZADOS.Compra Com ON P.Compra = Com.Id
+		JOIN NORMALIZADOS.Viaje V ON V.Id = Com.Viaje
+		JOIN NORMALIZADOS.Registro_De_Llegada_Destino R ON V.Id = R.Viaje
+		WHERE C.Dni = @Dni AND DATEDIFF(DAY,DATEADD(DAY,400,GETDATE()), Com.Fecha) < 365 AND V.Id IN (SELECT Viaje FROM NORMALIZADOS.Registro_De_Llegada_Destino)-- AND Com.Fecha < GETDATE()
+		AND P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados) AND E.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Encomiendas_Canceladas)
+		GROUP BY C.Dni, C.Nombre, C.Apellido
+
+		RETURN @millas
+	END
+GO
+
 CREATE PROCEDURE NORMALIZADOS.SP_Canje_Millas(@dni numeric(18,0), @producto nvarchar(255), @cantidad int)
 AS
 	BEGIN
@@ -2379,7 +2401,7 @@ AS
 
 		SET @puntosCambio = @puntosP * @cantidad
 
-		EXEC @millasDisponibles = NORMALIZADOS.SP_Get_Millas_By_Dni @dni
+		SELECT @millasDisponibles = NORMALIZADOS.Get_Millas_By_Dni(@dni)
 
 		IF(@millasDisponibles>@puntosCambio)
 			BEGIN
@@ -2398,12 +2420,9 @@ AS
 		ELSE
 			BEGIN
 				RAISERROR ('No es posible realizar el canje', 16, 1)
-				ROLLBACK
-				RETURN
 			END
 	END
 GO
-
 
 
 CREATE PROCEDURE NORMALIZADOS.SP_Get_Recompensas
