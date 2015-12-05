@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AerolineaFrba.Helpers;
 using AerolineaFrba.DAO;
+using AerolineaFrba.DTO;
 
 namespace AerolineaFrba.Canje_Millas
 {
@@ -24,6 +25,7 @@ namespace AerolineaFrba.Canje_Millas
             if (validar()) return;
             this.textBox2.Text = MillasDAO.getMillas(this.textDNI.Text);
             UpdateDataGridViewRowColors();
+            dataGridView1.Enabled = true;
 
         }
 
@@ -43,7 +45,7 @@ namespace AerolineaFrba.Canje_Millas
         {
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
-                int MillasNecesarias = Convert.ToInt32(row.Cells[1].Value);
+                int MillasNecesarias = Convert.ToInt32(row.Cells[4].Value);
                 int MillasDisponibles = Convert.ToInt32(this.textBox2.Text);
 
                 if (MillasNecesarias > MillasDisponibles)
@@ -56,13 +58,14 @@ namespace AerolineaFrba.Canje_Millas
                     row.DefaultCellStyle.BackColor = Color.Green;
                     row.DefaultCellStyle.ForeColor = Color.Black;
                 }
-
             }
         }
 
         private void ListadoDeRecompensas_Load(object sender, EventArgs e)
         {
             dataGridView1.DataSource = MillasDAO.getRecompensas();
+            dataGridView1.Columns[2].Visible = false;
+            dataGridView1.Enabled = false;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -73,6 +76,74 @@ namespace AerolineaFrba.Canje_Millas
             dataGridView1.DefaultCellStyle.ForeColor = Color.Black;
             this.textBox2.Text = "";
             this.textDNI.Text = "";
+            dataGridView1.Enabled = false;
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridView1.Rows[e.RowIndex].Cells[1].Value == null)
+            {
+                MessageBox.Show("Debe introducir una cantidad a canjear.");
+                return;
+            }
+            //Ignora los clicks que no son sobre los elementos de la columna de botones
+            if (e.RowIndex < 0 || e.ColumnIndex != dataGridView1.Columns.IndexOf(dataGridView1.Columns["Seleccionar"]) || dataGridView1.DataSource == null)
+                return;
+
+            RecompensaDTO Recompensa = (RecompensaDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
+            int Cantidad = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[1].Value);
+
+            if(Cantidad == 0)
+            {
+                MessageBox.Show("La cantidad a canjear debe ser mayor a 0.");
+                return;
+            }
+
+            if (Recompensa.Stock > 0)
+            {
+                if (Recompensa.Millas * Cantidad < Convert.ToInt32(this.textBox2.Text))
+                {
+                    if (MillasDAO.doCanje(Convert.ToInt32(this.textDNI.Text), Recompensa.Id, Cantidad))
+                    {
+                        MessageBox.Show("Canje exitoso, imprima el comprobante y pase a retirar su recompensa por cualquiera de nuestras sucursales.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Su canje no se ha efectuado con exito.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("No le alcanzan las millas para lo que intenta canjear.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("No hay stock suficiente del producto seleccionado.");
+            }
+
+
+        }
+
+        private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            e.Control.KeyPress -= new KeyPressEventHandler(Column1_KeyPress);
+            if (dataGridView1.CurrentCell.ColumnIndex == 1) //Desired Column
+            {
+                TextBox tb = e.Control as TextBox;
+                if (tb != null)
+                {
+                    tb.KeyPress += new KeyPressEventHandler(Column1_KeyPress);
+                }
+            }
+        }
+
+        private void Column1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
         }
     }
 }
