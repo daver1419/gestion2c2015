@@ -441,7 +441,8 @@ GO
 ******************************************************************/
 CREATE TABLE [NORMALIZADOS].[Tipo_Tarjeta](
 	[Id] [int] PRIMARY KEY IDENTITY(0,1) NOT NULL,
-	[Nombre] [nvarchar](255) NOT NULL
+	[Nombre] [nvarchar](255) NOT NULL,
+	[Numero_Cuotas] [int] NOT NULL
 )
 GO
 /*****************************************************************
@@ -2139,3 +2140,78 @@ AS
 		RETURN @retorno
 	END
 GO
+------------------------------------------------------------------
+--         SP devuelve datos de cliente a partir del DNI
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetCliente_SEL_ByDNI]
+@paramDNI numeric(18,0)
+AS
+BEGIN
+	SELECT*
+	FROM [NORMALIZADOS].[Cliente]
+	WHERE Dni=@paramDNI
+END
+GO
+------------------------------------------------------------------
+--         SP actualiza datos de un cliente a partir del DNI
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[UpdateCliente]
+@paramNombre nvarchar(255),
+@paramApellido nvarchar(255),
+@paramDni numeric(18,0),
+@paramDireccion nvarchar(255),
+@paramFechaNac datetime,
+@paramMail nvarchar(255),
+@paramTelefono numeric(18,0)
+AS
+BEGIN
+	UPDATE [NORMALIZADOS].[Cliente]
+	SET Nombre=@paramDni,
+		Apellido=@paramApellido,
+		Direccion=@paramDireccion,
+		Fecha_Nac=@paramFechaNac,
+		Mail=@paramMail,
+		Telefono=@paramTelefono
+	WHERE Dni=@paramDni
+
+	SELECT @@ROWCOUNT
+END
+------------------------------------------------------------------
+--         SP registra datos de un cliente
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SaveCliente_INS](
+@paramNombre nvarchar(255),
+@paramApellido nvarchar(255),
+@paramDni numeric(18,0),
+@paramDireccion nvarchar(255),
+@paramFechaNac datetime,
+@paramMail nvarchar(255),
+@paramTelefono numeric(18,0),
+)
+AS
+BEGIN
+	INSERT INTO [NORMALIZADOS].[Cliente](Nombre,
+										Apellido,
+										Dni,
+										Telefono,
+										Direccion,
+										Fecha_Nac,
+										Mail)
+							VALUES(@paramNombre,
+									@paramApellido,
+									@paramDni,
+									@paramTelefono,
+									@paramDireccion,
+									@paramFechaNac,
+									@paramMail)
+END
+GO
+------------------------------------------------------------------
+--         SP devuelve todos los tipos de pago
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetAllTipoPago_SEL]
+AS
+BEGIN
+	SELECT Id,Descripcion
+	FROM [Tipo_Pago]
+END
