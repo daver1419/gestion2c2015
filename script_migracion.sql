@@ -2097,7 +2097,7 @@ BEGIN
 
 	SELECT @@ROWCOUNT
 END
-
+GO
 ----------------------------------------------------------------
 -- Valida que el pasajero no tenga otro vuelo superpuesto con 
 -- el que se va a comprar
