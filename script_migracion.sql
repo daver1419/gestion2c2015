@@ -1474,27 +1474,36 @@ GO
 ------------------------------------------------------------------
 -- Funcion para obtener los KGs disponibles en un viaje
 ------------------------------------------------------------------
-CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@fecha_salida datetime,
+CREATE FUNCTION NORMALIZADOS.KGs_Disponibles(@fecha_salida datetime,
 												@ciudad_origen int, @ciudad_destino int, 
 												@tipo_servicio int)
-RETURNS int
-AS 
+RETURNS numeric(18,0)
+AS
 	BEGIN
+		DECLARE @KGtotal numeric(18,0)
+		DECLARE @viaje int
+		DECLARE @KGusados numeric(18,0)
+		DECLARE @KGdisponibles numeric (18,0)
 		
-		DECLARE @butacas_disponibles int
-		
-		SELECT @butacas_disponibles = (NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(A.Matricula)-
-										NORMALIZADOS.GetCantidadButacasOcupadas(@fecha_salida,@ciudad_origen,@ciudad_destino,@tipo_servicio))
+		SELECT @KGtotal = A.KG_Disponibles, @viaje = V.Id
 		FROM NORMALIZADOS.Viaje V
-		JOIN NORMALIZADOS.Aeronave A ON V.Aeronave = A.Numero
-		JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
-		WHERE R.Ciudad_Origen = @ciudad_origen AND R.Ciudad_Destino = @ciudad_destino AND R.Tipo_Servicio = @tipo_servicio 
+		JOIN NORMALIZADOS.Ruta_Aerea R
+		ON V.Ruta_Aerea = R.Id
+		JOIN NORMALIZADOS.Aeronave A
+		ON A.Numero = V.Aeronave
+		WHERE R.Ciudad_Origen = @ciudad_origen AND R.Ciudad_Destino = @ciudad_destino AND R.Tipo_Servicio = @tipo_servicio
 		AND YEAR(V.Fecha_Salida) = YEAR(@fecha_salida) AND MONTH(V.Fecha_Salida) = MONTH(@fecha_salida) AND DAY(V.Fecha_Salida) = DAY(@fecha_salida)
-		
-		RETURN @butacas_disponibles
+
+		SELECT @KGusados = SUM(E.Kg)
+		FROM NORMALIZADOS.Encomienda E
+		JOIN NORMALIZADOS.Compra C ON E.Compra = C.Id
+		WHERE C.Viaje = @viaje AND E.id NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
+
+		SET @KGdisponibles = @KGtotal - @KGusados
+
+		RETURN @KGdisponibles
 	END
 GO
-
 
 --------------------------------------------------------------------------------
 --			FUNCION devuelve cantidad de butacas ocupadas
