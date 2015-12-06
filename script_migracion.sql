@@ -2109,3 +2109,45 @@ BEGIN
 
 	SELECT @@ROWCOUNT
 END
+
+----------------------------------------------------------------
+-- Valida que el pasajero no tenga otro vuelo superpuesto con 
+-- el que se va a comprar
+----------------------------------------------------------------
+
+CREATE FUNCTION NORMALIZADOS.Validar_PasajesEnCompra(@pasajero numeric(18,0), @fecha_llegada_estimada datetime, @fecha_salida datetime)
+RETURNS BIT
+AS
+	BEGIN
+
+		DECLARE @retorno BIT
+
+		IF EXISTS(SELECT 1
+				FROM NORMALIZADOS.Pasaje P
+				JOIN NORMALIZADOS.Compra C
+				ON P.Compra = C.Id
+				JOIN NORMALIZADOS.Viaje V
+				ON V.Id = C.Viaje
+				WHERE P.Pasajero = @pasajero AND (@fecha_salida BETWEEN V.Fecha_Salida AND V.Fecha_Llegada_Estimada OR
+				@fecha_llegada_estimada BETWEEN V.Fecha_Salida AND V.Fecha_Llegada_Estimada)
+				AND P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados))
+			SET @retorno = 0
+
+		ELSE
+			IF EXISTS (SELECT 1
+					FROM NORMALIZADOS.Pasaje P
+					JOIN NORMALIZADOS.Compra C
+					ON P.Compra = C.Id
+					JOIN NORMALIZADOS.Viaje V
+					ON V.Id = C.Viaje
+					WHERE P.Pasajero = @pasajero AND @fecha_llegada_estimada < V.Fecha_Llegada_Estimada
+					AND @fecha_salida > V.Fecha_Salida
+					AND P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados))
+			SET @retorno = 0
+
+				ELSE
+					SET @retorno = 1
+
+		RETURN @retorno
+	END
+GO
