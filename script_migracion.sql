@@ -1904,7 +1904,7 @@ AS
 	END
 GO
 
-CREATE  PROCEDURE [NORMALIZADOS].[SP_Get_Millas_By_Dni](@Dni numeric(18,0))
+CREATE PROCEDURE [NORMALIZADOS].[SP_Get_Millas_By_Dni](@Dni numeric(18,0))
 AS
 	BEGIN
 		IF EXISTS (SELECT 1 FROM NORMALIZADOS.Cliente C WHERE C.Dni = @Dni)
@@ -2176,6 +2176,7 @@ BEGIN
 
 	SELECT @@ROWCOUNT
 END
+GO
 ------------------------------------------------------------------
 --         SP registra datos de un cliente
 ------------------------------------------------------------------
@@ -2215,3 +2216,4 @@ BEGIN
 	SELECT Id,Descripcion
 	FROM [Tipo_Pago]
 END
+GO
