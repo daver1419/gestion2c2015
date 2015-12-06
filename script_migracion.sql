@@ -2103,7 +2103,7 @@ END
 -- el que se va a comprar
 ----------------------------------------------------------------
 
-CREATE FUNCTION NORMALIZADOS.Validar_PasajesEnCompra(@pasajero numeric(18,0), @fecha_llegada_estimada datetime, @fecha_salida datetime)
+CREATE FUNCTION NORMALIZADOS.Validar_PasajesEnCompra(@pasajero numeric(18,0), @fecha_salida datetime, @fecha_llegada_estimada datetime)
 RETURNS BIT
 AS
 	BEGIN
@@ -2128,8 +2128,8 @@ AS
 					ON P.Compra = C.Id
 					JOIN NORMALIZADOS.Viaje V
 					ON V.Id = C.Viaje
-					WHERE P.Pasajero = @pasajero AND @fecha_llegada_estimada < V.Fecha_Llegada_Estimada
-					AND @fecha_salida > V.Fecha_Salida
+					WHERE P.Pasajero = @pasajero AND @fecha_llegada_estimada > V.Fecha_Llegada_Estimada
+					AND @fecha_salida < V.Fecha_Salida
 					AND P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados))
 			SET @retorno = 0
 
