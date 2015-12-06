@@ -1866,9 +1866,10 @@ BEGIN
 	FROM [NORMALIZADOS].[Aeronave] A
 	JOIN [NORMALIZADOS].[Viaje] V
 		ON A.Numero=V.Aeronave
-		AND( (@fechaDesde BETWEEN V.Fecha_Salida AND V.Fecha_Llegada)
-		OR (@fechaHasta BETWEEN V.Fecha_Salida AND V.Fecha_Llegada))
-	WHERE A.Numero=@nroAeronave
+	JOIN [NORMALIZADOS].[Registro_De_Llegada_Destino] R
+		ON V.Id = R.Viaje
+	WHERE A.Numero=@nroAeronave AND( (@fechaDesde BETWEEN V.Fecha_Salida AND R.Fecha_Llegada)
+		OR (@fechaHasta BETWEEN V.Fecha_Salida AND R.Fecha_Llegada))
 END
 GO
 ------------------------------------------------------------------
