@@ -7,14 +7,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AerolineaFrba.DTO;
+using AerolineaFrba.DAO;
 
 namespace AerolineaFrba.Compra
 {
     public partial class SeleccionButaca : Form
     {
-        public SeleccionButaca()
+        private AeronaveDTO aeronave;
+
+        public SeleccionButaca(AeronaveDTO unaAeronave)
         {
             InitializeComponent();
+            this.aeronave = unaAeronave;
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            //Ignora los clicks que no son sobre los elementos de la columna de botones
+            if (e.RowIndex < 0 || e.ColumnIndex != dataGridView1.Columns.IndexOf(dataGridView1.Columns["ColumnSel"]))
+                return;
+            ButacaDTO unaButaca = (ButacaDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
+            this.aeronave.ListaButacas.Add(unaButaca);//CHEQUEAR QUE LE AÑADA ESTA COSA
+            this.Close();
+        }
+
+        private void SeleccionButaca_Load(object sender, EventArgs e)
+        {
+            this.dataGridView1.DataSource=ButacaDAO.GetByAeronave(this.aeronave);
         }
     }
 }

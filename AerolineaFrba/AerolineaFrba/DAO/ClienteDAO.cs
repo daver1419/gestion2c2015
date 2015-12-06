@@ -83,5 +83,29 @@ namespace AerolineaFrba.DAO
             }
             return retValue > 0;
         }
+        /// <summary>
+        /// Actualiza datos de cliente
+        /// </summary>
+        /// <param name="cliente"></param>
+        /// <returns></returns>
+        public static bool Actualizar(ClienteDTO cliente)
+        {
+            int retValue = 0;
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[UpdateCliente]", conn);
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.Parameters.AddWithValue("@paramNombre", cliente.Nombre);
+                comm.Parameters.AddWithValue("@paramApellido", cliente.Apellido);
+                comm.Parameters.AddWithValue("@paramDni", cliente.Dni);
+                comm.Parameters.AddWithValue("@paramDireccion", cliente.Direccion);
+                comm.Parameters.AddWithValue("@paramFechaNac", cliente.Fecha_Nac);
+                comm.Parameters.AddWithValue("@paramMail", cliente.Mail);
+                comm.Parameters.AddWithValue("@paramTelefono", cliente.Telefono);
+
+                retValue = comm.ExecuteNonQuery();
+            }
+            return retValue > 0;
+        }
     }
 }

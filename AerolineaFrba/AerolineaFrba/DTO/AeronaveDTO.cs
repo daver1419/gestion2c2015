@@ -16,6 +16,7 @@ namespace AerolineaFrba.DTO
         public FabricanteDTO Fabricante{get;set;}
         public DateTime? FechaAlta{get;set;}
         public List<ButacaDTO> ListaButacas { get; set; }
+        public int CantidadButacasLibres { get; set; }
 
         public AeronaveDTO(){
             this.ListaButacas = new List<ButacaDTO>();

@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.label1 = new System.Windows.Forms.Label();
             this.ColumnSel = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -43,6 +43,12 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(556, 150);
             this.dataGridView1.TabIndex = 0;
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            // 
+            // ColumnSel
+            // 
+            this.ColumnSel.HeaderText = "Seleccionar";
+            this.ColumnSel.Name = "ColumnSel";
             // 
             // label1
             // 
@@ -54,11 +60,6 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Por favor seleccione una de las siguientes butacas:";
             // 
-            // ColumnSel
-            // 
-            this.ColumnSel.HeaderText = "Seleccionar";
-            this.ColumnSel.Name = "ColumnSel";
-            // 
             // SeleccionButaca
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -68,6 +69,7 @@
             this.Controls.Add(this.dataGridView1);
             this.Name = "SeleccionButaca";
             this.Text = "Seleccion de butaca";
+            this.Load += new System.EventHandler(this.SeleccionButaca_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

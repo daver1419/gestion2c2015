@@ -113,6 +113,7 @@
             this.textBoxDni.Name = "textBoxDni";
             this.textBoxDni.Size = new System.Drawing.Size(100, 20);
             this.textBoxDni.TabIndex = 8;
+            this.textBoxDni.Leave += new System.EventHandler(this.textBoxDni_Leave);
             // 
             // textBoxDir
             // 

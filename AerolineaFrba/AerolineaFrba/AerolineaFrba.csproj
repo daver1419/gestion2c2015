@@ -188,6 +188,12 @@
     <Compile Include="Compra\CompraPasajeEncomienda.Designer.cs">
       <DependentUpon>CompraPasajeEncomienda.cs</DependentUpon>
     </Compile>
+    <Compile Include="Compra\DatosTitularTarjeta.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Compra\DatosTitularTarjeta.Designer.cs">
+      <DependentUpon>DatosTitularTarjeta.cs</DependentUpon>
+    </Compile>
     <Compile Include="Compra\FormaPago.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -199,12 +205,6 @@
     </Compile>
     <Compile Include="Compra\IngresoDatos.Designer.cs">
       <DependentUpon>IngresoDatos.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Compra\IngresoDni.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Compra\IngresoDni.Designer.cs">
-      <DependentUpon>IngresoDni.cs</DependentUpon>
     </Compile>
     <Compile Include="Compra\SeleccionButaca.cs">
       <SubType>Form</SubType>
@@ -230,10 +230,12 @@
     <Compile Include="DAO\RutaDAO.cs" />
     <Compile Include="DAO\TipoButacaDAO.cs" />
     <Compile Include="DAO\RolxFuncDAO.cs" />
+    <Compile Include="DAO\TipoPagoDAO.cs" />
     <Compile Include="DAO\TipoServicioDAO.cs" />
     <Compile Include="DAO\FabricanteDAO.cs" />
     <Compile Include="DAO\FuncionalidadDAO.cs" />
     <Compile Include="DAO\RolDAO.cs" />
+    <Compile Include="DAO\TipoTarjetaDAO.cs" />
     <Compile Include="DAO\ViajeDAO.cs" />
     <Compile Include="Devolucion\Form1.cs">
       <SubType>Form</SubType>
@@ -254,10 +256,12 @@
     <Compile Include="DTO\RutaDTO.cs" />
     <Compile Include="DTO\TipoButacaDTO.cs" />
     <Compile Include="DTO\RolxFuncDTO.cs" />
+    <Compile Include="DTO\TipoPagoDTO.cs" />
     <Compile Include="DTO\TipoServicioDTO.cs" />
     <Compile Include="DTO\FabricanteDTO.cs" />
     <Compile Include="DTO\FuncionalidadDTO.cs" />
     <Compile Include="DTO\RolDTO.cs" />
+    <Compile Include="DTO\TipoTarjetaDTO.cs" />
     <Compile Include="DTO\UsuarioDTO.cs" />
     <Compile Include="DTO\ViajeDTO.cs" />
     <Compile Include="Generacion Viaje\GeneracionViaje.cs">
@@ -391,14 +395,14 @@
     <EmbeddedResource Include="Compra\CompraPasajeEncomienda.resx">
       <DependentUpon>CompraPasajeEncomienda.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Compra\DatosTitularTarjeta.resx">
+      <DependentUpon>DatosTitularTarjeta.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Compra\FormaPago.resx">
       <DependentUpon>FormaPago.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Compra\IngresoDatos.resx">
       <DependentUpon>IngresoDatos.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Compra\IngresoDni.resx">
-      <DependentUpon>IngresoDni.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Compra\SeleccionButaca.resx">
       <DependentUpon>SeleccionButaca.cs</DependentUpon>
