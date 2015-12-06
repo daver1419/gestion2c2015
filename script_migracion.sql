@@ -1474,78 +1474,9 @@ GO
 ------------------------------------------------------------------
 -- Funcion para obtener los KGs disponibles en un viaje
 ------------------------------------------------------------------
-CREATE FUNCTION NORMALIZADOS.KGs_Disponibles (@fecha_salida datetime,
-												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255), 
-												@tipo_servicio nvarchar(255))
-RETURNS numeric(18,0)
-AS
-	BEGIN
-		DECLARE @KGtotal numeric(18,0)
-		DECLARE @viaje int
-		DECLARE @KGusados numeric(18,0)
-		DECLARE @KGdisponibles numeric (18,0)
-		
-		SELECT @KGtotal = A.KG_Disponibles, @viaje = V.Id
-		FROM NORMALIZADOS.Viaje V
-		JOIN NORMALIZADOS.Ruta_Aerea R
-		ON V.Ruta_Aerea = R.Id
-		JOIN NORMALIZADOS.Aeronave A
-		ON A.Numero = V.Aeronave
-		JOIN NORMALIZADOS.Ciudad C1
-		ON C1.Id = R.Ciudad_Origen
-		JOIN NORMALIZADOS.Ciudad C2
-		ON C2.Id = R.Ciudad_Destino
-		JOIN NORMALIZADOS.Servicio S
-		ON A.Tipo_Servicio = S.Id
-		WHERE C1.Nombre LIKE '_'+@ciudad_origen AND C2.Nombre LIKE '_'+@ciudad_destino AND S.Descripcion = @tipo_servicio
-		AND YEAR(V.Fecha_Salida) = YEAR(@fecha_salida) AND MONTH(V.Fecha_Salida) = MONTH(@fecha_salida) AND DAY(V.Fecha_Salida) = DAY(@fecha_salida)
-
-		SELECT @KGusados = SUM(E.Kg)
-		FROM NORMALIZADOS.Encomienda E
-		JOIN NORMALIZADOS.Compra C ON E.Compra = C.Id
-		WHERE C.Viaje = @viaje
-
-		SET @KGdisponibles = @KGtotal - @KGusados
-
-		RETURN @KGdisponibles
-	END
-GO
-
---------------------------------------------------------------------------------
---			FUNCION devuelve cantidad de butacas ocupadas
---------------------------------------------------------------------------------
-
-CREATE FUNCTION NORMALIZADOS.GetCantidadButacasOcupadas(@fecha_salida datetime,
-												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255), 
-												@tipo_servicio nvarchar(255))
-RETURNS int
-AS 
-	BEGIN
-		
-		DECLARE @butacas_ocupadas int
-
-		SELECT @butacas_ocupadas = COUNT(*) FROM NORMALIZADOS.Pasaje P
-		JOIN NORMALIZADOS.Compra C ON P.Compra = C.Id
-		JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
-		JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
-		JOIN NORMALIZADOS.Ciudad C1 ON R.Ciudad_Origen = C1.ID
-		JOIN NORMALIZADOS.Ciudad C2 ON R.Ciudad_Destino = C2.ID
-		JOIN NORMALIZADOS.Servicio S ON R.Tipo_Servicio = S.ID
-		WHERE V.Fecha_Salida = CONVERT(datetime,@fecha_salida,21) AND C1.Nombre LIKE '_'+@ciudad_origen AND C2.Nombre LIKE '_'+@ciudad_destino AND S.Descripcion = @tipo_servicio 
-
-		RETURN @butacas_ocupadas
-	END
-GO
-
---select NORMALIZADOS.GetCantidadButacasOcupadas('2016-02-01 06:00:00.000','Nueva York', 'Londres', 'Turista')
-
-------------------------------------------------------------------
---         FUNCION devuelve la cantidad de butacas disponibles
---				de una aeronave
-------------------------------------------------------------------
 CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@fecha_salida datetime,
-												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255), 
-												@tipo_servicio nvarchar(255))
+												@ciudad_origen int, @ciudad_destino int, 
+												@tipo_servicio int)
 RETURNS int
 AS 
 	BEGIN
@@ -1557,16 +1488,63 @@ AS
 		FROM NORMALIZADOS.Viaje V
 		JOIN NORMALIZADOS.Aeronave A ON V.Aeronave = A.Numero
 		JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
-		JOIN NORMALIZADOS.Ciudad C1 ON R.Ciudad_Origen = C1.ID
-		JOIN NORMALIZADOS.Ciudad C2 ON R.Ciudad_Destino = C2.ID
-		JOIN NORMALIZADOS.Servicio S ON R.Tipo_Servicio = S.ID
-		WHERE V.Fecha_Salida = CONVERT(datetime,@fecha_salida,21) AND C1.Nombre LIKE '_'+@ciudad_origen AND C2.Nombre LIKE '_'+@ciudad_destino AND S.Descripcion = @tipo_servicio 
-	
+		WHERE R.Ciudad_Origen = @ciudad_origen AND R.Ciudad_Destino = @ciudad_destino AND R.Tipo_Servicio = @tipo_servicio 
+		AND YEAR(V.Fecha_Salida) = YEAR(@fecha_salida) AND MONTH(V.Fecha_Salida) = MONTH(@fecha_salida) AND DAY(V.Fecha_Salida) = DAY(@fecha_salida)
+		
 		RETURN @butacas_disponibles
 	END
 GO
 
---select NORMALIZADOS.GetCantidadButacasDisponibles('2016-02-01 06:00:00.000','Nueva York', 'Londres', 'Turista')
+
+--------------------------------------------------------------------------------
+--			FUNCION devuelve cantidad de butacas ocupadas
+--------------------------------------------------------------------------------
+
+CREATE FUNCTION NORMALIZADOS.GetCantidadButacasOcupadas(@fecha_salida datetime,
+												@ciudad_origen int, @ciudad_destino int, 
+												@tipo_servicio int)
+RETURNS int
+AS 
+	BEGIN
+		
+		DECLARE @butacas_ocupadas int
+
+		SELECT @butacas_ocupadas = COUNT(*) FROM NORMALIZADOS.Pasaje P
+		JOIN NORMALIZADOS.Compra C ON P.Compra = C.Id
+		JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+		JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
+		WHERE R.Ciudad_Origen = @ciudad_origen AND R.Ciudad_Destino = @ciudad_destino AND R.Tipo_Servicio = @tipo_servicio 
+		AND YEAR(V.Fecha_Salida) = YEAR(@fecha_salida) AND MONTH(V.Fecha_Salida) = MONTH(@fecha_salida) AND DAY(V.Fecha_Salida) = DAY(@fecha_salida)
+		AND P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
+
+		RETURN @butacas_ocupadas
+	END
+GO
+
+------------------------------------------------------------------
+--         FUNCION devuelve la cantidad de butacas disponibles
+--				de una aeronave
+------------------------------------------------------------------
+CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@fecha_salida datetime,
+												@ciudad_origen int, @ciudad_destino int, 
+												@tipo_servicio int)
+RETURNS int
+AS 
+	BEGIN
+		
+		DECLARE @butacas_disponibles int
+		
+		SELECT @butacas_disponibles = (NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(A.Matricula)-
+										NORMALIZADOS.GetCantidadButacasOcupadas(@fecha_salida,@ciudad_origen,@ciudad_destino,@tipo_servicio))
+		FROM NORMALIZADOS.Viaje V
+		JOIN NORMALIZADOS.Aeronave A ON V.Aeronave = A.Numero
+		JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
+		WHERE R.Ciudad_Origen = @ciudad_origen AND R.Ciudad_Destino = @ciudad_destino AND R.Tipo_Servicio = @tipo_servicio 
+		AND YEAR(V.Fecha_Salida) = YEAR(@fecha_salida) AND MONTH(V.Fecha_Salida) = MONTH(@fecha_salida) AND DAY(V.Fecha_Salida) = DAY(@fecha_salida)
+		
+		RETURN @butacas_disponibles
+	END
+GO
 
 ------------------------------------------------------------------
 --         SP cantidad de butacas totales, ocupadas y disponibles por viaje
