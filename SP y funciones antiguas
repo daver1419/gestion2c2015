@@ -380,3 +380,26 @@ BEGIN
 END
 GO
 */
+
+------------------------------------------------------------------
+--         SP cantidad de butacas totales, ocupadas y disponibles por viaje
+------------------------------------------------------------------
+/*
+CREATE PROCEDURE [NORMALIZADOS].[GetAllButacas]
+AS
+BEGIN
+	SELECT V.Fecha_Llegada, V.Fecha_Llegada_Estimada, V.Fecha_Llegada, C1.Nombre AS Ciudad_Origen, C2.Nombre AS Ciudad_Destino, S.Descripcion AS Tipo_Servicio, 
+	NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(A.Matricula) AS Total_Butacas, 
+	NORMALIZADOS.GetCantidadButacasDisponibles(V.Fecha_Salida,C1.Nombre, C2.Nombre, S.Descripcion) AS Butacas_Disponibles,
+	NORMALIZADOS.GetCantidadButacasOcupadas(V.Fecha_Salida,C1.Nombre, C2.Nombre, S.Descripcion) AS Butacas_Ocupadas
+	FROM NORMALIZADOS.Pasaje P
+	JOIN NORMALIZADOS.Compra C ON P.Compra = C.Id
+	JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+	JOIN NORMALIZADOS.Ruta_Aerea R ON V.Ruta_Aerea = R.Id
+	JOIN NORMALIZADOS.Ciudad C1 ON R.Ciudad_Origen = C1.ID
+	JOIN NORMALIZADOS.Ciudad C2 ON R.Ciudad_Destino = C2.ID
+	JOIN NORMALIZADOS.Servicio S ON R.Tipo_Servicio = S.ID
+	JOIN NORMALIZADOS.Aeronave A ON A.Numero = V.Aeronave
+END
+GO
+*/
