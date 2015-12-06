@@ -943,8 +943,9 @@ BEGIN
 							FROM NORMALIZADOS.Pasaje P
 							JOIN NORMALIZADOS.Compra C ON C.Id = P.Compra
 							JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+							JOIN NORMALIZADOS.Registro_De_Llegada_Destino R ON V.Id = R.Viaje
 							WHERE P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
-							AND V.Fecha_Llegada IS NOT NULL AND YEAR(V.Fecha_Llegada) = @Anio
+							AND YEAR(R.Fecha_Llegada) = @Anio
 												
 					UNION ALL
 
@@ -952,8 +953,9 @@ BEGIN
 							FROM NORMALIZADOS.Encomienda E
 							JOIN NORMALIZADOS.Compra C ON C.Id = E.Compra
 							JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+							JOIN NORMALIZADOS.Registro_De_Llegada_Destino R ON V.Id = R.Viaje
 							WHERE E.Id NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
-							AND V.Fecha_Llegada IS NOT NULL AND YEAR(V.Fecha_Llegada) = @Anio
+							AND YEAR(R.Fecha_Llegada) = @Anio
 					) P
 				JOIN NORMALIZADOS.Cliente C ON C.Id = P.Cliente
 				GROUP BY C.Dni, C.Apellido, C.Nombre, C.Id
@@ -972,8 +974,9 @@ BEGIN
 							FROM NORMALIZADOS.Pasaje P
 							JOIN NORMALIZADOS.Compra C ON C.Id = P.Compra
 							JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+							JOIN NORMALIZADOS.Registro_De_Llegada_Destino R ON V.Id = R.Viaje
 							WHERE P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
-							AND V.Fecha_Llegada IS NOT NULL AND MONTH(V.Fecha_Llegada) BETWEEN @Desde AND @Hasta AND (YEAR(V.Fecha_Llegada) = @Anio OR YEAR(V.Fecha_Llegada) = @Anio - 1)
+							AND MONTH(R.Fecha_Llegada) BETWEEN @Desde AND @Hasta AND (YEAR(R.Fecha_Llegada) = @Anio OR YEAR(R.Fecha_Llegada) = @Anio - 1)
 												
 					UNION ALL
 
@@ -981,9 +984,9 @@ BEGIN
 							FROM NORMALIZADOS.Encomienda E
 							JOIN NORMALIZADOS.Compra C ON C.Id = E.Compra
 							JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+							JOIN NORMALIZADOS.Registro_De_Llegada_Destino R ON V.Id = R.Viaje
 							WHERE E.Id NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
-							AND V.Fecha_Llegada IS NOT NULL 
-							AND ((YEAR(V.Fecha_Llegada) = @Anio AND MONTH(V.Fecha_Llegada) < 7) OR (YEAR(V.Fecha_Llegada) = @Anio - 1 AND MONTH(V.Fecha_Llegada) > 6))
+							AND ((YEAR(R.Fecha_Llegada) = @Anio AND MONTH(R.Fecha_Llegada) < 7) OR (YEAR(R.Fecha_Llegada) = @Anio - 1 AND MONTH(R.Fecha_Llegada) > 6))
 					) P
 				JOIN NORMALIZADOS.Cliente C ON C.Id = P.Cliente
 				GROUP BY C.Dni, C.Apellido, C.Nombre, C.Id
