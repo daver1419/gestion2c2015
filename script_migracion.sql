@@ -2187,7 +2187,7 @@ CREATE PROCEDURE [NORMALIZADOS].[SaveCliente_INS](
 @paramDireccion nvarchar(255),
 @paramFechaNac datetime,
 @paramMail nvarchar(255),
-@paramTelefono numeric(18,0),
+@paramTelefono numeric(18,0)
 )
 AS
 BEGIN
