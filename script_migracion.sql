@@ -1279,47 +1279,7 @@ CREATE PROCEDURE [NORMALIZADOS].[SP_Busqueda_Baja_Aeronave]
 			)
  
 GO
---------------------------------------------------------------------------------
---				SP reemplaza una aeronave
---------------------------------------------------------------------------------
-/*
-CREATE PROCEDURE [NORMALIZADOS].[SP_Reemplazar_Aeronave](
-@nroAeronave int,
-@fechaDesde datetime,
-@fechaHasta datetime
-)
-AS
-BEGIN
-	DECLARE @ciudad int
-	SELECT TOP 1 @ciudad=RA.Ciudad_Origen
-	FROM [NORMALIZADOS].[Viaje] V
-	JOIN [NORMALIZADOS].[Ruta_Aerea] RA
-		ON V.Ruta_Aerea=RA.Id
-	WHERE V.Aeronave=@nroAeronave
-		AND @fechaDesde<Fecha_Salida
-	ORDER BY Fecha_Salida ASC
-	DECLARE @aeronaveReemplazante int
-	IF EXISTS(
-		SELECT 1
-		FROM [NORMALIZADOS].[Aeronave] A
-		JOIN [NORMALIZADOS].[Viaje] V
-			ON A.Numero=V.Aeronave
-		JOIN [NORMALIZADOS].[Ruta_Aerea] RA
-			ON RA.Id=V.Ruta_Aerea
-		WHERE A.Numero<> @nroAeronave
-			AND RA.Ciudad_Destino=@ciudad
-			AND 
-			AND A.Numero NOT IN (SELECT A2.Numero
-								FROM [NORMALIZADOS].[Aeronave] A2
-								JOIN [NORMALIZADOS].[Viaje] V2
-									ON A2.Numero=V2.Aeronave
-									AND V2.Fecha_Salida >@fechaDesde
-								)
-	ORDER BY V.Fecha_Salida DESC
-	)
-END
-GO
-*/
+
 --------------------------------------------------------------------------------
 --				SP cancela pasajes y encomiendas 
 --					 de aeronave
@@ -1510,6 +1470,47 @@ BEGIN
 	FROM [NORMALIZADOS].Ciudad
 END
 GO
+
+------------------------------------------------------------------
+-- Funcion para obtener los KGs disponibles en un viaje
+------------------------------------------------------------------
+CREATE FUNCTION NORMALIZADOS.KGs_Disponibles (@fecha_salida datetime,
+												@ciudad_origen nvarchar(255), @ciudad_destino nvarchar(255), 
+												@tipo_servicio nvarchar(255))
+RETURNS numeric(18,0)
+AS
+	BEGIN
+		DECLARE @KGtotal numeric(18,0)
+		DECLARE @viaje int
+		DECLARE @KGusados numeric(18,0)
+		DECLARE @KGdisponibles numeric (18,0)
+		
+		SELECT @KGtotal = A.KG_Disponibles, @viaje = V.Id
+		FROM NORMALIZADOS.Viaje V
+		JOIN NORMALIZADOS.Ruta_Aerea R
+		ON V.Ruta_Aerea = R.Id
+		JOIN NORMALIZADOS.Aeronave A
+		ON A.Numero = V.Aeronave
+		JOIN NORMALIZADOS.Ciudad C1
+		ON C1.Id = R.Ciudad_Origen
+		JOIN NORMALIZADOS.Ciudad C2
+		ON C2.Id = R.Ciudad_Destino
+		JOIN NORMALIZADOS.Servicio S
+		ON A.Tipo_Servicio = S.Id
+		WHERE C1.Nombre LIKE '_'+@ciudad_origen AND C2.Nombre LIKE '_'+@ciudad_destino AND S.Descripcion = @tipo_servicio
+		AND YEAR(V.Fecha_Salida) = YEAR(@fecha_salida) AND MONTH(V.Fecha_Salida) = MONTH(@fecha_salida) AND DAY(V.Fecha_Salida) = DAY(@fecha_salida)
+
+		SELECT @KGusados = SUM(E.Kg)
+		FROM NORMALIZADOS.Encomienda E
+		JOIN NORMALIZADOS.Compra C ON E.Compra = C.Id
+		WHERE C.Viaje = @viaje
+
+		SET @KGdisponibles = @KGtotal - @KGusados
+
+		RETURN @KGdisponibles
+	END
+GO
+
 --------------------------------------------------------------------------------
 --			FUNCION devuelve cantidad de butacas ocupadas
 --------------------------------------------------------------------------------
