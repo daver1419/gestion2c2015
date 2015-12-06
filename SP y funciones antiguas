@@ -1,0 +1,340 @@
+--Funcion para obtener los puntos de un cliente particular hasta una fecha determinada. 
+CREATE FUNCTION NORMALIZADOS.Puntos_a_la_Fecha(@Cliente numeric(18,0), @Fecha datetime)
+RETURNS int
+AS 
+BEGIN
+	DECLARE @Total int
+	SELECT @Total = ISNULL(SUM(P.Puntos)-(SELECT SUM(R.Puntos * Can.Cantidad) FROM Canje Can JOIN Recompensa R ON Can.Recompensa = R.Id WHERE Can.Cliente = @Cliente AND Can.Fecha < @Fecha AND DATEDIFF(DAY, Can.Fecha, @Fecha)<365),0) --Si es nulo le damos el valor 0.
+		FROM
+		(
+			SELECT P.Pasajero AS Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(P.Precio),0) AS Puntos  
+					FROM NORMALIZADOS.Pasaje P
+					JOIN NORMALIZADOS.Compra C
+					ON P.Compra = C.ID
+					JOIN NORMALIZADOS.Viaje V ON 
+					C.Viaje = V.ID
+					AND V.Fecha_Llegada IS NOT NULL --La llegada del viaje fue registrada 
+					AND V.Fecha_Llegada <= @Fecha --El viaje se realizó antes de la fecha
+					AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No está vencido
+					WHERE P.ID NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
+
+			UNION ALL
+					SELECT E.Cliente, ISNULL(NORMALIZADOS.Puntos_Generados(E.Precio),0)
+					FROM NORMALIZADOS.Encomienda E 
+					JOIN NORMALIZADOS.Compra C
+					ON E.Compra = C.ID
+					JOIN NORMALIZADOS.Viaje V ON 
+					C.Viaje = V.ID
+					AND V.Fecha_Llegada IS NOT NULL --La llegada del viaje fue registrada 
+					AND V.Fecha_Llegada <= @Fecha --El viaje ya se realizó 
+					AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365 --No esta vencido
+					WHERE E.ID NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
+			) P
+		
+	RETURN @Total
+
+END
+GO
+
+
+--Devuelve una tabla con los detalles de todos los puntos (disponibles, canjeados y vencidos)
+/*CREATE FUNCTION [NORMALIZADOS].[Listado_Puntos](@Cliente numeric(18,0))
+RETURNS @Listado TABLE
+	 (Descripcion nvarchar(255), Puntos int, Fecha datetime)
+AS
+BEGIN
+	
+		INSERT INTO @Listado
+	
+				 SELECT ('Pasaje ' + CONVERT(char(18),P.Codigo)) AS Descripcion,NORMALIZADOS.Puntos_Generados(P.Precio) AS Cantidad,  C.Fecha AS Fecha
+					FROM NORMALIZADOS.Pasaje P 
+					JOIN NORMALIZADOS.Viaje V ON 
+						P.Viaje = V.Id
+						AND P.Cliente = @Cliente 
+						AND P.Cancelacion IS NULL --El vuelo no fue cancelado
+						AND NORMALIZADOS.Puntos_Generados(P.Precio) > 0
+						AND V.Fecha_Llegada IS NOT NULL	-- El enunciado explicita que solo es si los vuelos se concretaron					
+					JOIN NORMALIZADOS.Compra C	ON C.PNR = P.Compra						
+					
+						
+				 UNION 
+				 
+					SELECT ('Encomienda ' + CONVERT(char(18),E.Codigo)) AS Descripcion, NORMALIZADOS.Puntos_Generados(E.Precio) AS Cantidad, C.Fecha AS Fecha
+					FROM NORMALIZADOS.Encomienda E 
+					JOIN NORMALIZADOS.Viaje V ON
+						E.Viaje = V.Id
+						AND E.Cliente = @Cliente 
+						AND E.Cancelacion IS NULL 
+						AND NORMALIZADOS.Puntos_Generados(E.Precio) > 0 
+						AND V.Fecha_Llegada IS NOT NULL	
+					JOIN NORMALIZADOS.Compra C ON C.PNR = E.Compra
+						
+				 UNION 
+				 
+					SELECT (R.Descripcion+'('+CONVERT(nvarchar(11),Ca.Cantidad)+')') AS Descripcion, Ca.Cantidad*R.Puntos*-1 AS Cantidad, Ca.Fecha AS Fecha
+						FROM NORMALIZADOS.Canje Ca 
+						JOIN NORMALIZADOS.Recompensa R ON Ca.Cliente = @Cliente AND R.Id = Ca.Recompensa
+						
+				 ORDER BY Fecha DESC
+	RETURN
+END
+GO
+*/
+
+------------------------------------------------------------------
+--            TRIGGER QUE DESCUENTA STOCK Y PUNTOS
+------------------------------------------------------------------
+/*
+CREATE TRIGGER NORMALIZADOS.PERSISTIR_STOCK_PUNTOS  ON [NORMALIZADOS].[Canje]
+INSTEAD OF INSERT
+AS
+BEGIN
+	
+	DECLARE @Cliente numeric(18,0)
+	DECLARE @Recompensa int
+	DECLARE @Cantidad int
+	DECLARE @Puntos int
+	DECLARE @Puntos_Usados int
+	DECLARE @Stock int
+	DECLARE @Costo int
+	DECLARE @Fecha datetime
+	DECLARE @FechaCompra datetime
+	DECLARE @Canjeados TABLE(Tipo bit, PasajeEncomienda int, Cantidad int)
+	DECLARE @Contador_Transact int;
+    SET @Contador_Transact = @@TRANCOUNT;
+		
+	
+	SET NOCOUNT ON
+	
+	BEGIN TRY
+		
+		IF @Contador_Transact = 0 BEGIN TRANSACTION
+		ELSE SAVE TRANSACTION SP
+			
+		IF (SELECT COUNT(*) FROM inserted)> 1 
+		  raiserror('Inserte los canjes de uno en uno.', 16, 1)
+		
+			
+		--Obtengo registro insertado
+		SELECT @Cliente = Cliente, @Recompensa = Recompensa, @Cantidad = Cantidad, @Fecha = Fecha
+			FROM Inserted
+			
+		--Obtengo datos de la recompensa
+		SELECT @Stock = Stock, @Costo=Puntos FROM NORMALIZADOS.Recompensa WHERE Id = @Recompensa
+		
+				
+					 
+		--Actualizo stock
+		IF @Stock < @Cantidad
+			 raiserror('Stock insuficiente.', 16, 1)
+				
+		SET @Stock =  @Stock - @Cantidad
+		UPDATE NORMALIZADOS.Recompensa SET Stock=@Stock WHERE Id = @Recompensa		
+		
+				
+		--Calculo puntos a usar.
+		SET @Puntos_Usados = @Costo*@Cantidad
+			
+		--Creo un cursor para poder recorrer los puntos del cliente.
+		DECLARE Puntos CURSOR FOR 
+			SELECT P.Id, NORMALIZADOS.Puntos_Generados(P.Precio) AS Restantes, V.Fecha_Llegada AS Fecha
+			FROM NORMALIZADOS.Pasaje P
+			JOIN NORMALIZADOS.Viaje V ON P.Cliente=@Cliente AND P.Cancelacion IS NULL AND P.Viaje = V.Id AND V.Fecha_Llegada IS NOT NULL AND DATEDIFF(DAY, V.Fecha_Llegada, @Fecha)<365
+			GROUP BY P.Id, P.Precio, V.Fecha_Llegada
+			ORDER BY Fecha
+	    
+		
+		OPEN Puntos
+		
+		DECLARE @IdPasajeEncomienda int 
+	
+		DECLARE @Restantes int --Puntos que le quedan al cliente
+		
+		
+		--Obtengo primer registro de puntos
+		FETCH NEXT FROM Puntos
+		INTO @IdPasajeEncomienda, @Restantes, @FechaCompra
+		WHILE @@FETCH_STATUS = 0 AND @Puntos_Usados>0 --Mientras haya registros y los puntos que use no hayan sido quitados
+		BEGIN
+			--Si con los puntos actuales es suficiente, los quito y actualizo
+			IF @Restantes > @Puntos_Usados
+			BEGIN			
+				INSERT INTO @Canjeados(PasajeEncomienda,Cantidad) VALUES(@IdPasajeEncomienda, @Puntos_Usados)
+				SET @Puntos_Usados = 0
+				BREAK			
+			END
+		
+			--Si no fuesen suficientes, los marco como canjeados y sigo con el proximo.
+			SET @Puntos_Usados = @Puntos_Usados - @Restantes
+			INSERT INTO @Canjeados(PasajeEncomienda,Cantidad) VALUES(@IdPasajeEncomienda, @Restantes)
+				
+			
+			FETCH NEXT FROM Puntos
+			INTO @IdPasajeEncomienda, @Restantes, @FechaCompra
+		
+		END
+		
+		--Cierro y libero el cursor
+		CLOSE Puntos
+		DEALLOCATE Puntos
+		
+		IF @Puntos_Usados > 0 
+			raiserror('Puntos insuficientes.', 16, 1)
+		
+		--Creo el canje del producto y le seteo los puntos canjeados.
+		INSERT INTO NORMALIZADOS.Canje(Cliente,Recompensa,Cantidad,Fecha)
+			VALUES(@Cliente, @Recompensa, @Cantidad, @Fecha)
+		
+		
+		IF @Contador_Transact = 0 COMMIT TRAN 
+	END TRY
+	
+	BEGIN CATCH 
+		--Rollback y muestro el error.
+		
+		DECLARE @ErrorMessage nvarchar(4000)
+		DECLARE @ErrorSeverity int
+		DECLARE @ErrorState int
+		DECLARE @xstate int
+		
+		SELECT 
+			@ErrorMessage = ERROR_MESSAGE(),
+			@ErrorSeverity = ERROR_SEVERITY(),
+			@ErrorState = ERROR_STATE(),
+		    @xstate = XACT_STATE();
+		    
+        IF @xstate = -1
+            ROLLBACK;
+        IF @xstate = 1 and @Contador_Transact = 0
+            ROLLBACK
+        IF @xstate = 1 and @Contador_Transact > 0
+            ROLLBACK TRANSACTION usp_my_procedure_name;
+		
+		RAISERROR (@ErrorMessage, 
+				   @ErrorSeverity, 
+				   @ErrorState 
+				   );
+		
+	END CATCH   
+END
+GO
+*/
+
+------------------------------------------------------------------
+--                 FUNCIONES PARA COMPRAS                       --
+------------------------------------------------------------------
+/*
+CREATE FUNCTION NORMALIZADOS.Butacas_Sin_Usar(@idViaje int)
+RETURNS numeric(18,0)
+AS 
+BEGIN
+	DECLARE @ButacasSinPasaje numeric(18,0)
+	DECLARE @ButacasSinUsar numeric(18,0)
+		SELECT @ButacasSinPasaje = ISNULL(N.Cantidad_Butacas,0) - ISNULL(COUNT(P.Id),0)
+				FROM NORMALIZADOS.Viaje V
+				LEFT JOIN NORMALIZADOS.Pasaje P ON P.Viaje = V.Id
+				LEFT JOIN NORMALIZADOS.Aeronave N ON N.Id = V.Aeronave
+				WHERE V.Id = @idViaje
+				GROUP BY N.Cantidad_Butacas
+	
+		SELECT @ButacasSinUSar = @ButacasSinPasaje - ISNULL(COUNT(BR.Butaca),0)
+				FROM NORMALIZADOS.Butaca_Reservada BR WHERE BR.Viaje = @idViaje
+	
+	RETURN @ButacasSinUsar
+END
+GO
+CREATE FUNCTION NORMALIZADOS.Kgs_Sin_Usar(@idViaje int)
+RETURNS numeric(18,0)
+AS 
+BEGIN
+	DECLARE @KgsSinEncomienda numeric (18,0)
+	DECLARE @KgsSinUsar numeric (18,0)
+		SELECT @KgsSinEncomienda = ISNULL(N.KG_Disponibles, 0) - ISNULL(SUM(E.Kg),0)
+			FROM NORMALIZADOS.Viaje V
+			LEFT JOIN NORMALIZADOS.Encomienda E ON E.Viaje = V.Id AND E.Cancelacion IS NULL
+			LEFT JOIN NORMALIZADOS.Aeronave N ON N.Id = V.Aeronave
+			WHERE V.Id = @idViaje
+			GROUP BY N.KG_Disponibles
+			
+		SELECT @KgsSinUsar =  @KgsSinEncomienda - ISNULL(SUM(KU.Kg),0)
+			FROM NORMALIZADOS.Kgs_Usados KU WHERE KU.Viaje = @idViaje
+			
+	RETURN @KgsSinUsar
+END
+GO
+*/
+--------------------------------------------------------------------------------
+-- FUNCION QUE BUSCA AERONAVES DISPONIBLES
+--------------------------------------------------------------------------------
+/*
+CREATE FUNCTION NORMALIZADOS.Aeronaves_Disponibles(@Fecha datetime)
+RETURNS @Aeronaves_Disponibles TABLE(
+	[Id][int], 
+	[Matricula] [nvarchar](255),
+	[Numero] [int],	
+	[Fecha_Alta] [datetime], 
+	[Modelo] [nvarchar](255), 
+	[Fabricante] [int],
+	[Fecha_Baja_Definitiva] [datetime],
+	[Cantidad_Butacas] [numeric](18,0),
+	[KG_Disponibles] [numeric](18,0),
+	[Tipo_Servicio] [int]
+	)	
+AS 
+BEGIN
+DECLARE @Arrivo datetime
+SET @Arrivo = DATEADD(HOUR, 24, @Fecha)
+	INSERT INTO @Aeronaves_Disponibles
+		SELECT DISTINCT A.Id, A.Matricula, A.Numero, A.Fecha_Alta, A.Modelo, A.Fabricante, A.Fecha_Baja_Definitiva, A.Cantidad_Butacas, A.KG_Disponibles, A.Tipo_Servicio FROM NORMALIZADOS.Aeronave A
+		LEFT JOIN NORMALIZADOS.Baja_Temporal_Aeronave B ON  B.Aeronave = A.Id AND NOT (@Arrivo < B.Fecha_Fuera_Servicio OR @Fecha > B.Fecha_Vuelta_Al_Servicio)
+		WHERE B.Id IS NULL AND A.Fecha_Baja_Definitiva IS NULL
+		
+	RETURN
+END
+GO
+*/
+
+------------------------------------------------------------------
+-- Las llegadas se registran durante el día pero se ingresan al
+-- sistema todas juntas.
+------------------------------------------------------------------
+CREATE TYPE [NORMALIZADOS].[Tipo_Arrivos] AS TABLE
+(
+	Aeronave int,
+	FechaArrivo datetime	
+)
+GO
+
+CREATE PROCEDURE [NORMALIZADOS].[Registrar_Arrivos] (@Arrivos [NORMALIZADOS].[Tipo_Arrivos] READONLY) 
+AS
+BEGIN
+	DECLARE @Aeronave int
+	DECLARE @FechaArrivo datetime
+	DECLARE Arrivos_Cursor CURSOR FOR SELECT * FROM @Arrivos
+	DECLARE @Viaje int
+	
+	OPEN Arrivos_Cursor
+	
+	FETCH NEXT FROM Arrivos INTO @Aeronave, @FechaArrivo
+
+	WHILE @@FETCH_STATUS = 0 
+	BEGIN
+
+		--Obtengo el viaje de la aeronave.
+		SELECT TOP 1 @Viaje= Id FROM NORMALIZADOS.Viaje 
+		WHERE Fecha_Salida < @FechaArrivo --La aeronave ya partió.
+			 AND Fecha_Llegada IS NULL --Aun no se registró un arrivó. 
+			 AND Aeronave=@Aeronave --Era la aeronave que arrivó.
+		ORDER BY Fecha_Salida
+	
+		--Registro el arrivo.
+		UPDATE NORMALIZADOS.Viaje SET Fecha_Llegada=@FechaArrivo WHERE Id=@Viaje
+		
+		FETCH NEXT FROM Arrivos_Cursor INTO @Aeronave, @FechaArrivo
+		
+	END
+	
+	CLOSE Arrivos_Cursor
+	DEALLOCATE Arrivos_Cursor
+END
+GO
