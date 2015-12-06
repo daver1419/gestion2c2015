@@ -338,3 +338,45 @@ BEGIN
 	DEALLOCATE Arrivos_Cursor
 END
 GO
+
+--------------------------------------------------------------------------------
+--				SP reemplaza una aeronave
+--------------------------------------------------------------------------------
+/*
+CREATE PROCEDURE [NORMALIZADOS].[SP_Reemplazar_Aeronave](
+@nroAeronave int,
+@fechaDesde datetime,
+@fechaHasta datetime
+)
+AS
+BEGIN
+	DECLARE @ciudad int
+	SELECT TOP 1 @ciudad=RA.Ciudad_Origen
+	FROM [NORMALIZADOS].[Viaje] V
+	JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+		ON V.Ruta_Aerea=RA.Id
+	WHERE V.Aeronave=@nroAeronave
+		AND @fechaDesde<Fecha_Salida
+	ORDER BY Fecha_Salida ASC
+	DECLARE @aeronaveReemplazante int
+	IF EXISTS(
+		SELECT 1
+		FROM [NORMALIZADOS].[Aeronave] A
+		JOIN [NORMALIZADOS].[Viaje] V
+			ON A.Numero=V.Aeronave
+		JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+			ON RA.Id=V.Ruta_Aerea
+		WHERE A.Numero<> @nroAeronave
+			AND RA.Ciudad_Destino=@ciudad
+			AND 
+			AND A.Numero NOT IN (SELECT A2.Numero
+								FROM [NORMALIZADOS].[Aeronave] A2
+								JOIN [NORMALIZADOS].[Viaje] V2
+									ON A2.Numero=V2.Aeronave
+									AND V2.Fecha_Salida >@fechaDesde
+								)
+	ORDER BY V.Fecha_Salida DESC
+	)
+END
+GO
+*/
