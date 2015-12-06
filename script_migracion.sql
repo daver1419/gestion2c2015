@@ -1833,7 +1833,6 @@ GO
 
 CREATE PROCEDURE [NORMALIZADOS].[GenerarViaje]
 (@fechaSalida datetime,
-@fechaLlegada datetime,
 @fechaLlegadaEstimada datetime,
 @rutaId numeric(18,0),
 @nroAeronave int
@@ -1841,12 +1840,10 @@ CREATE PROCEDURE [NORMALIZADOS].[GenerarViaje]
 AS
 BEGIN
 	INSERT INTO [NORMALIZADOS].[Viaje](Fecha_Salida,
-										Fecha_Llegada,
 										Fecha_Llegada_Estimada,
 										Ruta_Aerea,
 										Aeronave)
 		VALUES(@fechaSalida,
-				@fechaLlegada,
 				@fechaLlegadaEstimada,
 				@rutaId,
 				@nroAeronave)
