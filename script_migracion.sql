@@ -2275,3 +2275,49 @@ BEGIN
 	FROM [Tipo_Pago]
 END
 GO
+------------------------------------------------------------------
+--         SP devuelve viajes disponibles para 
+--				una fecha de entrada,fecha de salida,
+--				ciudad de origen y ciudad de destino
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetViajes_SEL_ByFechasCiudades]
+@paramFechaSalida datetime,
+@paramFechaLlegadaEstimada datetime,
+@paramCiudadOrigen int,
+@paramCiudadDestino int
+AS
+BEGIN
+	SELECT V.Id,
+			V.Fecha_Salida,
+			V.Fecha_Llegada_Estimada,
+			V.Ruta_Aerea,
+			C1.Nombre as CiudadOrigenNombre,
+			C2.Nombre as CiudadDestinoNombre,
+			V.Aeronave,
+			A.Matricula,
+			A.Tipo_Servicio,
+			S.Descripcion,
+			[NORMALIZADOS].[GetCantidadButacasDisponibles](V.Id) as CantButacasDisponibles,
+			[NORMALIZADOS].[KGs_Disponibles](V.Id) as KGs_Disponibles
+	FROM [NORMALIZADOS].[Viaje] V
+	JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+		ON V.Ruta_Aerea=RA.Id
+		AND RA.Habilitada=1
+		AND RA.Ciudad_Origen=@paramCiudadOrigen
+		AND RA.Ciudad_Destino=@paramCiudadDestino
+	JOIN [NORMALIZADOS].[Ciudad] C1
+		ON C1.Id=RA.Ciudad_Origen
+	JOIN [NORMALIZADOS].[Ciudad] C2
+		ON C2.Id=RA.Ciudad_Destino
+	JOIN [NORMALIZADOS].[Aeronave] A
+		ON V.Aeronave=A.Numero
+	JOIN [NORMALIZADOS].[Servicio] S
+		ON S.Id=A.Tipo_Servicio
+	WHERE YEAR(Fecha_Salida)=YEAR(@paramFechaSalida)
+		AND MONTH(Fecha_Salida)=MONTH(@paramFechaSalida)
+		AND DAY(Fecha_Salida)=DAY(@paramFechaSalida)
+		AND YEAR(Fecha_Llegada_Estimada)=YEAR(@paramFechaLlegadaEstimada)
+		AND MONTH(Fecha_Llegada_Estimada)=MONTH(@paramFechaLlegadaEstimada)
+		AND DAY(Fecha_Llegada_Estimada)=DAY(@paramFechaLlegadaEstimada)
+END
+GO
