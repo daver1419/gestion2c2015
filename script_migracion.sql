@@ -2321,3 +2321,13 @@ BEGIN
 		AND DAY(Fecha_Llegada_Estimada)=DAY(@paramFechaLlegadaEstimada)
 END
 GO
+
+------------------------------------------------------------------
+--         SP devuelve todos los tipos de tarjeta
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetAllTipoTarjeta_SEL]
+AS
+BEGIN
+	SELECT*
+	FROM [NORMALIZADOS].[Tipo_Tarjeta]
+END
