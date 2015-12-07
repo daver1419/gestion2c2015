@@ -22,6 +22,7 @@ namespace AerolineaFrba.DAO
             {
                 SqlCommand com = new SqlCommand("[NORMALIZADOS].[SaveCompra]", conn);
                 com.CommandType = CommandType.StoredProcedure;
+                com.Parameters.Add("@paramPNR", SqlDbType.Int).Direction = ParameterDirection.Output;
                 com.Parameters.AddWithValue("@paramComprador", compra.Comprador.IdCliente);
                 com.Parameters.AddWithValue("@paramMedioPago",compra.MedioPago.IdTipoPago);
                 com.Parameters.AddWithValue("@paramTarjeta",compra.TarjetaCredito.Numero);

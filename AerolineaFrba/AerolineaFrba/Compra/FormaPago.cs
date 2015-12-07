@@ -21,7 +21,7 @@ namespace AerolineaFrba.Compra
         private int idViaje;
         private int KgsDeEncomienda;
         private decimal monto;
-        private int PNR;
+        private CompraDTO compra;
 
         public FormaPago(Int32 IdViaje,List<Tuple<ClienteDTO,ButacaDTO>> ListaTuplaPasajes,ClienteDTO clienteConEncomienda,Int32 KgEncomienda )
         {
@@ -112,10 +112,12 @@ namespace AerolineaFrba.Compra
             ViajeDTO viaje = new ViajeDTO();
             viaje.Id = this.idViaje;
             compra.Viaje = viaje;
+            compra.IdCompra = 0;
+            compra.PNR = 0;
 
-            this.PNR =CompraDAO.Save(compra).PNR;
+            this.compra =CompraDAO.Save(compra);
 
-            if (this.PNR == null)
+            if (this.compra.PNR == 0)
             {
                 MessageBox.Show("No se pudo realizar la compra");
                 retValue = false;
@@ -128,7 +130,7 @@ namespace AerolineaFrba.Compra
                 {
                     PasajeDTO pasaje = new PasajeDTO();
                     pasaje.Pasajero = tupla.Item1;
-                    pasaje.Compra = compra;
+                    pasaje.Compra = this.compra;
                     pasaje.Butaca = tupla.Item2;
                     pasaje.Precio = 0;
 
@@ -139,7 +141,7 @@ namespace AerolineaFrba.Compra
             {
                 EncomiendaDTO encomienda = new EncomiendaDTO();
                 encomienda.Cliente = this.clienteAcargoDeEncomienda;
-                encomienda.Compra = compra;
+                encomienda.Compra = this.compra;
                 encomienda.Precio = 0;
                 encomienda.Kg = this.KgsDeEncomienda;
 
@@ -214,7 +216,7 @@ namespace AerolineaFrba.Compra
                     }
                     else
                     {
-                        MessageBox.Show(String.Format("La transaccion de la compra ha finalizado con exito. Monto a abonar: {0}. PNR: {1}", this.monto, this.PNR));
+                        MessageBox.Show(String.Format("La transaccion de la compra ha finalizado con exito. Monto a abonar: {0}. PNR: {1}", this.monto, this.compra.PNR));
                     }
                 }
             }
