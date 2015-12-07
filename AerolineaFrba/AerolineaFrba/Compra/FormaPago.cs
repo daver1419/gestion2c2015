@@ -31,21 +31,13 @@ namespace AerolineaFrba.Compra
         private void buttonBuscar_Click(object sender, EventArgs e)
         {
             DatosTitularTarjeta ventana = new DatosTitularTarjeta(this.textBoxDNI.Text);
+            ventana.ShowDialog(this);
         }
 
         private void FormaPago_Load(object sender, EventArgs e)
         {
             comboBoxTipoTarj.DataSource = TipoTarjetaDAO.GetAll();
-            comboBoxTipoTarj.SelectedIndex = -1;
             comboBoxMedioPago.DataSource = TipoPagoDAO.GetAll();
-            comboBoxMedioPago.SelectedIndex = -1;
-
-            panel1.Hide();
-            radioButton1.Hide();
-            radioButton2.Hide();
-            radioButton3.Hide();
-            radioButton4.Hide();
-            label7.Hide();
 
             if (Sesion.Rol.NombreRol == "Guest")
             {
@@ -58,27 +50,39 @@ namespace AerolineaFrba.Compra
         {
             switch (((TipoTarjetaDTO)comboBoxTipoTarj.SelectedItem).NumeroCuotas)
             {
-                case 1: radioButton1.Show();
+                case 1: radioButton1.Enabled = true;
+                    radioButton2.Enabled = false;
+                    radioButton3.Enabled = false;
+                    radioButton4.Enabled = false;
                     break;
-                case 6: radioButton2.Show();
+                case 6: radioButton2.Enabled = true;
+                    radioButton1.Enabled = false;
+                    radioButton3.Enabled = false;
+                    radioButton4.Enabled = false;
                     break;
-                case 12: radioButton3.Show();
+                case 12: radioButton3.Enabled = true;
+                    radioButton1.Enabled = false;
+                    radioButton2.Enabled = false;
+                    radioButton4.Enabled = false;
                     break;
-                case 18: radioButton4.Show();
+                case 18: radioButton4.Enabled = true;
+                    radioButton1.Enabled = false;
+                    radioButton2.Enabled = false;
+                    radioButton3.Enabled = false;
                     break;
             }
         }
 
         private void comboBoxMedioPago_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxMedioPago.SelectedItem.ToString() == "Tarjeta de credito")
+            if (((TipoPagoDTO)comboBoxMedioPago.SelectedItem).Descripcion != "Tarjeta de credito")
             {
-                panel1.Enabled=false;
-                radioButton1.Enabled=false;
-                radioButton2.Enabled=false;
-                radioButton3.Enabled=false;
-                radioButton4.Enabled=false;
-                label7.Enabled = false;
+                panel1.Hide();
+                radioButton1.Hide();
+                radioButton2.Hide();
+                radioButton3.Hide();
+                radioButton4.Hide();
+                label7.Hide();
             }
         }
 
