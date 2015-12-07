@@ -37,33 +37,27 @@ namespace AerolineaFrba.DAO
         /// </summary>
         /// <param name="dataReader"></param>
         /// <returns></returns>
-        public static List<ViajeDTO> getViajes(SqlDataReader dataReader)
+        public static List<GridViajesDTO> getViajes(SqlDataReader dataReader)
         {
-            List<ViajeDTO> ListaViajes = new List<ViajeDTO>();
+            List<GridViajesDTO> ListaViajes = new List<GridViajesDTO>();
             if (dataReader.HasRows)
             {
                 while (dataReader.Read())
                 {
-                    ViajeDTO viaje = new ViajeDTO();
+                    GridViajesDTO viaje = new GridViajesDTO();
 
+                    viaje.IdViaje = Convert.ToInt32(dataReader["Id"]);
                     viaje.FechaSalida = Convert.ToDateTime(dataReader["Fecha_Salida"]);
                     viaje.FechaLlegadaEstimada = Convert.ToDateTime(dataReader["Fecha_Llegada_Estimada"]);
-                    CiudadDTO ciudadOrigen= new CiudadDTO();
-                    ciudadOrigen.Descripcion=Convert.ToString(dataReader["CiudadOrigenNombre"]);
-                    CiudadDTO ciudadDestino = new CiudadDTO();
-                    ciudadDestino.Descripcion = Convert.ToString(dataReader["CiudadDestinoNombre"]);
-                    RutaDTO ruta=new RutaDTO();
-                    ruta.IdRuta=Convert.ToInt32(dataReader["Ruta_Aerea"]);
-                    ruta.CiudadOrigen=ciudadOrigen;
-                    ruta.CiudadDestino=ciudadDestino;
-                    viaje.Ruta = ruta;
-                    AeronaveDTO aeronave=new AeronaveDTO();
-                    aeronave.Numero=Convert.ToInt32(dataReader["Aeronave"]);
-                    aeronave.KG = Convert.ToInt32(dataReader["KgDisponibles"]);
-                    TipoServicioDTO servicio = new TipoServicioDTO();
-                    servicio.Descripcion = Convert.ToString(dataReader["Servicio"]);
-                    aeronave.TipoServicio = servicio;
-                    viaje.Aeronave = aeronave;
+                    viaje.IdRuta = Convert.ToInt32(dataReader["Ruta_Aerea"]);
+                    viaje.DescrCiudadOrigen=Convert.ToString(dataReader["CiudadOrigenNombre"]);
+                    viaje.DescrCiudadDest = Convert.ToString(dataReader["CiudadDestinoNombre"]);
+                    viaje.NumeroAeronave=Convert.ToInt32(dataReader["Aeronave"]);
+                    viaje.MatriculaAeronave = Convert.ToString(dataReader["Matricula"]);
+                    viaje.DescrServicio = Convert.ToString(dataReader["Descripcion"]);
+                    viaje.IdTipoServicio = Convert.ToInt32(dataReader["Tipo_Servicio"]);
+                    viaje.KgsDisponibles =Convert.ToInt32( dataReader["KGs_Disponibles"]);
+                    viaje.CantButacasDisp = Convert.ToInt32(dataReader["CantButacasDisponibles"]);
 
                     ListaViajes.Add(viaje);
                 }
@@ -79,19 +73,18 @@ namespace AerolineaFrba.DAO
         /// </summary>
         /// <param name="viaje"></param>
         /// <returns></returns>
-        public static List<ViajeDTO> GetByFechasCiudadesOrigenDestino(ViajeDTO viaje)
+        public static List<GridViajesDTO> GetByFechasCiudadesOrigenDestino(ViajeDTO viaje)
         {
             using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
             {
-                SqlCommand com = new SqlCommand("[NORMALIZADOS].[GetRutaByFilters]", conn);
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[GetViajes_SEL_ByFechasCiudades]", conn);
                 com.CommandType = CommandType.StoredProcedure;
                 com.Parameters.AddWithValue("@paramFechaSalida", viaje.FechaSalida);
                 com.Parameters.AddWithValue("@paramFechaLlegadaEstimada", viaje.FechaLlegadaEstimada);
-                com.Parameters.AddWithValue("@paramCiudadOrigen", viaje.Ruta.CiudadOrigen);
-                com.Parameters.AddWithValue("@paramCiudadDestino", viaje.Ruta.CiudadDestino);
+                com.Parameters.AddWithValue("@paramCiudadOrigen", viaje.Ruta.CiudadOrigen.IdCiudad);
+                com.Parameters.AddWithValue("@paramCiudadDestino", viaje.Ruta.CiudadDestino.IdCiudad);
                 SqlDataReader dataReader = com.ExecuteReader();
                 return getViajes(dataReader);
-
             }
         }
     }

@@ -64,9 +64,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(47, 42);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 13);
+            this.label1.Size = new System.Drawing.Size(82, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Fecha de entrada";
+            this.label1.Text = "Fecha de salida";
             // 
             // comboBoxCiudOrig
             // 
@@ -147,9 +147,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(47, 78);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(82, 13);
+            this.label4.Size = new System.Drawing.Size(89, 13);
             this.label4.TabIndex = 9;
-            this.label4.Text = "Fecha de salida";
+            this.label4.Text = "Fecha de llegada";
             // 
             // dateTimePickerSal
             // 

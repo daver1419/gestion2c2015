@@ -31,7 +31,7 @@ namespace AerolineaFrba.Compra
             dateTimePickerSal.Value = DateTime.Now;
 
             label5.Hide();
-            label5.Hide();
+            label6.Hide();
             label7.Hide();
             comboBoxCantPas.Hide();
             numericUpDown1.Hide();
@@ -58,20 +58,23 @@ namespace AerolineaFrba.Compra
             //Ignora los clicks que no son sobre los elementos de la columna de botones
             if (e.RowIndex < 0 || e.ColumnIndex != dataGridView1.Columns.IndexOf(dataGridView1.Columns["ColumnCompra"]))
                 return;
-            ViajeDTO unViaje = (ViajeDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
+            GridViajesDTO gridViaje = (GridViajesDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
             bool compraEncomienda=false;
 
             if (numericUpDown1.Value > 0)
             {
                 compraEncomienda = true;
-                IngresoDatos vent = new IngresoDatos(unViaje.Aeronave, compraEncomienda);
-            }
-            
-            for (int i = 0; i <= Convert.ToInt32(comboBoxCantPas.SelectedItem.ToString()); i++)
-            {
-                IngresoDatos ventana = new IngresoDatos(unViaje.Aeronave,compraEncomienda);
+                IngresoDatos vent = new IngresoDatos(gridViaje.NumeroAeronave, compraEncomienda);
             }
 
+            if (Convert.ToInt32(comboBoxCantPas.SelectedItem.ToString()) > 0 && comboBoxCantPas.SelectedItem != null)
+            {
+                for (int i = 1; i <= Convert.ToInt32(comboBoxCantPas.SelectedItem.ToString()); i++)
+                {
+                    IngresoDatos ventana = new IngresoDatos(gridViaje.NumeroAeronave, compraEncomienda);
+                    ventana.ShowDialog(this);
+                }
+            }
             FormaPago formPago = new FormaPago();
             formPago.ShowDialog(this);
 
@@ -121,6 +124,17 @@ namespace AerolineaFrba.Compra
                 ruta.CiudadDestino = (CiudadDTO)comboBoxCiudDest.SelectedItem;
                 viaje.Ruta = ruta;
                 dataGridView1.DataSource = ViajeDAO.GetByFechasCiudadesOrigenDestino(viaje);
+                dataGridView1.Columns[1].Visible = false;
+                dataGridView1.Columns[4].Visible = false;
+                dataGridView1.Columns[9].Visible = false;
+            }
+            if (dataGridView1.DataSource != null)
+            {
+                label5.Show();
+                label6.Show();
+                label7.Show();
+                comboBoxCantPas.Show();
+                numericUpDown1.Show();
             }
         }
     }

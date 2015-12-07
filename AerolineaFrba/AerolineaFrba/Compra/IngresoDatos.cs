@@ -15,13 +15,13 @@ namespace AerolineaFrba.Compra
     public partial class IngresoDatos : Form
     {
         private bool clienteExistente;
-        private AeronaveDTO aeronave;
+        private int NroAeronave;
         private bool compraEncomienda;
 
-        public IngresoDatos(AeronaveDTO unaAeronave, bool esCompraEncomienda)
+        public IngresoDatos(int nroAeronave, bool esCompraEncomienda)
         {
             InitializeComponent();
-            this.aeronave = unaAeronave;
+            this.NroAeronave = nroAeronave;
             this.compraEncomienda = esCompraEncomienda;
         }
 
@@ -31,9 +31,35 @@ namespace AerolineaFrba.Compra
         }
 
         private bool validar()
-        { 
-            //AGREGAR VALIDACIONES
-            return true;
+        {
+            errorProvider1.Clear();
+            bool ret = true;
+            if (this.textBoxNom.Text == "")
+            {
+                errorProvider1.SetError(textBoxNom, "Ingrese un nombre.");
+                ret = false;
+            }
+            if (this.textBoxApe.Text == "")
+            {
+                errorProvider1.SetError(textBoxApe, "Ingrese un apellido");
+                ret = false;
+            }
+            if (this.textBoxDir.Text == "")
+            {
+                errorProvider1.SetError(this.textBoxDir, "Ingrese una direccion");
+                ret = false;
+            }
+            if (this.textBoxDni.Text == "")
+            {
+                errorProvider1.SetError(this.textBoxDni, "Ingrese un DNI");
+                ret = false;
+            }
+            if (this.textBoxTel.Text == "")
+            {
+                errorProvider1.SetError(this.textBoxTel, "Ingrese un telefono");
+                ret = false;
+            }
+            return ret;
         }
 
         private void buttonRegistrar_Click(object sender, EventArgs e)
@@ -74,7 +100,7 @@ namespace AerolineaFrba.Compra
 
                 if (!this.compraEncomienda)
                 {
-                    SeleccionButaca ventana = new SeleccionButaca(this.aeronave);
+                    SeleccionButaca ventana = new SeleccionButaca(this.NroAeronave);
                     ventana.ShowDialog(this);
                 }
                 this.Close();
@@ -88,6 +114,8 @@ namespace AerolineaFrba.Compra
 
         private void textBoxDni_Leave(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(textBoxDni.Text))
+                return;
             ClienteDTO cliente = new ClienteDTO();
             cliente.Dni =Convert.ToInt32( textBoxDni.Text);
             cliente=ClienteDAO.GetByDNI(cliente);

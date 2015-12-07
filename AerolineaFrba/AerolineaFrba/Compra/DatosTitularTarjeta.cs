@@ -43,8 +43,34 @@ namespace AerolineaFrba.Compra
 
         private bool validar()
         {
-            //TERMINAR
-            return true;
+            errorProvider1.Clear();
+            bool ret = true;
+            if (this.textBoxNom.Text=="")
+            {
+                errorProvider1.SetError(textBoxNom, "Ingrese un nombre.");
+                ret = false;
+            }
+            if (this.textBoxApe.Text=="")
+            {
+                errorProvider1.SetError(textBoxApe, "Ingrese un apellido");
+                ret = false;
+            }
+            if (this.textBoxDir.Text == "")
+            {
+                errorProvider1.SetError(this.textBoxDir, "Ingrese una direccion");
+                ret = false;
+            }
+            if (this.textBoxDni.Text == "")
+            {
+                errorProvider1.SetError(this.textBoxDni, "Ingrese un DNI");
+                ret = false;
+            }
+            if (this.textBoxTel.Text=="")
+            {
+                errorProvider1.SetError(this.textBoxTel, "Ingrese un telefono");
+                ret = false;
+            }
+            return ret;
         }
 
         private void buttonRegistrar_Click(object sender, EventArgs e)

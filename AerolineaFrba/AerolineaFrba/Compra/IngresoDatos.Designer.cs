@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -44,6 +45,8 @@
             this.buttonRegistrar = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxApe = new System.Windows.Forms.TextBox();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -179,6 +182,10 @@
             this.textBoxApe.Size = new System.Drawing.Size(100, 20);
             this.textBoxApe.TabIndex = 18;
             // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
+            // 
             // IngresoDatos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -203,6 +210,7 @@
             this.Name = "IngresoDatos";
             this.Text = "Ingreso de Datos";
             this.Load += new System.EventHandler(this.IngresoDatos_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -226,5 +234,6 @@
         private System.Windows.Forms.Button buttonRegistrar;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBoxApe;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
     }
 }

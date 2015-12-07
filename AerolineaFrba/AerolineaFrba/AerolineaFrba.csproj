@@ -249,6 +249,7 @@
     <Compile Include="DTO\CiudadDTO.cs" />
     <Compile Include="DTO\AeronaveFiltersDTO.cs" />
     <Compile Include="DTO\ClienteDTO.cs" />
+    <Compile Include="DTO\GridViajesDTO.cs" />
     <Compile Include="DTO\MillasDTO.cs" />
     <Compile Include="DTO\ModeloDTO.cs" />
     <Compile Include="DTO\RecompensaDTO.cs" />

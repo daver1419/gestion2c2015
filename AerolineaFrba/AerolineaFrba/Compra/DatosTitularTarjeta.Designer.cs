@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.textBoxApe = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
@@ -44,6 +45,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.buttonRegistrar = new System.Windows.Forms.Button();
             this.buttonLimpiar = new System.Windows.Forms.Button();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // textBoxApe
@@ -178,6 +181,10 @@
             this.buttonLimpiar.UseVisualStyleBackColor = true;
             this.buttonLimpiar.Click += new System.EventHandler(this.buttonLimpiar_Click);
             // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
+            // 
             // DatosTitularTarjeta
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -202,6 +209,7 @@
             this.Name = "DatosTitularTarjeta";
             this.Text = "Datos titular de tarjeta";
             this.Load += new System.EventHandler(this.DatosTitularTarjeta_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -225,5 +233,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button buttonRegistrar;
         private System.Windows.Forms.Button buttonLimpiar;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
     }
 }

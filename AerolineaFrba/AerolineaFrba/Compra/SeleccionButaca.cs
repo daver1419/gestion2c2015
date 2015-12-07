@@ -14,12 +14,12 @@ namespace AerolineaFrba.Compra
 {
     public partial class SeleccionButaca : Form
     {
-        private AeronaveDTO aeronave;
+        private int NroAeronave;
 
-        public SeleccionButaca(AeronaveDTO unaAeronave)
+        public SeleccionButaca(int nroAeronave)
         {
             InitializeComponent();
-            this.aeronave = unaAeronave;
+            this.NroAeronave = nroAeronave;
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -28,13 +28,15 @@ namespace AerolineaFrba.Compra
             if (e.RowIndex < 0 || e.ColumnIndex != dataGridView1.Columns.IndexOf(dataGridView1.Columns["ColumnSel"]))
                 return;
             ButacaDTO unaButaca = (ButacaDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
-            this.aeronave.ListaButacas.Add(unaButaca);//CHEQUEAR QUE LE AÑADA ESTA COSA
+            //this.aeronave.ListaButacas.Add(unaButaca); CHEQUEAR QUE LE AÑADA ESTA COSA
             this.Close();
         }
 
         private void SeleccionButaca_Load(object sender, EventArgs e)
         {
-            this.dataGridView1.DataSource=ButacaDAO.GetByAeronave(this.aeronave);
+            AeronaveDTO aeronave = new AeronaveDTO();
+            aeronave.Numero = this.NroAeronave;
+            this.dataGridView1.DataSource=ButacaDAO.GetByAeronave(aeronave);
         }
     }
 }
