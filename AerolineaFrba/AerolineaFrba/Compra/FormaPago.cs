@@ -16,10 +16,12 @@ namespace AerolineaFrba.Compra
 {
     public partial class FormaPago : Form
     {
-        private ClienteDTO Comprador;
         private List<Tuple<ClienteDTO, ButacaDTO>> listaPasajeroButacas;
         private ClienteDTO clienteAcargoDeEncomienda;
-        private Int32 idViaje;
+        private int idViaje;
+        private int KgsDeEncomienda;
+        private decimal monto;
+        private int PNR;
 
         public FormaPago(Int32 IdViaje,List<Tuple<ClienteDTO,ButacaDTO>> ListaTuplaPasajes,ClienteDTO clienteConEncomienda,Int32 KgEncomienda )
         {
@@ -27,6 +29,7 @@ namespace AerolineaFrba.Compra
             this.listaPasajeroButacas = ListaTuplaPasajes;
             this.clienteAcargoDeEncomienda = clienteConEncomienda;
             this.idViaje=IdViaje;
+            this.KgsDeEncomienda = KgEncomienda;
         }
 
         private void textBoxDNI_Leave(object sender, EventArgs e)
@@ -110,14 +113,14 @@ namespace AerolineaFrba.Compra
             viaje.Id = this.idViaje;
             compra.Viaje = viaje;
 
-            int PNR =CompraDAO.Save(compra).PNR;
+            this.PNR =CompraDAO.Save(compra).PNR;
 
-            if (PNR == null)
+            if (this.PNR == null)
             {
                 MessageBox.Show("No se pudo realizar la compra");
                 retValue = false;
             }
-            decimal monto = 0;
+            this.monto = 0;
 
             if (this.listaPasajeroButacas != null)
             {
@@ -127,11 +130,21 @@ namespace AerolineaFrba.Compra
                     pasaje.Pasajero = tupla.Item1;
                     pasaje.Compra = compra;
                     pasaje.Butaca = tupla.Item2;
+                    pasaje.Precio = 0;
 
-                    monto = PasajeDAO.Save(pasaje).Precio + monto;
+                    this.monto = PasajeDAO.Save(pasaje).Precio + this.monto;
                 }
             }
+            if (this.clienteAcargoDeEncomienda != null)
+            {
+                EncomiendaDTO encomienda = new EncomiendaDTO();
+                encomienda.Cliente = this.clienteAcargoDeEncomienda;
+                encomienda.Compra = compra;
+                encomienda.Precio = 0;
+                encomienda.Kg = this.KgsDeEncomienda;
 
+                this.monto = EncomiendaDAO.Save(encomienda).Precio + this.monto;
+            }
             return retValue;
         }
 
@@ -201,7 +214,7 @@ namespace AerolineaFrba.Compra
                     }
                     else
                     {
-                        MessageBox.Show("La compra fue realizada con exito");
+                        MessageBox.Show(String.Format("La transaccion de la compra ha finalizado con exito. Monto a abonar: {0}. PNR: {1}", this.monto, this.PNR));
                     }
                 }
             }
