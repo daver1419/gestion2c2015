@@ -22,14 +22,12 @@ namespace AerolineaFrba.DAO
             {
                 SqlCommand com = new SqlCommand("[NORMALIZADOS].[SaveCompra]", conn);
                 com.CommandType = CommandType.StoredProcedure;
-                com.Parameters.Add("@C_PNR", SqlDbType.Int).Direction = ParameterDirection.Output;
                 com.Parameters.AddWithValue("@paramComprador", compra.Comprador.IdCliente);
                 com.Parameters.AddWithValue("@paramMedioPago",compra.MedioPago.IdTipoPago);
                 com.Parameters.AddWithValue("@paramTarjeta",compra.TarjetaCredito.Numero);
                 com.Parameters.AddWithValue("@paramViaje",compra.Viaje.Id);
 
-                com.ExecuteNonQuery();
-                int PNR = Convert.ToInt32(com.Parameters["@C_PNR"].Value);
+                int PNR=com.ExecuteNonQuery();
 
                 CompraDTO retValue = new CompraDTO();
                 retValue.PNR = PNR;
