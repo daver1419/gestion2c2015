@@ -115,6 +115,21 @@ namespace AerolineaFrba.Compra
             if (PNR == null)
             {
                 MessageBox.Show("No se pudo realizar la compra");
+                retValue = false;
+            }
+            decimal monto = 0;
+
+            if (this.listaPasajeroButacas != null)
+            {
+                foreach (Tuple<ClienteDTO, ButacaDTO> tupla in this.listaPasajeroButacas)
+                {
+                    PasajeDTO pasaje = new PasajeDTO();
+                    pasaje.Pasajero = tupla.Item1;
+                    pasaje.Compra = compra;
+                    pasaje.Butaca = tupla.Item2;
+
+                    monto = PasajeDAO.Save(pasaje).Precio + monto;
+                }
             }
 
             return retValue;

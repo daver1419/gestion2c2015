@@ -227,6 +227,7 @@
     <Compile Include="DAO\ListadoDAO.cs" />
     <Compile Include="DAO\MillasDAO.cs" />
     <Compile Include="DAO\ModeloDAO.cs" />
+    <Compile Include="DAO\PasajeDAO.cs" />
     <Compile Include="DAO\RegistroLlegadaDestinoDAO.cs" />
     <Compile Include="DAO\RutaDAO.cs" />
     <Compile Include="DAO\TipoButacaDAO.cs" />
@@ -254,6 +255,7 @@
     <Compile Include="DTO\GridViajesDTO.cs" />
     <Compile Include="DTO\MillasDTO.cs" />
     <Compile Include="DTO\ModeloDTO.cs" />
+    <Compile Include="DTO\PasajeDTO.cs" />
     <Compile Include="DTO\RecompensaDTO.cs" />
     <Compile Include="DTO\RegistroLlegadaDestinoDTO.cs" />
     <Compile Include="DTO\RutaDTO.cs" />
