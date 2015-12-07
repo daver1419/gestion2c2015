@@ -441,7 +441,8 @@ GO
 ******************************************************************/
 CREATE TABLE [NORMALIZADOS].[Tipo_Tarjeta](
 	[Id] [int] PRIMARY KEY IDENTITY(0,1) NOT NULL,
-	[Nombre] [nvarchar](255) NOT NULL
+	[Nombre] [nvarchar](255) NOT NULL,
+	[Numero_Cuotas] [int] NOT NULL
 )
 GO
 /*****************************************************************
@@ -1474,7 +1475,7 @@ GO
 ------------------------------------------------------------------
 -- Funcion para obtener los KGs disponibles en un viaje
 ------------------------------------------------------------------
-CREATE FUNCTION NORMALIZADOS.KGs_Disponibles(@fecha_salida datetime,
+/*CREATE FUNCTION NORMALIZADOS.KGs_Disponibles(@fecha_salida datetime,
 												@ciudad_origen int, @ciudad_destino int, 
 												@tipo_servicio int)
 RETURNS numeric(18,0)
@@ -1503,13 +1504,39 @@ AS
 
 		RETURN @KGdisponibles
 	END
+GO*/
+
+CREATE FUNCTION NORMALIZADOS.KGs_Disponibles(@viaje int)
+RETURNS numeric(18,0)
+AS
+	BEGIN
+		DECLARE @KGtotal numeric(18,0)
+
+		DECLARE @KGusados numeric(18,0)
+		DECLARE @KGdisponibles numeric (18,0)
+		
+		SELECT @KGtotal = A.KG_Disponibles
+		FROM NORMALIZADOS.Viaje V
+		JOIN NORMALIZADOS.Aeronave A
+		ON A.Numero = V.Aeronave
+		WHERE V.Id = @viaje
+
+		SELECT @KGusados = SUM(E.Kg)
+		FROM NORMALIZADOS.Encomienda E
+		JOIN NORMALIZADOS.Compra C ON E.Compra = C.Id
+		WHERE C.Viaje = @viaje AND E.id NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
+
+		SET @KGdisponibles = @KGtotal - @KGusados
+
+		RETURN @KGdisponibles
+	END
 GO
 
 --------------------------------------------------------------------------------
 --			FUNCION devuelve cantidad de butacas ocupadas
 --------------------------------------------------------------------------------
 
-CREATE FUNCTION NORMALIZADOS.GetCantidadButacasOcupadas(@fecha_salida datetime,
+/*CREATE FUNCTION NORMALIZADOS.GetCantidadButacasOcupadas(@fecha_salida datetime,
 												@ciudad_origen int, @ciudad_destino int, 
 												@tipo_servicio int)
 RETURNS int
@@ -1528,13 +1555,30 @@ AS
 
 		RETURN @butacas_ocupadas
 	END
+GO*/
+
+CREATE FUNCTION NORMALIZADOS.GetCantidadButacasOcupadas(@viaje int)
+RETURNS int
+AS 
+	BEGIN
+		
+		DECLARE @butacas_ocupadas int
+
+		SELECT @butacas_ocupadas = COUNT(*) FROM NORMALIZADOS.Pasaje P
+		JOIN NORMALIZADOS.Compra C ON P.Compra = C.Id
+		JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+		WHERE V.Id = @viaje
+		AND P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
+
+		RETURN @butacas_ocupadas
+	END
 GO
 
 ------------------------------------------------------------------
 --         FUNCION devuelve la cantidad de butacas disponibles
 --				de una aeronave
 ------------------------------------------------------------------
-CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@fecha_salida datetime,
+/*CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@fecha_salida datetime,
 												@ciudad_origen int, @ciudad_destino int, 
 												@tipo_servicio int)
 RETURNS int
@@ -1553,8 +1597,23 @@ AS
 		
 		RETURN @butacas_disponibles
 	END
+GO*/
+CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@viaje int)
+RETURNS int
+AS 
+	BEGIN
+		
+		DECLARE @butacas_disponibles int
+		
+		SELECT @butacas_disponibles = (NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(A.Matricula)-
+										NORMALIZADOS.GetCantidadButacasOcupadas(@viaje))
+		FROM NORMALIZADOS.Viaje V
+		JOIN NORMALIZADOS.Aeronave A ON V.Aeronave = A.Numero
+		WHERE V.Id = @viaje
+		
+		RETURN @butacas_disponibles
+	END
 GO
-
 
 ------------------------------------------------------------------
 --         SP verifica si existe una ruta con ciudad de origen, destino y servicio
@@ -1903,7 +1962,7 @@ AS
 	END
 GO
 
-CREATE  PROCEDURE [NORMALIZADOS].[SP_Get_Millas_By_Dni](@Dni numeric(18,0))
+CREATE PROCEDURE [NORMALIZADOS].[SP_Get_Millas_By_Dni](@Dni numeric(18,0))
 AS
 	BEGIN
 		IF EXISTS (SELECT 1 FROM NORMALIZADOS.Cliente C WHERE C.Dni = @Dni)
@@ -2097,13 +2156,13 @@ BEGIN
 
 	SELECT @@ROWCOUNT
 END
-
+GO
 ----------------------------------------------------------------
 -- Valida que el pasajero no tenga otro vuelo superpuesto con 
 -- el que se va a comprar
 ----------------------------------------------------------------
 
-CREATE FUNCTION NORMALIZADOS.Validar_PasajesEnCompra(@pasajero numeric(18,0), @fecha_llegada_estimada datetime, @fecha_salida datetime)
+CREATE FUNCTION NORMALIZADOS.Validar_PasajesEnCompra(@pasajero numeric(18,0), @fecha_salida datetime, @fecha_llegada_estimada datetime)
 RETURNS BIT
 AS
 	BEGIN
@@ -2128,8 +2187,8 @@ AS
 					ON P.Compra = C.Id
 					JOIN NORMALIZADOS.Viaje V
 					ON V.Id = C.Viaje
-					WHERE P.Pasajero = @pasajero AND @fecha_llegada_estimada < V.Fecha_Llegada_Estimada
-					AND @fecha_salida > V.Fecha_Salida
+					WHERE P.Pasajero = @pasajero AND @fecha_llegada_estimada > V.Fecha_Llegada_Estimada
+					AND @fecha_salida < V.Fecha_Salida
 					AND P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados))
 			SET @retorno = 0
 
@@ -2138,4 +2197,127 @@ AS
 
 		RETURN @retorno
 	END
+GO
+------------------------------------------------------------------
+--         SP devuelve datos de cliente a partir del DNI
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetCliente_SEL_ByDNI]
+@paramDNI numeric(18,0)
+AS
+BEGIN
+	SELECT*
+	FROM [NORMALIZADOS].[Cliente]
+	WHERE Dni=@paramDNI
+END
+GO
+------------------------------------------------------------------
+--         SP actualiza datos de un cliente a partir del DNI
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[UpdateCliente]
+@paramNombre nvarchar(255),
+@paramApellido nvarchar(255),
+@paramDni numeric(18,0),
+@paramDireccion nvarchar(255),
+@paramFechaNac datetime,
+@paramMail nvarchar(255),
+@paramTelefono numeric(18,0)
+AS
+BEGIN
+	UPDATE [NORMALIZADOS].[Cliente]
+	SET Nombre=@paramDni,
+		Apellido=@paramApellido,
+		Direccion=@paramDireccion,
+		Fecha_Nac=@paramFechaNac,
+		Mail=@paramMail,
+		Telefono=@paramTelefono
+	WHERE Dni=@paramDni
+
+	SELECT @@ROWCOUNT
+END
+GO
+------------------------------------------------------------------
+--         SP registra datos de un cliente
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SaveCliente_INS](
+@paramNombre nvarchar(255),
+@paramApellido nvarchar(255),
+@paramDni numeric(18,0),
+@paramDireccion nvarchar(255),
+@paramFechaNac datetime,
+@paramMail nvarchar(255),
+@paramTelefono numeric(18,0)
+)
+AS
+BEGIN
+	INSERT INTO [NORMALIZADOS].[Cliente](Nombre,
+										Apellido,
+										Dni,
+										Telefono,
+										Direccion,
+										Fecha_Nac,
+										Mail)
+							VALUES(@paramNombre,
+									@paramApellido,
+									@paramDni,
+									@paramTelefono,
+									@paramDireccion,
+									@paramFechaNac,
+									@paramMail)
+END
+GO
+------------------------------------------------------------------
+--         SP devuelve todos los tipos de pago
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetAllTipoPago_SEL]
+AS
+BEGIN
+	SELECT Id,Descripcion
+	FROM [Tipo_Pago]
+END
+GO
+------------------------------------------------------------------
+--         SP devuelve viajes disponibles para 
+--				una fecha de entrada,fecha de salida,
+--				ciudad de origen y ciudad de destino
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetViajes_SEL_ByFechasCiudades]
+@paramFechaSalida datetime,
+@paramFechaLlegadaEstimada datetime,
+@paramCiudadOrigen int,
+@paramCiudadDestino int
+AS
+BEGIN
+	SELECT V.Id,
+			V.Fecha_Salida,
+			V.Fecha_Llegada_Estimada,
+			V.Ruta_Aerea,
+			C1.Nombre as CiudadOrigenNombre,
+			C2.Nombre as CiudadDestinoNombre,
+			V.Aeronave,
+			A.Matricula,
+			A.Tipo_Servicio,
+			S.Descripcion,
+			[NORMALIZADOS].[GetCantidadButacasDisponibles](V.Id) as CantButacasDisponibles,
+			[NORMALIZADOS].[KGs_Disponibles](V.Id) as KGs_Disponibles
+	FROM [NORMALIZADOS].[Viaje] V
+	JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+		ON V.Ruta_Aerea=RA.Id
+		AND RA.Habilitada=1
+		AND RA.Ciudad_Origen=@paramCiudadOrigen
+		AND RA.Ciudad_Destino=@paramCiudadDestino
+	JOIN [NORMALIZADOS].[Ciudad] C1
+		ON C1.Id=RA.Ciudad_Origen
+	JOIN [NORMALIZADOS].[Ciudad] C2
+		ON C2.Id=RA.Ciudad_Destino
+	JOIN [NORMALIZADOS].[Aeronave] A
+		ON V.Aeronave=A.Numero
+	JOIN [NORMALIZADOS].[Servicio] S
+		ON S.Id=A.Tipo_Servicio
+	WHERE YEAR(Fecha_Salida)=YEAR(@paramFechaSalida)
+		AND MONTH(Fecha_Salida)=MONTH(@paramFechaSalida)
+		AND DAY(Fecha_Salida)=DAY(@paramFechaSalida)
+		AND YEAR(Fecha_Llegada_Estimada)=YEAR(@paramFechaLlegadaEstimada)
+		AND MONTH(Fecha_Llegada_Estimada)=MONTH(@paramFechaLlegadaEstimada)
+		AND DAY(Fecha_Llegada_Estimada)=DAY(@paramFechaLlegadaEstimada)
+END
 GO
