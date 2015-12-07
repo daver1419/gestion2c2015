@@ -1475,7 +1475,7 @@ GO
 ------------------------------------------------------------------
 -- Funcion para obtener los KGs disponibles en un viaje
 ------------------------------------------------------------------
-CREATE FUNCTION NORMALIZADOS.KGs_Disponibles(@fecha_salida datetime,
+/*CREATE FUNCTION NORMALIZADOS.KGs_Disponibles(@fecha_salida datetime,
 												@ciudad_origen int, @ciudad_destino int, 
 												@tipo_servicio int)
 RETURNS numeric(18,0)
@@ -1504,13 +1504,39 @@ AS
 
 		RETURN @KGdisponibles
 	END
+GO*/
+
+CREATE FUNCTION NORMALIZADOS.KGs_Disponibles(@viaje int)
+RETURNS numeric(18,0)
+AS
+	BEGIN
+		DECLARE @KGtotal numeric(18,0)
+
+		DECLARE @KGusados numeric(18,0)
+		DECLARE @KGdisponibles numeric (18,0)
+		
+		SELECT @KGtotal = A.KG_Disponibles
+		FROM NORMALIZADOS.Viaje V
+		JOIN NORMALIZADOS.Aeronave A
+		ON A.Numero = V.Aeronave
+		WHERE V.Id = @viaje
+
+		SELECT @KGusados = SUM(E.Kg)
+		FROM NORMALIZADOS.Encomienda E
+		JOIN NORMALIZADOS.Compra C ON E.Compra = C.Id
+		WHERE C.Viaje = @viaje AND E.id NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
+
+		SET @KGdisponibles = @KGtotal - @KGusados
+
+		RETURN @KGdisponibles
+	END
 GO
 
 --------------------------------------------------------------------------------
 --			FUNCION devuelve cantidad de butacas ocupadas
 --------------------------------------------------------------------------------
 
-CREATE FUNCTION NORMALIZADOS.GetCantidadButacasOcupadas(@fecha_salida datetime,
+/*CREATE FUNCTION NORMALIZADOS.GetCantidadButacasOcupadas(@fecha_salida datetime,
 												@ciudad_origen int, @ciudad_destino int, 
 												@tipo_servicio int)
 RETURNS int
@@ -1529,13 +1555,30 @@ AS
 
 		RETURN @butacas_ocupadas
 	END
+GO*/
+
+CREATE FUNCTION NORMALIZADOS.GetCantidadButacasOcupadas(@viaje int)
+RETURNS int
+AS 
+	BEGIN
+		
+		DECLARE @butacas_ocupadas int
+
+		SELECT @butacas_ocupadas = COUNT(*) FROM NORMALIZADOS.Pasaje P
+		JOIN NORMALIZADOS.Compra C ON P.Compra = C.Id
+		JOIN NORMALIZADOS.Viaje V ON C.Viaje = V.Id
+		WHERE V.Id = @viaje
+		AND P.Id NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
+
+		RETURN @butacas_ocupadas
+	END
 GO
 
 ------------------------------------------------------------------
 --         FUNCION devuelve la cantidad de butacas disponibles
 --				de una aeronave
 ------------------------------------------------------------------
-CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@fecha_salida datetime,
+/*CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@fecha_salida datetime,
 												@ciudad_origen int, @ciudad_destino int, 
 												@tipo_servicio int)
 RETURNS int
@@ -1554,8 +1597,23 @@ AS
 		
 		RETURN @butacas_disponibles
 	END
+GO*/
+CREATE FUNCTION NORMALIZADOS.GetCantidadButacasDisponibles(@viaje int)
+RETURNS int
+AS 
+	BEGIN
+		
+		DECLARE @butacas_disponibles int
+		
+		SELECT @butacas_disponibles = (NORMALIZADOS.GetTotalButacas_SEL_ByMatricula(A.Matricula)-
+										NORMALIZADOS.GetCantidadButacasOcupadas(@viaje))
+		FROM NORMALIZADOS.Viaje V
+		JOIN NORMALIZADOS.Aeronave A ON V.Aeronave = A.Numero
+		WHERE V.Id = @viaje
+		
+		RETURN @butacas_disponibles
+	END
 GO
-
 
 ------------------------------------------------------------------
 --         SP verifica si existe una ruta con ciudad de origen, destino y servicio
