@@ -14,6 +14,7 @@ namespace AerolineaFrba.Compra
 {
     public partial class IngresoDatos : Form
     {
+        public ButacaDTO butaca;
         private bool clienteExistente;
         private int NroAeronave;
         private bool compraEncomienda;
@@ -102,6 +103,12 @@ namespace AerolineaFrba.Compra
                 {
                     SeleccionButaca ventana = new SeleccionButaca(this.NroAeronave);
                     ventana.ShowDialog(this);
+                    Tuple<ClienteDTO, ButacaDTO> tuple = new Tuple<ClienteDTO, ButacaDTO>(cliente, this.butaca);
+                    ((CompraPasajeEncomienda)this.Owner).listaPasajerosButacas.Add(tuple);
+                }
+                else
+                {
+                    ((CompraPasajeEncomienda)this.Owner).clienteEncomienda = cliente;
                 }
                 this.Close();
             }

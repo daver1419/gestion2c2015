@@ -28,7 +28,7 @@ namespace AerolineaFrba.Compra
             if (e.RowIndex < 0 || e.ColumnIndex != dataGridView1.Columns.IndexOf(dataGridView1.Columns["ColumnSel"]))
                 return;
             ButacaDTO unaButaca = (ButacaDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
-            //this.aeronave.ListaButacas.Add(unaButaca); CHEQUEAR QUE LE AÑADA ESTA COSA
+            ((IngresoDatos)this.Owner).butaca = unaButaca;
             this.Close();
         }
 

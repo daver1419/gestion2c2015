@@ -16,11 +16,17 @@ namespace AerolineaFrba.Compra
 {
     public partial class FormaPago : Form
     {
-        private ClienteDTO cliente;
+        private ClienteDTO Comprador;
+        private List<Tuple<ClienteDTO, ButacaDTO>> listaPasajeroButacas;
+        private ClienteDTO clienteAcargoDeEncomienda;
+        private Int32 idViaje;
 
-        public FormaPago()
+        public FormaPago(Int32 IdViaje,List<Tuple<ClienteDTO,ButacaDTO>> ListaTuplaPasajes,ClienteDTO clienteConEncomienda,Int32 KgEncomienda )
         {
             InitializeComponent();
+            this.listaPasajeroButacas = ListaTuplaPasajes;
+            this.clienteAcargoDeEncomienda = clienteConEncomienda;
+            this.idViaje=IdViaje;
         }
 
         private void textBoxDNI_Leave(object sender, EventArgs e)
@@ -88,7 +94,30 @@ namespace AerolineaFrba.Compra
 
         private bool FinalizarTransaccion()
         {
-            return true;
+            bool retValue = true;
+            ClienteDTO cliente=new ClienteDTO();
+            cliente.Dni=Convert.ToInt32( textBoxDNI.Text);
+            CompraDTO compra = new CompraDTO();
+            compra.Comprador = ClienteDAO.GetByDNI(cliente);
+            compra.MedioPago = (TipoPagoDTO)comboBoxMedioPago.SelectedItem;
+            TarjetaCreditoDTO tarjeta = new TarjetaCreditoDTO();
+            tarjeta.Numero =Convert.ToInt32( textBoxNro.Text);
+            tarjeta.Codigo = Convert.ToInt32(textBoxCodSeg.Text);
+            tarjeta.FechaVencimiento = Convert.ToInt32(textBoxFechVenc.Text);
+            tarjeta.TipoTarjeta = (TipoTarjetaDTO)comboBoxTipoTarj.SelectedItem;
+            compra.TarjetaCredito = tarjeta;
+            ViajeDTO viaje = new ViajeDTO();
+            viaje.Id = this.idViaje;
+            compra.Viaje = viaje;
+
+            int PNR =CompraDAO.Save(compra).PNR;
+
+            if (PNR == null)
+            {
+                MessageBox.Show("No se pudo realizar la compra");
+            }
+
+            return retValue;
         }
 
         private bool validarCampos()
@@ -115,9 +144,9 @@ namespace AerolineaFrba.Compra
                 errorProvider1.SetError(this.textBoxNro, "Ingrese el numero de la tarjeta");
                 retValue = false;
             }
-            if (this.textBoxFechNac.Text == "")
+            if (this.textBoxFechVenc.Text == "")
             {
-                errorProvider1.SetError(this.textBoxFechNac, "Ingrese mes y año de la fecha de nacimiento");
+                errorProvider1.SetError(this.textBoxFechVenc, "Ingrese mes y año de la fecha de nacimiento");
                 retValue = false;
             }
             if (this.comboBoxMedioPago.SelectedIndex == -1)

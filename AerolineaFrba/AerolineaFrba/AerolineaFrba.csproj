@@ -223,6 +223,7 @@
     <Compile Include="DAO\ButacaDAO.cs" />
     <Compile Include="DAO\CiudadDAO.cs" />
     <Compile Include="DAO\ClienteDAO.cs" />
+    <Compile Include="DAO\CompraDAO.cs" />
     <Compile Include="DAO\ListadoDAO.cs" />
     <Compile Include="DAO\MillasDAO.cs" />
     <Compile Include="DAO\ModeloDAO.cs" />
@@ -249,12 +250,14 @@
     <Compile Include="DTO\CiudadDTO.cs" />
     <Compile Include="DTO\AeronaveFiltersDTO.cs" />
     <Compile Include="DTO\ClienteDTO.cs" />
+    <Compile Include="DTO\CompraDTO.cs" />
     <Compile Include="DTO\GridViajesDTO.cs" />
     <Compile Include="DTO\MillasDTO.cs" />
     <Compile Include="DTO\ModeloDTO.cs" />
     <Compile Include="DTO\RecompensaDTO.cs" />
     <Compile Include="DTO\RegistroLlegadaDestinoDTO.cs" />
     <Compile Include="DTO\RutaDTO.cs" />
+    <Compile Include="DTO\TarjetaCreditoDTO.cs" />
     <Compile Include="DTO\TipoButacaDTO.cs" />
     <Compile Include="DTO\RolxFuncDTO.cs" />
     <Compile Include="DTO\TipoPagoDTO.cs" />

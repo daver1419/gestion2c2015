@@ -37,7 +37,7 @@
             this.textBoxDNI = new System.Windows.Forms.TextBox();
             this.textBoxNro = new System.Windows.Forms.TextBox();
             this.textBoxCodSeg = new System.Windows.Forms.TextBox();
-            this.textBoxFechNac = new System.Windows.Forms.TextBox();
+            this.textBoxFechVenc = new System.Windows.Forms.TextBox();
             this.comboBoxTipoTarj = new System.Windows.Forms.ComboBox();
             this.buttonComprar = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
@@ -123,12 +123,12 @@
             this.textBoxCodSeg.Size = new System.Drawing.Size(100, 20);
             this.textBoxCodSeg.TabIndex = 7;
             // 
-            // textBoxFechNac
+            // textBoxFechVenc
             // 
-            this.textBoxFechNac.Location = new System.Drawing.Point(188, 131);
-            this.textBoxFechNac.Name = "textBoxFechNac";
-            this.textBoxFechNac.Size = new System.Drawing.Size(100, 20);
-            this.textBoxFechNac.TabIndex = 8;
+            this.textBoxFechVenc.Location = new System.Drawing.Point(188, 131);
+            this.textBoxFechVenc.Name = "textBoxFechVenc";
+            this.textBoxFechVenc.Size = new System.Drawing.Size(100, 20);
+            this.textBoxFechVenc.TabIndex = 8;
             // 
             // comboBoxTipoTarj
             // 
@@ -277,7 +277,7 @@
             this.Controls.Add(this.label6);
             this.Controls.Add(this.buttonComprar);
             this.Controls.Add(this.comboBoxTipoTarj);
-            this.Controls.Add(this.textBoxFechNac);
+            this.Controls.Add(this.textBoxFechVenc);
             this.Controls.Add(this.textBoxCodSeg);
             this.Controls.Add(this.textBoxNro);
             this.Controls.Add(this.textBoxDNI);
@@ -307,7 +307,7 @@
         private System.Windows.Forms.TextBox textBoxDNI;
         private System.Windows.Forms.TextBox textBoxNro;
         private System.Windows.Forms.TextBox textBoxCodSeg;
-        private System.Windows.Forms.TextBox textBoxFechNac;
+        private System.Windows.Forms.TextBox textBoxFechVenc;
         private System.Windows.Forms.ComboBox comboBoxTipoTarj;
         private System.Windows.Forms.Button buttonComprar;
         private System.Windows.Forms.Label label6;
