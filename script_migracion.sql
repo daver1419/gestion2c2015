@@ -2331,3 +2331,25 @@ BEGIN
 	SELECT*
 	FROM [NORMALIZADOS].[Tipo_Tarjeta]
 END
+GO
+------------------------------------------------------------------
+--         SP registra una compra y devuelve PNR
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SaveCompra]
+@paramComprador numeric(18,0),
+@paramMedioPago int,
+@paramTarjeta bigint,
+@paramViaje int
+AS
+BEGIN
+	DECLARE @IdCompra int
+
+	INSERT INTO [NORMALIZADOS].[Compra](Fecha,Comprador,Medio_Pago,Tarjeta_Credito,Viaje)
+		VALUES(GETDATE(), @paramComprador, @paramMedioPago, @paramTarjeta, @paramViaje)
+
+	SET @IdCompra=SCOPE_IDENTITY()
+
+	SELECT PNR
+	FROM [NORMALIZADOS].[Compra]
+	WHERE Id=@IdCompra
+END
