@@ -2336,6 +2336,8 @@ GO
 --         SP registra una compra y devuelve PNR
 ------------------------------------------------------------------
 CREATE PROCEDURE [NORMALIZADOS].[SaveCompra]
+@paramPNR int OUTPUT,
+@paramIdCompra int OUTPUT,
 @paramComprador numeric(18,0),
 @paramMedioPago int,
 @paramTarjeta bigint,
@@ -2347,9 +2349,57 @@ BEGIN
 	INSERT INTO [NORMALIZADOS].[Compra](Fecha,Comprador,Medio_Pago,Tarjeta_Credito,Viaje)
 		VALUES(GETDATE(), @paramComprador, @paramMedioPago, @paramTarjeta, @paramViaje)
 
-	SET @IdCompra=SCOPE_IDENTITY()
+	SET @paramIdCompra=SCOPE_IDENTITY()
 
-	SELECT PNR
+	SELECT @paramPNR=PNR
 	FROM [NORMALIZADOS].[Compra]
-	WHERE Id=@IdCompra
+	WHERE Id=@paramIdCompra
+END
+GO
+------------------------------------------------------------------
+--         SP registra un pasaje y devuelve su precio
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SaveEncomienda]
+@paramPrecio numeric(18,2) OUTPUT,
+@paramKg numeric(18,0),
+@paramCompra int,
+@paramCliente numeric(18,0)
+AS
+BEGIN
+		SELECT @paramPrecio=RA.Precio_BaseKG*S.Porcentaje_Adicional+RA.Precio_BaseKG
+		FROM [NORMALIZADOS].[Servicio] S
+		JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+			ON S.Id=RA.Tipo_Servicio
+		JOIN [NORMALIZADOS].[Viaje] V
+			ON V.Ruta_Aerea=RA.Id
+		JOIN [NORMALIZADOS].[Compra] C
+			ON V.Id=C.Viaje
+			AND C.Id=@paramCompra
+
+		INSERT INTO [NORMALIZADOS].[Encomienda](Precio,Kg,Cliente,Compra)
+			VALUES(@paramPrecio,@paramKg,@paramCliente,@paramCompra)
+END
+GO
+------------------------------------------------------------------
+--         SP registra una encomienda y devuelve su precio
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SavePasaje]
+@paramPrecio numeric(18,2) OUTPUT,
+@paramButaca int,
+@paramCompra int,
+@paramPasajero numeric(18,0)
+AS
+BEGIN
+		SELECT @paramPrecio=RA.Precio_BasePasaje*S.Porcentaje_Adicional+RA.Precio_BasePasaje
+		FROM [NORMALIZADOS].[Servicio] S
+		JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+			ON S.Id=RA.Tipo_Servicio
+		JOIN [NORMALIZADOS].[Viaje] V
+			ON V.Ruta_Aerea=RA.Id
+		JOIN [NORMALIZADOS].[Compra] C
+			ON V.Id=C.Viaje
+			AND C.Id=@paramCompra
+
+		INSERT INTO [NORMALIZADOS].[Pasaje](Precio,Butaca,Pasajero,Compra)
+			VALUES(@paramPrecio,@paramButaca,@paramPasajero,@paramCompra)
 END
