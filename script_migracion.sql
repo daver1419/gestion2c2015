@@ -2333,7 +2333,27 @@ BEGIN
 END
 GO
 ------------------------------------------------------------------
---         SP registra una compra y devuelve PNR
+--         SP registra una tarjeta de credito
+------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SaveTarjeta]
+@paramNro bigint,
+@paramCodigo int,
+@paramFechaVencimiento int,
+@paramTipoTarjeta int
+AS
+BEGIN
+	IF NOT EXISTS(SELECT 1
+					FROM [NORMALIZADOS].[Tarjeta_Credito]
+					WHERE Nro=@paramNro
+					)
+	BEGIN
+		INSERT INTO [NORMALIZADOS].[Tarjeta_Credito](Nro,Codigo,Fecha_Vencimiento,Tipo_Tarjeta)
+			VALUES(@paramNro,@paramCodigo,@paramFechaVencimiento,@paramTipoTarjeta)
+	END
+END
+GO
+------------------------------------------------------------------
+--         SP registra una compra y devuelve PNR y Id de Compra
 ------------------------------------------------------------------
 CREATE PROCEDURE [NORMALIZADOS].[SaveCompra]
 @paramPNR int OUTPUT,
