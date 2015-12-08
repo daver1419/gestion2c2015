@@ -14,31 +14,16 @@ namespace AerolineaFrba.Compra
 {
     public partial class DatosTitularTarjeta : Form
     {
-        private string Dni;
-        private ClienteDTO cliente;
+        private bool clienteExistente;
 
-        public DatosTitularTarjeta(string unDNI)
+        public DatosTitularTarjeta()
         {
             InitializeComponent();
-            this.Dni = unDNI;
         }
 
         private void DatosTitularTarjeta_Load(object sender, EventArgs e)
         {
-            ClienteDTO uncliente = new ClienteDTO();
-            uncliente.Dni =Convert.ToInt32( this.Dni);
-
-            this.cliente = ClienteDAO.GetByDNI(uncliente);
-            if (this.cliente != null)
-            {
-                this.textBoxNom.Text = this.cliente.Nombre;
-                this.textBoxApe.Text = this.cliente.Apellido;
-                this.textBoxDni.Text =this.cliente.Dni.ToString();
-                this.textBoxMail.Text = this.cliente.Mail;
-                this.textBoxDir.Text = this.cliente.Direccion;
-                this.textBoxTel.Text = this.cliente.Telefono.ToString();
-                this.dateTimePicker1.Value = this.cliente.Fecha_Nac;
-            }
+            this.clienteExistente = false;
         }
 
         private bool validar()
@@ -77,23 +62,18 @@ namespace AerolineaFrba.Compra
         {
             if (validar())
             {
-                if (this.cliente == null)
-                {
-                    ClienteDTO unCliente = new ClienteDTO();
+                ClienteDTO cliente = new ClienteDTO();
+                cliente.Nombre = textBoxNom.Text;
+                cliente.Apellido = textBoxApe.Text;
+                cliente.Direccion = textBoxDir.Text;
+                cliente.Dni =Convert.ToInt32( textBoxDni.Text);
+                cliente.Fecha_Nac = dateTimePicker1.Value;
+                cliente.Mail = textBoxMail.Text;
+                cliente.Telefono = Convert.ToInt32(textBoxTel.Text);
 
-                    if (!ClienteDAO.Save(unCliente))
-                    {
-                        MessageBox.Show("No se pudo guardar los datos del titular");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Se guardaron los datos del titular con exito");
-                        this.Close();
-                    }
-                }
-                else
+                if(this.clienteExistente)
                 {
-                    if (!ClienteDAO.Actualizar(this.cliente))
+                    if (!ClienteDAO.Actualizar(cliente))
                     {
                         MessageBox.Show("No se pudieron actualizar los datos del titular");
                     }
@@ -103,12 +83,44 @@ namespace AerolineaFrba.Compra
                         this.Close();
                     }
                 }
+                else
+                {
+                    if (!ClienteDAO.Save(cliente))
+                    {
+                        MessageBox.Show("No se pudieron guardar los datos del titular");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Se guardaron los datos del titular con exito");
+                        this.Close();
+                    }
+                }
+                ((FormaPago)this.Owner).textBoxDNI.Text = this.textBoxDni.Text;
             }
         }
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void textBoxDni_Leave(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(textBoxDni.Text))
+                return;
+            ClienteDTO cliente = new ClienteDTO();
+            cliente.Dni = Convert.ToInt32(textBoxDni.Text);
+            cliente = ClienteDAO.GetByDNI(cliente);
+            if (cliente != null)
+            {
+                textBoxNom.Text = cliente.Nombre;
+                textBoxApe.Text = cliente.Apellido;
+                textBoxDir.Text = cliente.Direccion;
+                textBoxTel.Text = cliente.Telefono.ToString();
+                textBoxMail.Text = cliente.Mail;
+                dateTimePicker1.Value = cliente.Fecha_Nac;
+                this.clienteExistente = true;
+            }
         }
     }
 }

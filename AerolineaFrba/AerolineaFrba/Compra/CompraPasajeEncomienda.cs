@@ -62,11 +62,29 @@ namespace AerolineaFrba.Compra
             if (e.RowIndex < 0 || e.ColumnIndex != dataGridView1.Columns.IndexOf(dataGridView1.Columns["ColumnCompra"]))
                 return;
             GridViajesDTO gridViaje = (GridViajesDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
+            bool compraEncomienda = false;
 
-            if (gridViaje.CantButacasDisp == 0 && (Int32)comboBoxCantPas.SelectedItem != 0)
+            if (comboBoxCantPas.SelectedItem != null )
             {
-                MessageBox.Show("Todos los pasajes de este viaje estan vendidos");
-                return;
+                if (Convert.ToInt32(comboBoxCantPas.SelectedItem.ToString()) > 0)
+                {
+                    if (gridViaje.CantButacasDisp == 0)
+                    {
+                        MessageBox.Show("Todos los pasajes de este viaje estan vendidos");
+                        return;
+                    }
+                    if ((int)comboBoxCantPas.SelectedItem > gridViaje.CantButacasDisp)
+                    {
+                        MessageBox.Show(string.Format("A la aeronave del viaje seleccionado solo le quedan: {0} pasajes disponibles", gridViaje.CantButacasDisp));
+                        return;
+                    }
+                    for (int i = 1; i <= Convert.ToInt32(comboBoxCantPas.SelectedItem.ToString()); i++)
+                    {
+                        compraEncomienda = false;
+                        IngresoDatos ventana = new IngresoDatos(gridViaje.NumeroAeronave, compraEncomienda);
+                        ventana.ShowDialog(this);
+                    }
+                }
             }
             if (gridViaje.KgsDisponibles == 0 && numericUpDown1.Value != 0)
             {
@@ -78,33 +96,18 @@ namespace AerolineaFrba.Compra
                 MessageBox.Show(string.Format("A la aeronave del viaje seleccionado solo le quedan: {0} Kgs disponibles",gridViaje.KgsDisponibles));
                 return;
             }
-            if((Int32)comboBoxCantPas.SelectedItem > gridViaje.CantButacasDisp)
-            {
-               MessageBox.Show(string.Format("A la aeronave del viaje seleccionado solo le quedan: {0} pasajes disponibles",gridViaje.CantButacasDisp)); 
-                return;
-            }
-
-            bool compraEncomienda=false;
 
             if (numericUpDown1.Value > 0)
             {
                 compraEncomienda = true;
                 IngresoDatos vent = new IngresoDatos(gridViaje.NumeroAeronave, compraEncomienda);
+                vent.ShowDialog(this);
             } 
             List<Tuple<ClienteDTO, ButacaDTO>> listaTupla = new List<Tuple<ClienteDTO, ButacaDTO>>();
             ClienteDTO clienteEnco = new ClienteDTO();
             this.listaPasajerosButacas = listaTupla;
             this.clienteEncomienda = clienteEnco;
 
-            if (Convert.ToInt32(comboBoxCantPas.SelectedItem.ToString()) > 0 && comboBoxCantPas.SelectedItem != null)
-            {
-                for (int i = 1; i <= Convert.ToInt32(comboBoxCantPas.SelectedItem.ToString()); i++)
-                {
-                    compraEncomienda = false;
-                    IngresoDatos ventana = new IngresoDatos(gridViaje.NumeroAeronave, compraEncomienda);
-                    ventana.ShowDialog(this);
-                }
-            }
             FormaPago formPago = new FormaPago(gridViaje.IdViaje,this.listaPasajerosButacas,this.clienteEncomienda,Convert.ToInt32( numericUpDown1.Value));
             formPago.ShowDialog(this);
 

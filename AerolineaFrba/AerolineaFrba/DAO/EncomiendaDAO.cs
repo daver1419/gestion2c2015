@@ -20,20 +20,17 @@ namespace AerolineaFrba.DAO
         {
             using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
             {
-                SqlCommand com = new SqlCommand("[NORMALIZADOS].[SavePasaje]", conn);
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[SaveEncomienda]", conn);
                 com.CommandType = CommandType.StoredProcedure;
-                com.Parameters.Add("@paramPrecio", SqlDbType.Int).Direction = ParameterDirection.Output;
-                com.Parameters.AddWithValue("@paramPrecio", unaEncomienda.Precio);
+                SqlParameter outPutPrecio = new SqlParameter("@paramPrecio", SqlDbType.Decimal) { Direction = ParameterDirection.Output };
+                com.Parameters.Add(outPutPrecio);
                 com.Parameters.AddWithValue("@paramKg", unaEncomienda.Kg);
                 com.Parameters.AddWithValue("@paramCompra", unaEncomienda.Compra.IdCompra);
                 com.Parameters.AddWithValue("@paramCliente", unaEncomienda.Cliente.IdCliente);
-
                 com.ExecuteNonQuery();
 
-                decimal precioPasaje = Convert.ToDecimal(com.Parameters["@paramPrecio"].Value);
-
                 EncomiendaDTO retValue = new EncomiendaDTO();
-                retValue.Precio = precioPasaje;
+                retValue.Precio = (decimal)outPutPrecio.Value;
 
                 return retValue;
             }

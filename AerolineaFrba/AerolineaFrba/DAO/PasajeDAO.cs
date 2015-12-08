@@ -17,18 +17,15 @@ namespace AerolineaFrba.DAO
             {
                 SqlCommand com = new SqlCommand("[NORMALIZADOS].[SavePasaje]", conn);
                 com.CommandType = CommandType.StoredProcedure;
-                com.Parameters.Add("@paramPrecio", SqlDbType.Int).Direction = ParameterDirection.Output;
-                com.Parameters.AddWithValue("@paramPrecio", unPasaje.Precio);
+                SqlParameter outPutPrecio = new SqlParameter("@paramPrecio", SqlDbType.Decimal) { Direction = ParameterDirection.Output };
+                com.Parameters.Add(outPutPrecio);
                 com.Parameters.AddWithValue("@paramPasajero", unPasaje.Pasajero.IdCliente);
                 com.Parameters.AddWithValue("@paramCompra", unPasaje.Compra.IdCompra);
                 com.Parameters.AddWithValue("@paramButaca", unPasaje.Butaca.IdButaca);
-
                 com.ExecuteNonQuery();
 
-                decimal precioPasaje = Convert.ToDecimal(com.Parameters["@paramPrecio"].Value);
-
                 PasajeDTO retValue = new PasajeDTO();
-                retValue.Precio = precioPasaje;
+                retValue.Precio = (decimal)outPutPrecio.Value;
 
                 return retValue;
             }

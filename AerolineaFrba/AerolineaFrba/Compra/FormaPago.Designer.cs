@@ -103,6 +103,7 @@
             // 
             // textBoxDNI
             // 
+            this.textBoxDNI.Enabled = false;
             this.textBoxDNI.Location = new System.Drawing.Point(188, 30);
             this.textBoxDNI.Name = "textBoxDNI";
             this.textBoxDNI.Size = new System.Drawing.Size(100, 20);
@@ -304,7 +305,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBoxDNI;
+        public System.Windows.Forms.TextBox textBoxDNI;
         private System.Windows.Forms.TextBox textBoxNro;
         private System.Windows.Forms.TextBox textBoxCodSeg;
         private System.Windows.Forms.TextBox textBoxFechVenc;

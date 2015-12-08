@@ -39,7 +39,7 @@ namespace AerolineaFrba.Compra
 
         private void buttonBuscar_Click(object sender, EventArgs e)
         {
-            DatosTitularTarjeta ventana = new DatosTitularTarjeta(this.textBoxDNI.Text);
+            DatosTitularTarjeta ventana = new DatosTitularTarjeta();
             ventana.ShowDialog(this);
         }
 
@@ -50,7 +50,7 @@ namespace AerolineaFrba.Compra
 
             if (Sesion.Rol.NombreRol == "Guest")
             {
-                comboBoxMedioPago.SelectedText = "Tarjeta de credito";
+                comboBoxMedioPago.SelectedItem = TipoPagoDAO.GetAll().ElementAt(0);
                 comboBoxMedioPago.Enabled = false;
             }
         }
@@ -115,6 +115,7 @@ namespace AerolineaFrba.Compra
             compra.IdCompra = 0;
             compra.PNR = 0;
 
+            TarjetaDAO.Save(tarjeta);
             this.compra =CompraDAO.Save(compra);
 
             if (this.compra.PNR == 0)
@@ -179,7 +180,7 @@ namespace AerolineaFrba.Compra
                 errorProvider1.SetError(this.textBoxFechVenc, "Ingrese mes y año de la fecha de nacimiento");
                 retValue = false;
             }
-            if (this.comboBoxMedioPago.SelectedIndex == -1)
+            if (this.comboBoxMedioPago.SelectedItem == null)
             {
                 errorProvider1.SetError(this.comboBoxMedioPago, "Seleccione el medio de pago");
                 retValue = false;
@@ -217,6 +218,7 @@ namespace AerolineaFrba.Compra
                     else
                     {
                         MessageBox.Show(String.Format("La transaccion de la compra ha finalizado con exito. Monto a abonar: {0}. PNR: {1}", this.monto, this.compra.PNR));
+                        this.Close();
                     }
                 }
             }

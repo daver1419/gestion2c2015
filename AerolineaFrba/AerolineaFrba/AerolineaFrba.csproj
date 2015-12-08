@@ -231,6 +231,7 @@
     <Compile Include="DAO\PasajeDAO.cs" />
     <Compile Include="DAO\RegistroLlegadaDestinoDAO.cs" />
     <Compile Include="DAO\RutaDAO.cs" />
+    <Compile Include="DAO\TarjetaDAO.cs" />
     <Compile Include="DAO\TipoButacaDAO.cs" />
     <Compile Include="DAO\RolxFuncDAO.cs" />
     <Compile Include="DAO\TipoPagoDAO.cs" />
