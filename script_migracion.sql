@@ -461,7 +461,7 @@ GO
 
 CREATE TABLE [NORMALIZADOS].[Compra](
 	[Id] [int] PRIMARY KEY IDENTITY (0,1),
-	[PNR] [int],
+	[PNR] [nvarchar](255),
 	[Fecha] [datetime] NOT NULL,
 	[Comprador] [numeric](18,0) FOREIGN KEY REFERENCES [NORMALIZADOS].[Cliente] (Id) NOT NULL,
 	[Medio_Pago] [int] FOREIGN KEY REFERENCES [NORMALIZADOS].[Tipo_Pago](Id) NOT NULL,
@@ -519,6 +519,9 @@ INSERT INTO [NORMALIZADOS].[Compra](
 
 )
 GO
+
+UPDATE [NORMALIZADOS].[Compra]
+SET PNR = CONVERT(nvarchar(255),Fecha,112)+CAST(Id AS nvarchar(255))
 
 INSERT INTO [NORMALIZADOS].[Pasaje](
 	[Codigo],
@@ -2423,3 +2426,23 @@ BEGIN
 		INSERT INTO [NORMALIZADOS].[Pasaje](Precio,Butaca,Pasajero,Compra)
 			VALUES(@paramPrecio,@paramButaca,@paramPasajero,@paramCompra)
 END
+GO
+
+--------------------------------------------------------------------
+--         Devuelve el codigo maximo de pasaje / encomienda
+--------------------------------------------------------------------
+CREATE FUNCTION NORMALIZADOS.Codigo_Maximo()
+RETURNS numeric(18,0)
+AS
+	BEGIN
+		DECLARE @maximo numeric(18,0)
+
+		SELECT @maximo = MAX(T.Codigo)
+		FROM
+		(SELECT Codigo FROM NORMALIZADOS.Pasaje
+		UNION ALL
+		SELECT Codigo FROM NORMALIZADOS.Encomienda) T
+
+		RETURN @maximo
+	END
+GO
