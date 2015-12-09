@@ -2454,7 +2454,7 @@ CREATE PROCEDURE NORMALIZADOS.Cancelar_Compra (@pnr nvarchar(255), @motivo nvarc
 AS
 	BEGIN
 		DECLARE @id_compra int
-		DECLARE @idCancelacion numeric(18,0)
+		DECLARE @idCancelacion int
 		
 		SELECT @id_compra = Id
 		FROM NORMALIZADOS.Compra
