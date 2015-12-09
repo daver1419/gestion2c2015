@@ -520,9 +520,6 @@ INSERT INTO [NORMALIZADOS].[Compra](
 )
 GO
 
-UPDATE [NORMALIZADOS].[Compra]
-SET PNR = CONVERT(nvarchar(255),Fecha,112)+CAST(Id AS nvarchar(255))
-
 INSERT INTO [NORMALIZADOS].[Pasaje](
 	[Codigo],
 	[Precio],
@@ -626,6 +623,9 @@ GO
 DROP TABLE [NORMALIZADOS].[#RutasTemporal]
 GO
 DROP TABLE [NORMALIZADOS].[#ViajeTemporal]
+
+UPDATE [NORMALIZADOS].[Compra]
+SET PNR = CONVERT(nvarchar(255),Fecha,112)+CAST(Id AS nvarchar(255))
 /*****************************************************************
 							DETALLE_CANCELACION
 ******************************************************************/
@@ -2444,5 +2444,39 @@ AS
 		SELECT Codigo FROM NORMALIZADOS.Encomienda) T
 
 		RETURN @maximo
+	END
+GO
+
+--------------------------------------------------------------------
+--        Cancelar compra completa por pedido del cliente
+--------------------------------------------------------------------
+CREATE PROCEDURE NORMALIZADOS.Cancelar_Compra (@pnr nvarchar(255), @motivo nvarchar(255))
+AS
+	BEGIN
+		DECLARE @id_compra int
+		DECLARE @idCancelacion numeric(18,0)
+		
+		SELECT @id_compra = Id
+		FROM NORMALIZADOS.Compra
+		WHERE PNR LIKE @pnr
+
+		BEGIN TRAN CANCELAR
+
+			INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
+			VALUES (GETDATE(),@motivo)
+
+			SET @idCancelacion = SCOPE_IDENTITY()
+
+			INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
+				SELECT P.Id, @idCancelacion
+				FROM NORMALIZADOS.Pasaje P
+				WHERE P.Compra = @id_compra
+
+			INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda, Cancelacion)
+				SELECT E.Id, @idCancelacion
+				FROM NORMALIZADOS.Encomienda E
+				WHERE E.Compra = @id_compra
+
+		COMMIT TRAN CANCELAR
 	END
 GO
