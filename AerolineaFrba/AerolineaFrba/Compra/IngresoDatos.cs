@@ -16,19 +16,21 @@ namespace AerolineaFrba.Compra
     {
         public ButacaDTO butaca;
         private bool clienteExistente;
-        private int NroAeronave;
+        private GridViajesDTO gridViaje;
         private bool compraEncomienda;
 
-        public IngresoDatos(int nroAeronave, bool esCompraEncomienda)
+        public IngresoDatos(GridViajesDTO unGridViaje, bool esCompraEncomienda)
         {
             InitializeComponent();
-            this.NroAeronave = nroAeronave;
+            this.gridViaje = unGridViaje;
             this.compraEncomienda = esCompraEncomienda;
         }
 
         private void IngresoDatos_Load(object sender, EventArgs e)
         {
             this.clienteExistente = false;
+            ButacaDTO unaButaca = new ButacaDTO();
+            this.butaca = unaButaca;
         }
 
         private bool validar()
@@ -101,7 +103,7 @@ namespace AerolineaFrba.Compra
 
                 if (!this.compraEncomienda)
                 {
-                    SeleccionButaca ventana = new SeleccionButaca(this.NroAeronave);
+                    SeleccionButaca ventana = new SeleccionButaca(this.gridViaje);
                     ventana.ShowDialog(this);
                     Tuple<ClienteDTO, ButacaDTO> tuple = new Tuple<ClienteDTO, ButacaDTO>(cliente, this.butaca);
                     ((CompraPasajeEncomienda)this.Owner).listaPasajerosButacas.Add(tuple);

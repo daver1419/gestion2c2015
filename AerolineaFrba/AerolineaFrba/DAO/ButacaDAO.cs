@@ -88,5 +88,22 @@ namespace AerolineaFrba.DAO
                 return getButacas(dataReader);
             }
         }
+        /// <summary>
+        /// Devuelve todas las butacas disponibles para compra y habilitadas
+        /// </summary>
+        /// <param name="aeronave"></param>
+        /// <returns></returns>
+        public static List<ButacaDTO> GetDisponiblesByAeronave(GridViajesDTO unGrid)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[GetButacasDisponibles_SEL_ByAeronave]", conn);
+                com.CommandType = CommandType.StoredProcedure;
+                com.Parameters.AddWithValue("@paramViaje",unGrid.IdViaje);
+                com.Parameters.AddWithValue("@paramNroAeronave", unGrid.NumeroAeronave);
+                SqlDataReader dataReader = com.ExecuteReader();
+                return getButacas(dataReader);
+            }
+        }
     }
 }

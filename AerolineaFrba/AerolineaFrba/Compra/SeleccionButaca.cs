@@ -14,12 +14,12 @@ namespace AerolineaFrba.Compra
 {
     public partial class SeleccionButaca : Form
     {
-        private int NroAeronave;
+        private GridViajesDTO gridViaje;
 
-        public SeleccionButaca(int nroAeronave)
+        public SeleccionButaca(GridViajesDTO unGridViaje)
         {
             InitializeComponent();
-            this.NroAeronave = nroAeronave;
+            this.gridViaje= unGridViaje;
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -34,9 +34,7 @@ namespace AerolineaFrba.Compra
 
         private void SeleccionButaca_Load(object sender, EventArgs e)
         {
-            AeronaveDTO aeronave = new AeronaveDTO();
-            aeronave.Numero = this.NroAeronave;
-            this.dataGridView1.DataSource=ButacaDAO.GetByAeronave(aeronave);
+            this.dataGridView1.DataSource=ButacaDAO.GetDisponiblesByAeronave(this.gridViaje);
         }
     }
 }

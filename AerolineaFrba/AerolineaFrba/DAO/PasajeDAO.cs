@@ -17,7 +17,7 @@ namespace AerolineaFrba.DAO
             {
                 SqlCommand com = new SqlCommand("[NORMALIZADOS].[SavePasaje]", conn);
                 com.CommandType = CommandType.StoredProcedure;
-                SqlParameter outPutPrecio = new SqlParameter("@paramPrecio", SqlDbType.Decimal) { Direction = ParameterDirection.Output };
+                SqlParameter outPutPrecio = new SqlParameter("@paramPrecio", SqlDbType.Money) { Direction = ParameterDirection.Output };
                 com.Parameters.Add(outPutPrecio);
                 com.Parameters.AddWithValue("@paramPasajero", unPasaje.Pasajero.IdCliente);
                 com.Parameters.AddWithValue("@paramCompra", unPasaje.Compra.IdCompra);

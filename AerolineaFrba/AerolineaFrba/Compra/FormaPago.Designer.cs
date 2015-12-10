@@ -167,6 +167,7 @@
             this.buttonAtras.TabIndex = 12;
             this.buttonAtras.Text = "Atras";
             this.buttonAtras.UseVisualStyleBackColor = true;
+            this.buttonAtras.Click += new System.EventHandler(this.buttonAtras_Click);
             // 
             // label7
             // 

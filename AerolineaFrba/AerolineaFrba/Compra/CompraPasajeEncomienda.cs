@@ -38,6 +38,9 @@ namespace AerolineaFrba.Compra
             label7.Hide();
             comboBoxCantPas.Hide();
             numericUpDown1.Hide();
+
+            List<Tuple<ClienteDTO, ButacaDTO>> listaTupla = new List<Tuple<ClienteDTO, ButacaDTO>>();
+            this.listaPasajerosButacas = listaTupla;
         }
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
@@ -73,7 +76,7 @@ namespace AerolineaFrba.Compra
                         MessageBox.Show("Todos los pasajes de este viaje estan vendidos");
                         return;
                     }
-                    if ((int)comboBoxCantPas.SelectedItem > gridViaje.CantButacasDisp)
+                    if (Convert.ToInt32( comboBoxCantPas.SelectedItem.ToString()) > gridViaje.CantButacasDisp)
                     {
                         MessageBox.Show(string.Format("A la aeronave del viaje seleccionado solo le quedan: {0} pasajes disponibles", gridViaje.CantButacasDisp));
                         return;
@@ -81,7 +84,7 @@ namespace AerolineaFrba.Compra
                     for (int i = 1; i <= Convert.ToInt32(comboBoxCantPas.SelectedItem.ToString()); i++)
                     {
                         compraEncomienda = false;
-                        IngresoDatos ventana = new IngresoDatos(gridViaje.NumeroAeronave, compraEncomienda);
+                        IngresoDatos ventana = new IngresoDatos(gridViaje, compraEncomienda);
                         ventana.ShowDialog(this);
                     }
                 }
@@ -100,17 +103,16 @@ namespace AerolineaFrba.Compra
             if (numericUpDown1.Value > 0)
             {
                 compraEncomienda = true;
-                IngresoDatos vent = new IngresoDatos(gridViaje.NumeroAeronave, compraEncomienda);
+                IngresoDatos vent = new IngresoDatos(gridViaje, compraEncomienda);
                 vent.ShowDialog(this);
+                ClienteDTO clienteEnco = new ClienteDTO();
+                this.clienteEncomienda = clienteEnco;
             } 
-            List<Tuple<ClienteDTO, ButacaDTO>> listaTupla = new List<Tuple<ClienteDTO, ButacaDTO>>();
-            ClienteDTO clienteEnco = new ClienteDTO();
-            this.listaPasajerosButacas = listaTupla;
-            this.clienteEncomienda = clienteEnco;
+            
 
             FormaPago formPago = new FormaPago(gridViaje.IdViaje,this.listaPasajerosButacas,this.clienteEncomienda,Convert.ToInt32( numericUpDown1.Value));
             formPago.ShowDialog(this);
-
+            this.Close();
         }
 
         private bool validar()

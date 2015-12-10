@@ -223,5 +223,10 @@ namespace AerolineaFrba.Compra
                 }
             }
         }
+
+        private void buttonAtras_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
