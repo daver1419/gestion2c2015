@@ -203,6 +203,7 @@ namespace AerolineaFrba
         {
             Sesion.StartAsClient();
             listBoxFunc.DataSource = Sesion.Rol.ListaFunc;
+            this.LoguedIn = false;
         }
 
         private void PantallaInicio_Closed(object sender, FormClosedEventArgs e)
