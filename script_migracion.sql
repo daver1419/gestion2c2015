@@ -445,6 +445,12 @@ CREATE TABLE [NORMALIZADOS].[Tipo_Tarjeta](
 	[Numero_Cuotas] [int] NOT NULL
 )
 GO
+
+INSERT INTO [NORMALIZADOS].[Tipo_Tarjeta](Nombre,Numero_Cuotas)
+	VALUES('Rio',12),
+		('Nacion',6),
+		('Frances',3)
+GO
 /*****************************************************************
 							Tarjeta_Credito
 ******************************************************************/
