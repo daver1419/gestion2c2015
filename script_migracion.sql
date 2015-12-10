@@ -2457,29 +2457,37 @@ AS
 	BEGIN
 		DECLARE @id_compra int
 		DECLARE @idCancelacion int
-		
+		DECLARE @filas_modificadas int
+				
 		SELECT @id_compra = Id
 		FROM NORMALIZADOS.Compra
 		WHERE PNR LIKE @pnr
+		
+		SET @filas_modificadas = 0
+		
+		IF (@id_compra IS NOT NULL)
+			BEGIN
+				INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
+				VALUES (GETDATE(),@motivo)
 
-		BEGIN TRAN CANCELAR
+				SET @idCancelacion = SCOPE_IDENTITY()
 
-			INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
-			VALUES (GETDATE(),@motivo)
+				INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
+					SELECT P.Id, @idCancelacion
+					FROM NORMALIZADOS.Pasaje P
+					WHERE P.Compra = @id_compra
+					
+				SET @filas_modificadas = @@ROWCOUNT
 
-			SET @idCancelacion = SCOPE_IDENTITY()
-
-			INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
-				SELECT P.Id, @idCancelacion
-				FROM NORMALIZADOS.Pasaje P
-				WHERE P.Compra = @id_compra
-
-			INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda, Cancelacion)
-				SELECT E.Id, @idCancelacion
-				FROM NORMALIZADOS.Encomienda E
-				WHERE E.Compra = @id_compra
-
-		COMMIT TRAN CANCELAR
+				INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda, Cancelacion)
+					SELECT E.Id, @idCancelacion
+					FROM NORMALIZADOS.Encomienda E
+					WHERE E.Compra = @id_compra
+				
+				SET @filas_modificadas = @filas_modificadas + @@ROWCOUNT				
+				
+			END
+		SELECT @filas_modificadas
 	END
 GO
 
@@ -2492,7 +2500,6 @@ CREATE PROCEDURE NORMALIZADOS.Cancelar_Pasaje
 @motivo nvarchar(255)
 AS
 	BEGIN
-	
 		DECLARE @idCancelacion int
 		DECLARE @pasaje int
 
@@ -2500,18 +2507,19 @@ AS
 		FROM NORMALIZADOS.Pasaje P
 		WHERE P.Codigo = @codigo
 		
-		BEGIN TRAN BAJA
-		
-			INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
-				VALUES (GETDATE(),@motivo)
+		IF (@pasaje IS NOT NULL)
+			BEGIN
 			
-			SET @idCancelacion = SCOPE_IDENTITY()
+				INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
+					VALUES (GETDATE(),@motivo)
+				
+				SET @idCancelacion = SCOPE_IDENTITY()
+				
+				INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
+					VALUES (@pasaje,@idCancelacion)
 			
-			INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
-				VALUES (@pasaje,@idCancelacion)
-		
-		COMMIT TRAN BAJA
-	
+			END
+		SELECT @@ROWCOUNT
 	END
 GO
 
@@ -2530,18 +2538,17 @@ AS
 		SELECT @encomienda = E.Id
 		FROM NORMALIZADOS.Encomienda E
 		WHERE E.Codigo = @codigo
-		
-		BEGIN TRAN BAJA
-		
-			INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
+
+		IF (@encomienda IS NOT NULL)
+			BEGIN
+				INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
 				VALUES (GETDATE(),@motivo)
 			
-			SET @idCancelacion = SCOPE_IDENTITY()
+				SET @idCancelacion = SCOPE_IDENTITY()
 			
-			INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda,Cancelacion)
+				INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda,Cancelacion)
 				VALUES (@encomienda,@idCancelacion)
-			
-		COMMIT TRAN BAJA
-	
+			END
+		SELECT @@ROWCOUNT
 	END
 GO
