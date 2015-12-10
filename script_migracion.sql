@@ -2492,6 +2492,7 @@ AS
 GO
 
 
+
 --------------------------------------------------------------------
 --        Cancelar un pasaje por pedido del cliente
 --------------------------------------------------------------------
@@ -2502,24 +2503,38 @@ AS
 	BEGIN
 		DECLARE @idCancelacion int
 		DECLARE @pasaje int
-
+		DECLARE @retorno int
+		
+		SET @retorno = 0
+		
 		SELECT @pasaje = P.Id
 		FROM NORMALIZADOS.Pasaje P
 		WHERE P.Codigo = @codigo
 		
 		IF (@pasaje IS NOT NULL)
 			BEGIN
-			
-				INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
-					VALUES (GETDATE(),@motivo)
-				
-				SET @idCancelacion = SCOPE_IDENTITY()
-				
-				INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
-					VALUES (@pasaje,@idCancelacion)
-			
+				IF EXISTS (SELECT 1 FROM NORMALIZADOS.Pasaje P
+								JOIN NORMALIZADOS.Pasajes_Cancelados PC
+								ON P.Id = PC.Pasaje
+								WHERE P.Id = @pasaje)
+
+					BEGIN
+						SET @retorno = -1
+					END
+				ELSE
+					BEGIN
+						INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
+							VALUES (GETDATE(),@motivo)
+						
+						SET @idCancelacion = SCOPE_IDENTITY()
+						
+						INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
+							VALUES (@pasaje,@idCancelacion)
+							
+						SET @retorno = @@ROWCOUNT
+					END			
 			END
-		SELECT @@ROWCOUNT
+		SELECT @retorno
 	END
 GO
 
@@ -2534,21 +2549,37 @@ AS
 	
 		DECLARE @idCancelacion int
 		DECLARE @encomienda int
+		DECLARE @retorno int
 
 		SELECT @encomienda = E.Id
 		FROM NORMALIZADOS.Encomienda E
 		WHERE E.Codigo = @codigo
 
+		SET @retorno = 0
+
 		IF (@encomienda IS NOT NULL)
 			BEGIN
-				INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
-				VALUES (GETDATE(),@motivo)
+				IF EXISTS (SELECT 1 FROM NORMALIZADOS.Encomienda E
+								JOIN NORMALIZADOS.Encomiendas_Canceladas EC
+								ON E.Id = EC.Encomienda
+								WHERE E.Id = @encomienda)
+
+					BEGIN
+						SET @retorno = -1
+					END
+				ELSE
+					BEGIN
+						INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
+						VALUES (GETDATE(),@motivo)
 			
-				SET @idCancelacion = SCOPE_IDENTITY()
+						SET @idCancelacion = SCOPE_IDENTITY()
 			
-				INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda,Cancelacion)
-				VALUES (@encomienda,@idCancelacion)
+						INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda,Cancelacion)
+						VALUES (@encomienda,@idCancelacion)
+
+						SET @retorno = @@ROWCOUNT
+					END
 			END
-		SELECT @@ROWCOUNT
+		SELECT @retorno
 	END
 GO
