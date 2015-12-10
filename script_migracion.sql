@@ -1448,7 +1448,7 @@ AS
 BEGIN
 	SELECT Id,Nombre
 	FROM [NORMALIZADOS].Ciudad
-	WHERE Nombre LIKE '_'+@descripcion
+	WHERE Nombre LIKE '%'+@descripcion+'%'
 END
 GO
 --------------------------------------------------------------------------------
