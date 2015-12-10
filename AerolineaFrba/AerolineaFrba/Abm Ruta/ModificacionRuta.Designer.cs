@@ -30,6 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBoxAct = new System.Windows.Forms.CheckBox();
+            this.textBoxPBPas = new System.Windows.Forms.TextBox();
+            this.textBoxPBKg = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.textBoxCodigo = new System.Windows.Forms.TextBox();
@@ -56,10 +59,6 @@
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.buttonGuardar = new System.Windows.Forms.Button();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.textBoxPBKg = new System.Windows.Forms.TextBox();
-            this.textBoxPBPas = new System.Windows.Forms.TextBox();
-            this.checkBoxAct = new System.Windows.Forms.CheckBox();
-            this.checkBoxMod = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPBPasMod)).BeginInit();
@@ -88,6 +87,30 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos actuales";
+            // 
+            // checkBoxAct
+            // 
+            this.checkBoxAct.AutoSize = true;
+            this.checkBoxAct.Location = new System.Drawing.Point(151, 212);
+            this.checkBoxAct.Name = "checkBoxAct";
+            this.checkBoxAct.Size = new System.Drawing.Size(73, 17);
+            this.checkBoxAct.TabIndex = 28;
+            this.checkBoxAct.Text = "Habilitado";
+            this.checkBoxAct.UseVisualStyleBackColor = true;
+            // 
+            // textBoxPBPas
+            // 
+            this.textBoxPBPas.Location = new System.Drawing.Point(200, 171);
+            this.textBoxPBPas.Name = "textBoxPBPas";
+            this.textBoxPBPas.Size = new System.Drawing.Size(119, 20);
+            this.textBoxPBPas.TabIndex = 26;
+            // 
+            // textBoxPBKg
+            // 
+            this.textBoxPBKg.Location = new System.Drawing.Point(200, 143);
+            this.textBoxPBKg.Name = "textBoxPBKg";
+            this.textBoxPBKg.Size = new System.Drawing.Size(119, 20);
+            this.textBoxPBKg.TabIndex = 25;
             // 
             // label6
             // 
@@ -176,7 +199,6 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.checkBoxMod);
             this.groupBox2.Controls.Add(this.numericUpDownPBPasMod);
             this.groupBox2.Controls.Add(this.numericUpDownPBKgMod);
             this.groupBox2.Controls.Add(this.label7);
@@ -319,40 +341,6 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
-            // textBoxPBKg
-            // 
-            this.textBoxPBKg.Location = new System.Drawing.Point(200, 143);
-            this.textBoxPBKg.Name = "textBoxPBKg";
-            this.textBoxPBKg.Size = new System.Drawing.Size(119, 20);
-            this.textBoxPBKg.TabIndex = 25;
-            // 
-            // textBoxPBPas
-            // 
-            this.textBoxPBPas.Location = new System.Drawing.Point(200, 171);
-            this.textBoxPBPas.Name = "textBoxPBPas";
-            this.textBoxPBPas.Size = new System.Drawing.Size(119, 20);
-            this.textBoxPBPas.TabIndex = 26;
-            // 
-            // checkBoxAct
-            // 
-            this.checkBoxAct.AutoSize = true;
-            this.checkBoxAct.Location = new System.Drawing.Point(151, 212);
-            this.checkBoxAct.Name = "checkBoxAct";
-            this.checkBoxAct.Size = new System.Drawing.Size(73, 17);
-            this.checkBoxAct.TabIndex = 28;
-            this.checkBoxAct.Text = "Habilitado";
-            this.checkBoxAct.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxMod
-            // 
-            this.checkBoxMod.AutoSize = true;
-            this.checkBoxMod.Location = new System.Drawing.Point(151, 204);
-            this.checkBoxMod.Name = "checkBoxMod";
-            this.checkBoxMod.Size = new System.Drawing.Size(73, 17);
-            this.checkBoxMod.TabIndex = 39;
-            this.checkBoxMod.Text = "Habilitado";
-            this.checkBoxMod.UseVisualStyleBackColor = true;
-            // 
             // ModificacionRuta
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -408,6 +396,5 @@
         private System.Windows.Forms.TextBox textBoxPBPas;
         private System.Windows.Forms.TextBox textBoxPBKg;
         private System.Windows.Forms.CheckBox checkBoxAct;
-        private System.Windows.Forms.CheckBox checkBoxMod;
     }
 }

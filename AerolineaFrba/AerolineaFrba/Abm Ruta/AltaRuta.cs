@@ -27,10 +27,14 @@ namespace AerolineaFrba.Abm_Ruta
             comboBoxTipoServ.SelectedIndex = -1;
             comboBoxCiudadOrigen.SelectedIndex = -1;
             comboBoxCiudadDest.SelectedIndex = -1;
+            numericUpDownPBKg.Value = 0;
+            numericUpDownPBPas.Value = 0;
         }
 
         private void AltaRuta_Load(object sender, EventArgs e)
         {
+            RutaDTO unaRuta = new RutaDTO();
+            this.ruta = unaRuta;
             comboBoxTipoServ.DataSource = TipoServicioDAO.selectAll();
             comboBoxCiudadOrigen.DataSource = CiudadDAO.SelectAll();
             comboBoxCiudadDest.DataSource = CiudadDAO.SelectAll();
@@ -55,26 +59,36 @@ namespace AerolineaFrba.Abm_Ruta
         private bool validar()
         {
             errorProvider1.Clear();
-            bool ret = false;
+            bool ret = true;
             if (textBoxCodigo.Text==String.Empty)
             {
                 errorProvider1.SetError(textBoxCodigo, "Ingrese codigo de ruta");
-                ret = true;
+                ret = false;
             }
             if (comboBoxTipoServ.SelectedIndex == -1)
             {
                 errorProvider1.SetError(comboBoxTipoServ, "Ingrese servicio");
-                ret = true;
+                ret = false;
             }
             if (comboBoxCiudadOrigen.SelectedIndex == -1)
             {
                 errorProvider1.SetError(comboBoxCiudadOrigen, "Ingrese ciudad de origen");
-                ret = true;
+                ret = false;
             }
             if (comboBoxCiudadDest.SelectedIndex == -1)
             {
                 errorProvider1.SetError(comboBoxCiudadDest, "Ingrese ciudad de destino");
-                ret = true;
+                ret = false;
+            }
+            if (numericUpDownPBKg.Value == 0)
+            {
+                ret = false;
+                errorProvider1.SetError(numericUpDownPBKg, "El precio base por Kg no puede ser 0");
+            }
+            if (numericUpDownPBPas.Value == 0)
+            {
+                ret = false;
+                errorProvider1.SetError(numericUpDownPBPas, "El precio base por pasaje no puede ser 0");
             }
             return ret;
         }
