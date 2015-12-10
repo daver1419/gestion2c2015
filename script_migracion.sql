@@ -2450,7 +2450,9 @@ GO
 --------------------------------------------------------------------
 --        Cancelar compra completa por pedido del cliente
 --------------------------------------------------------------------
-CREATE PROCEDURE NORMALIZADOS.Cancelar_Compra (@pnr nvarchar(255), @motivo nvarchar(255))
+CREATE PROCEDURE NORMALIZADOS.Cancelar_Compra
+@pnr nvarchar(255),
+@motivo nvarchar(255)
 AS
 	BEGIN
 		DECLARE @id_compra int
@@ -2478,5 +2480,68 @@ AS
 				WHERE E.Compra = @id_compra
 
 		COMMIT TRAN CANCELAR
+	END
+GO
+
+
+--------------------------------------------------------------------
+--        Cancelar un pasaje por pedido del cliente
+--------------------------------------------------------------------
+CREATE PROCEDURE NORMALIZADOS.Cancelar_Pasaje
+@codigo numeric(18,8),
+@motivo nvarchar(255)
+AS
+	BEGIN
+	
+		DECLARE @idCancelacion int
+		DECLARE @pasaje int
+
+		SELECT @pasaje = P.Id
+		FROM NORMALIZADOS.Pasaje P
+		WHERE P.Codigo = @codigo
+		
+		BEGIN TRAN BAJA
+		
+			INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
+				VALUES (GETDATE(),@motivo)
+			
+			SET @idCancelacion = SCOPE_IDENTITY()
+			
+			INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
+				VALUES (@pasaje,@idCancelacion)
+		
+		COMMIT TRAN BAJA
+	
+	END
+GO
+
+--------------------------------------------------------------------
+--        Cancelar una encomienda por pedido del cliente
+--------------------------------------------------------------------
+CREATE PROCEDURE NORMALIZADOS.Cancelar_Encomienda
+@codigo numeric(18,8), 
+@motivo nvarchar(255)
+AS
+	BEGIN
+	
+		DECLARE @idCancelacion int
+		DECLARE @encomienda int
+
+		SELECT @encomienda = E.Id
+		FROM NORMALIZADOS.Encomienda E
+		WHERE E.Codigo = @codigo
+		
+		BEGIN TRAN BAJA
+		
+			INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
+				VALUES (GETDATE(),@motivo)
+			
+			SET @idCancelacion = SCOPE_IDENTITY()
+			
+			INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda,Cancelacion)
+				VALUES (@encomienda,@idCancelacion)
+			
+		COMMIT TRAN BAJA
+	
 	END
 GO
