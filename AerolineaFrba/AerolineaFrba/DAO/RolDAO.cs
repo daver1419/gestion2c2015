@@ -167,6 +167,19 @@ namespace AerolineaFrba.DAO
                 }
             }
         }
+        public static RolDTO GetByNombre(RolDTO unRol)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                using (SqlCommand com = new SqlCommand(string.Format("SELECT Id, Nombre, Activo FROM [NORMALIZADOS].Rol WHERE Nombre = '{0}'", unRol.NombreRol), conn))
+                {
+                    SqlDataReader dataReader = com.ExecuteReader();
+                    List<RolDTO> Roles = ReaderToListClaseRol(dataReader);
+                    if (Roles.Count == 0) return null;
+                    return Roles[0];
+                }
+            }
+        }
 
     }
 }
