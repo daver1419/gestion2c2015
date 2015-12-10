@@ -445,6 +445,12 @@ CREATE TABLE [NORMALIZADOS].[Tipo_Tarjeta](
 	[Numero_Cuotas] [int] NOT NULL
 )
 GO
+
+INSERT INTO [NORMALIZADOS].[Tipo_Tarjeta](Nombre,Numero_Cuotas)
+	VALUES('Rio',12),
+		('Nacion',6),
+		('Frances',3)
+GO
 /*****************************************************************
 							Tarjeta_Credito
 ******************************************************************/
@@ -2227,7 +2233,7 @@ CREATE PROCEDURE [NORMALIZADOS].[UpdateCliente]
 AS
 BEGIN
 	UPDATE [NORMALIZADOS].[Cliente]
-	SET Nombre=@paramDni,
+	SET Nombre=@paramNombre,
 		Apellido=@paramApellido,
 		Direccion=@paramDireccion,
 		Fecha_Nac=@paramFechaNac,
@@ -2450,33 +2456,173 @@ GO
 --------------------------------------------------------------------
 --        Cancelar compra completa por pedido del cliente
 --------------------------------------------------------------------
-CREATE PROCEDURE NORMALIZADOS.Cancelar_Compra (@pnr nvarchar(255), @motivo nvarchar(255))
+CREATE PROCEDURE NORMALIZADOS.Cancelar_Compra
+@pnr nvarchar(255),
+@motivo nvarchar(255)
 AS
 	BEGIN
 		DECLARE @id_compra int
 		DECLARE @idCancelacion int
-		
+		DECLARE @pasajes_cancelados int
+		DECLARE @encomiendas_canceladas int
+		DECLARE @pasaje int
+		DECLARE @encomienda int
+		DECLARE @retorno int
+			
+		SET @pasajes_cancelados = 0
+		SET @encomiendas_canceladas = 0
+		SET @retorno = -1
+
 		SELECT @id_compra = Id
 		FROM NORMALIZADOS.Compra
 		WHERE PNR LIKE @pnr
+		
+		IF (@id_compra IS NOT NULL)
+			BEGIN
+				SET @retorno = 0
 
-		BEGIN TRAN CANCELAR
+				INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
+				VALUES (GETDATE(),@motivo)
 
-			INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
-			VALUES (GETDATE(),@motivo)
+				SET @idCancelacion = SCOPE_IDENTITY()
 
-			SET @idCancelacion = SCOPE_IDENTITY()
-
-			INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
-				SELECT P.Id, @idCancelacion
-				FROM NORMALIZADOS.Pasaje P
+				DECLARE Pasajes CURSOR FOR
+				SELECT P.Id from NORMALIZADOS.Pasaje P
 				WHERE P.Compra = @id_compra
 
-			INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda, Cancelacion)
-				SELECT E.Id, @idCancelacion
-				FROM NORMALIZADOS.Encomienda E
+				OPEN Pasajes
+				FETCH NEXT FROM Pasajes INTO @pasaje
+				WHILE @@FETCH_STATUS = 0
+					BEGIN
+						IF NOT EXISTS (SELECT 1 FROM NORMALIZADOS.Pasajes_Cancelados PC 
+										WHERE PC.Pasaje = @pasaje)
+							BEGIN
+								INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
+									VALUES (@pasaje,@idCancelacion)
+
+								SET @pasajes_cancelados = @pasajes_cancelados + 1
+							END
+						
+						FETCH NEXT FROM Pasajes INTO @pasaje
+					END
+				CLOSE Pasajes
+				DEALLOCATE Pasajes
+				
+				DECLARE Encomiendas CURSOR FOR
+				SELECT E.Id from NORMALIZADOS.Encomienda E
 				WHERE E.Compra = @id_compra
 
-		COMMIT TRAN CANCELAR
+				OPEN Encomiendas
+				FETCH NEXT FROM Encomiendas INTO @encomienda
+				WHILE @@FETCH_STATUS = 0
+					BEGIN
+						IF NOT EXISTS (SELECT 1 FROM NORMALIZADOS.Encomiendas_Canceladas EC
+										WHERE EC.Encomienda = @encomienda)
+							BEGIN
+								INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda, Cancelacion)
+									VALUES (@encomienda,@idCancelacion)	
+									
+								SET @encomiendas_canceladas = @encomiendas_canceladas + 1
+							END							
+						
+						FETCH NEXT FROM Encomiendas INTO @encomienda
+					END
+				CLOSE Encomiendas
+				DEALLOCATE Encomiendas
+
+				SET @retorno = @pasajes_cancelados + @encomiendas_canceladas
+			END
+		SELECT @retorno
+	END
+GO
+
+--------------------------------------------------------------------
+--        Cancelar un pasaje por pedido del cliente
+--------------------------------------------------------------------
+CREATE PROCEDURE NORMALIZADOS.Cancelar_Pasaje
+@codigo numeric(18,8),
+@motivo nvarchar(255)
+AS
+	BEGIN
+		DECLARE @idCancelacion int
+		DECLARE @pasaje int
+		DECLARE @retorno int
+		
+		SET @retorno = -1
+		
+		SELECT @pasaje = P.Id
+		FROM NORMALIZADOS.Pasaje P
+		WHERE P.Codigo = @codigo
+		
+		IF (@pasaje IS NOT NULL)
+			BEGIN
+				IF EXISTS (SELECT 1 FROM NORMALIZADOS.Pasaje P
+								JOIN NORMALIZADOS.Pasajes_Cancelados PC
+								ON P.Id = PC.Pasaje
+								WHERE P.Id = @pasaje)
+
+					BEGIN
+						SET @retorno = 0
+					END
+				ELSE
+					BEGIN
+						INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
+							VALUES (GETDATE(),@motivo)
+						
+						SET @idCancelacion = SCOPE_IDENTITY()
+						
+						INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
+							VALUES (@pasaje,@idCancelacion)
+							
+						SET @retorno = @@ROWCOUNT
+					END			
+			END
+		SELECT @retorno
+	END
+GO
+
+--------------------------------------------------------------------
+--        Cancelar una encomienda por pedido del cliente
+--------------------------------------------------------------------
+CREATE PROCEDURE NORMALIZADOS.Cancelar_Encomienda
+@codigo numeric(18,8), 
+@motivo nvarchar(255)
+AS
+	BEGIN
+	
+		DECLARE @idCancelacion int
+		DECLARE @encomienda int
+		DECLARE @retorno int
+
+		SELECT @encomienda = E.Id
+		FROM NORMALIZADOS.Encomienda E
+		WHERE E.Codigo = @codigo
+
+		SET @retorno = -1
+
+		IF (@encomienda IS NOT NULL)
+			BEGIN
+				IF EXISTS (SELECT 1 FROM NORMALIZADOS.Encomienda E
+								JOIN NORMALIZADOS.Encomiendas_Canceladas EC
+								ON E.Id = EC.Encomienda
+								WHERE E.Id = @encomienda)
+
+					BEGIN
+						SET @retorno = 0
+					END
+				ELSE
+					BEGIN
+						INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
+						VALUES (GETDATE(),@motivo)
+			
+						SET @idCancelacion = SCOPE_IDENTITY()
+			
+						INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda,Cancelacion)
+						VALUES (@encomienda,@idCancelacion)
+
+						SET @retorno = @@ROWCOUNT
+					END
+			END
+		SELECT @retorno
 	END
 GO
