@@ -9,7 +9,7 @@ namespace AerolineaFrba.DTO
     public class CompraDTO
     {
         public int IdCompra { get; set; }
-        public int PNR { get; set; }
+        public string PNR { get; set; }
         public ClienteDTO Comprador { get; set; }
         public TipoPagoDTO MedioPago { get; set; }
         public TarjetaCreditoDTO TarjetaCredito { get; set; }

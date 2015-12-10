@@ -113,12 +113,12 @@ namespace AerolineaFrba.Compra
             viaje.Id = this.idViaje;
             compra.Viaje = viaje;
             compra.IdCompra = 0;
-            compra.PNR = 0;
+            compra.PNR = "0";
 
             TarjetaDAO.Save(tarjeta);
             this.compra =CompraDAO.Save(compra);
 
-            if (this.compra.PNR == 0)
+            if (string.IsNullOrEmpty( this.compra.PNR))
             {
                 MessageBox.Show("No se pudo realizar la compra");
                 retValue = false;

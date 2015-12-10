@@ -22,7 +22,7 @@ namespace AerolineaFrba.DAO
             {
                 SqlCommand com = new SqlCommand("[NORMALIZADOS].[SaveCompra]", conn);
                 com.CommandType = CommandType.StoredProcedure;
-                SqlParameter outPutPNR = new SqlParameter("@paramPNR", SqlDbType.Int) { Direction=ParameterDirection.Output};
+                SqlParameter outPutPNR = new SqlParameter("@paramPNR", SqlDbType.NVarChar, 255) { Direction=ParameterDirection.Output};
                 com.Parameters.Add(outPutPNR);
                 SqlParameter outPutIdCompra = new SqlParameter("@paramIdCompra", SqlDbType.Int) { Direction = ParameterDirection.Output };
                 com.Parameters.Add(outPutIdCompra);
@@ -34,7 +34,7 @@ namespace AerolineaFrba.DAO
                 com.ExecuteNonQuery();
 
                 CompraDTO retValue = new CompraDTO();
-                retValue.PNR = (int)outPutPNR.Value;
+                retValue.PNR = (string)outPutPNR.Value;
                 retValue.IdCompra = (int)outPutIdCompra.Value;
 
                 return retValue;

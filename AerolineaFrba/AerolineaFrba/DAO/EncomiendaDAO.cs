@@ -22,7 +22,7 @@ namespace AerolineaFrba.DAO
             {
                 SqlCommand com = new SqlCommand("[NORMALIZADOS].[SaveEncomienda]", conn);
                 com.CommandType = CommandType.StoredProcedure;
-                SqlParameter outPutPrecio = new SqlParameter("@paramPrecio", SqlDbType.Decimal) { Direction = ParameterDirection.Output };
+                SqlParameter outPutPrecio = new SqlParameter("@paramPrecio", SqlDbType.Money) { Direction = ParameterDirection.Output };
                 com.Parameters.Add(outPutPrecio);
                 com.Parameters.AddWithValue("@paramKg", unaEncomienda.Kg);
                 com.Parameters.AddWithValue("@paramCompra", unaEncomienda.Compra.IdCompra);
