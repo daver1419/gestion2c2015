@@ -2227,7 +2227,7 @@ CREATE PROCEDURE [NORMALIZADOS].[UpdateCliente]
 AS
 BEGIN
 	UPDATE [NORMALIZADOS].[Cliente]
-	SET Nombre=@paramDni,
+	SET Nombre=@paramNombre,
 		Apellido=@paramApellido,
 		Direccion=@paramDireccion,
 		Fecha_Nac=@paramFechaNac,
