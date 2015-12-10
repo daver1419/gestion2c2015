@@ -2457,41 +2457,78 @@ AS
 	BEGIN
 		DECLARE @id_compra int
 		DECLARE @idCancelacion int
-		DECLARE @filas_modificadas int
-				
+		DECLARE @pasajes_cancelados int
+		DECLARE @encomiendas_canceladas int
+		DECLARE @pasaje int
+		DECLARE @encomienda int
+		DECLARE @retorno int
+			
+		SET @pasajes_cancelados = 0
+		SET @encomiendas_canceladas = 0
+		SET @retorno = -1
+
 		SELECT @id_compra = Id
 		FROM NORMALIZADOS.Compra
 		WHERE PNR LIKE @pnr
 		
-		SET @filas_modificadas = 0
-		
 		IF (@id_compra IS NOT NULL)
 			BEGIN
+				SET @retorno = 0
+
 				INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
 				VALUES (GETDATE(),@motivo)
 
 				SET @idCancelacion = SCOPE_IDENTITY()
 
-				INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
-					SELECT P.Id, @idCancelacion
-					FROM NORMALIZADOS.Pasaje P
-					WHERE P.Compra = @id_compra
-					
-				SET @filas_modificadas = @@ROWCOUNT
+				DECLARE Pasajes CURSOR FOR
+				SELECT P.Id from NORMALIZADOS.Pasaje P
+				WHERE P.Compra = @id_compra
 
-				INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda, Cancelacion)
-					SELECT E.Id, @idCancelacion
-					FROM NORMALIZADOS.Encomienda E
-					WHERE E.Compra = @id_compra
+				OPEN Pasajes
+				FETCH NEXT FROM Pasajes INTO @pasaje
+				WHILE @@FETCH_STATUS = 0
+					BEGIN
+						IF NOT EXISTS (SELECT 1 FROM NORMALIZADOS.Pasajes_Cancelados PC 
+										WHERE PC.Pasaje = @pasaje)
+							BEGIN
+								INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
+									VALUES (@pasaje,@idCancelacion)
+
+								SET @pasajes_cancelados = @pasajes_cancelados + 1
+							END
+						
+						FETCH NEXT FROM Pasajes INTO @pasaje
+					END
+				CLOSE Pasajes
+				DEALLOCATE Pasajes
 				
-				SET @filas_modificadas = @filas_modificadas + @@ROWCOUNT				
-				
+				DECLARE Encomiendas CURSOR FOR
+				SELECT E.Id from NORMALIZADOS.Encomienda E
+				WHERE E.Compra = @id_compra
+
+				OPEN Encomiendas
+				FETCH NEXT FROM Encomiendas INTO @encomienda
+				WHILE @@FETCH_STATUS = 0
+					BEGIN
+						IF NOT EXISTS (SELECT 1 FROM NORMALIZADOS.Encomiendas_Canceladas EC
+										WHERE EC.Encomienda = @encomienda)
+							BEGIN
+								INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda, Cancelacion)
+									VALUES (@encomienda,@idCancelacion)	
+									
+								SET @encomiendas_canceladas = @encomiendas_canceladas + 1
+							END							
+						
+						FETCH NEXT FROM Encomiendas INTO @encomienda
+					END
+				CLOSE Encomiendas
+				DEALLOCATE Encomiendas
+
+				SET @retorno = @pasajes_cancelados + @encomiendas_canceladas
 			END
-		SELECT @filas_modificadas
+		SELECT @retorno
 	END
 GO
-
-
 
 --------------------------------------------------------------------
 --        Cancelar un pasaje por pedido del cliente
@@ -2505,7 +2542,7 @@ AS
 		DECLARE @pasaje int
 		DECLARE @retorno int
 		
-		SET @retorno = 0
+		SET @retorno = -1
 		
 		SELECT @pasaje = P.Id
 		FROM NORMALIZADOS.Pasaje P
@@ -2519,7 +2556,7 @@ AS
 								WHERE P.Id = @pasaje)
 
 					BEGIN
-						SET @retorno = -1
+						SET @retorno = 0
 					END
 				ELSE
 					BEGIN
@@ -2555,7 +2592,7 @@ AS
 		FROM NORMALIZADOS.Encomienda E
 		WHERE E.Codigo = @codigo
 
-		SET @retorno = 0
+		SET @retorno = -1
 
 		IF (@encomienda IS NOT NULL)
 			BEGIN
@@ -2565,7 +2602,7 @@ AS
 								WHERE E.Id = @encomienda)
 
 					BEGIN
-						SET @retorno = -1
+						SET @retorno = 0
 					END
 				ELSE
 					BEGIN
