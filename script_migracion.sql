@@ -1009,33 +1009,66 @@ END
 GO		
 
 --------------------------------------------------------------------------------
---			FUNCION QUE BUSCA AERONAVES DISPONIBLES PARA UN VIAJE
+-- FUNCION QUE BUSCA AERONAVES QUE NO ESTAN FUERA DE SERVICIO O DADOS DE BAJA
 --------------------------------------------------------------------------------
 
-CREATE FUNCTION NORMALIZADOS.Aeronaves_Para_Viaje(@Origen int, @Destino int, @Fecha datetime)
+CREATE FUNCTION [NORMALIZADOS].[Aeronaves_Funcionan_En](@Fecha datetime)
 RETURNS @Aeronaves TABLE(
-	[Id][int], 
+	[Numero][int], 
 	[Matricula] [nvarchar](255),
-	[Numero] [int],	
 	[Fecha_Alta] [datetime], 
 	[Modelo] [nvarchar](255), 
 	[Fabricante] [int],
 	[Fecha_Baja_Definitiva] [datetime],
-	[Cantidad_Butacas] [numeric](18,0),
 	[KG_Disponibles] [numeric](18,0),
-	[Tipo_Servicio] [int]
+	[Tipo_Servicio] [int],
+	[Estado] [int]
+	)
+	
+AS 
+BEGIN
+DECLARE @Llegada datetime
+SET @Llegada = DATEADD(HOUR, 24, @Fecha)
+
+	INSERT INTO @Aeronaves
+		SELECT DISTINCT A.Numero,A.Matricula,A.Fecha_Alta,A.Modelo,A.Fabricante,A.Fecha_Baja_Definitiva,A.KG_Disponibles,A.Tipo_Servicio,A.Estado
+		FROM [NORMALIZADOS].[Aeronave] A
+		LEFT JOIN [NORMALIZADOS].[Baja_Temporal_Aeronave] B 
+			ON  B.Aeronave = A.Numero
+				AND NOT (@Llegada < B.Fecha_Fuera_Servicio OR @Fecha > B.Fecha_Vuelta_Al_Servicio)
+		WHERE B.Id IS NULL AND A.Fecha_Baja_Definitiva IS NULL
+		
+	RETURN
+END
+GO
+--------------------------------------------------------------------------------
+--			FUNCION QUE BUSCA AERONAVES DISPONIBLES PARA UN VIAJE
+--------------------------------------------------------------------------------
+
+CREATE FUNCTION [NORMALIZADOS].[Aeronaves_Para_Viaje](@Origen int, @Destino int, @Fecha datetime)
+RETURNS @Aeronaves TABLE(
+	[Numero] [int],
+	[Matricula] [nvarchar](255),
+	[Fecha_Alta] [datetime], 
+	[Modelo] [nvarchar](255), 
+	[Fabricante] [int],
+	[Fecha_Baja_Definitiva] [datetime],
+	[KG_Disponibles] [numeric](18,0),
+	[Tipo_Servicio] [int],
+	[Estado] [int]
 	)
 AS 
 BEGIN
 	
 	INSERT INTO @Aeronaves
-	SELECT A.Id, A.Matricula, A.Numero, A.Fecha_Alta, A.Modelo, A.Fabricante, A.Fecha_Baja_Definitiva, A.Cantidad_Butacas, A.KG_Disponibles, A.Tipo_Servicio FROM NORMALIZADOS.Aeronaves_Disponibles(@Fecha) A
+	SELECT A.Numero, A.Matricula, A.Fecha_Alta, A.Modelo, A.Fabricante, A.Fecha_Baja_Definitiva, A.KG_Disponibles, A.Tipo_Servicio,A.Estado
+	FROM NORMALIZADOS.Aeronaves_Funcionan_En(@Fecha) A
               JOIN NORMALIZADOS.Ruta_Aerea R ON R.Tipo_Servicio = A.Tipo_Servicio 
               AND R.Ciudad_Origen = @Origen AND R.Ciudad_Destino = @Destino
               WHERE NOT EXISTS(
                   
                    SELECT V.Id FROM NORMALIZADOS.Viaje V
-                   JOIN NORMALIZADOS.Ruta_Aerea R2 ON V.Ruta_Aerea = R2.Id AND V.Aeronave=A.Id
+                   JOIN NORMALIZADOS.Ruta_Aerea R2 ON V.Ruta_Aerea = R2.Id AND V.Aeronave=A.Numero
                    AND R2.Ciudad_Origen = @Origen AND R2.Ciudad_Destino = @Destino
                    WHERE
                      ( ABS (DATEDIFF(hour, V.Fecha_Salida, @Fecha))<24) --Hay menos de 24 horas entre los dos viajes
@@ -2649,3 +2682,78 @@ BEGIN
 							)
 END
 GO
+--------------------------------------------------------------------
+--        SP devuelve aeronaves a partir de filtros
+--------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetAeronaveByFiltersParaViajes]
+	@CiudadOrigen int,
+	@CiudadDestino int,
+	@FechaSalida datetime,
+	@Modelo nvarchar(255),
+	@Matricula nvarchar(255),
+	@Kg_Disponibles numeric(18,0),
+	@Fabricante nvarchar(255),
+	@Tipo_Servicio nvarchar(255),
+	@Fecha_Alta datetime,
+	@Fecha_Alta_Fin datetime,
+	@Fecha_Baja_Def datetime,
+	@Fecha_Baja_Def_Fin datetime,
+	@Fecha_Baja_Temporal datetime,
+	@Fecha_Baja_Temporal_Fin datetime,
+	@Fecha_Vuelta_Servicio datetime,
+	@Fecha_Vuelta_Servicio_Fin datetime
+
+	AS
+	SELECT A.*, S.Descripcion, F.Nombre, M.Modelo_Desc
+	FROM [NORMALIZADOS].[Aeronaves_Para_Viaje](@CiudadOrigen,@CiudadDestino,@FechaSalida) AFE
+	JOIN [NORMALIZADOS].Aeronave A
+	ON A.Numero=AFE.Numero
+	LEFT JOIN [NORMALIZADOS].[Baja_Temporal_Aeronave] BTA
+	ON A.Numero = BTA.Aeronave
+	LEFT JOIN [NORMALIZADOS].Servicio S
+	ON A.Tipo_Servicio = S.Id
+	LEFT JOIN [NORMALIZADOS].Fabricante F
+	ON A.Fabricante = F.Id
+	LEFT JOIN [NORMALIZADOS].[Modelo] M
+	ON M.Id = A.Modelo
+	WHERE (M.Modelo_Desc like @Modelo OR @Modelo is null)
+		AND (A.Matricula like @Matricula OR @Matricula like '')
+		AND (A.Kg_Disponibles = @Kg_Disponibles OR @Kg_Disponibles = 0)
+		AND (F.Nombre like @Fabricante OR @Fabricante is null)
+		AND (S.Descripcion like @Tipo_Servicio OR @Tipo_Servicio is null)
+		AND (A.Fecha_Alta > @Fecha_Alta OR @Fecha_Alta is null) 
+		AND (A.Fecha_Alta < @Fecha_Alta_Fin OR @Fecha_Alta_Fin is null) 
+		AND (A.Fecha_Baja_Definitiva > @Fecha_Baja_Def OR @Fecha_Baja_Def is null) 
+		AND (A.Fecha_Baja_Definitiva < @Fecha_Baja_Def_Fin OR @Fecha_Baja_Def_Fin is null)
+		AND (BTA.Fecha_Fuera_Servicio > @Fecha_Baja_Temporal OR @Fecha_Baja_Temporal is null) 
+		AND (BTA.Fecha_Fuera_Servicio < @Fecha_Baja_Temporal_Fin OR @Fecha_Baja_Temporal_Fin is null) 
+		AND (BTA.Fecha_Vuelta_Al_Servicio > @Fecha_Vuelta_Servicio OR @Fecha_Vuelta_Servicio is null)
+		AND (BTA.Fecha_Vuelta_Al_Servicio < @Fecha_Vuelta_Servicio_Fin OR @Fecha_Vuelta_Servicio_Fin is null) 
+GO
+--------------------------------------------------------------------
+--        SP devuelve una ruta a partir del id
+--------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetRutaById]
+@paramId numeric(18,0)
+AS
+BEGIN
+	SELECT RA.Id,
+			Ruta_Codigo as codigo,
+			Ciudad_Origen as CiudadOrigenId,
+			C1.Nombre as CiudadOrigenNombre,
+			Ciudad_Destino as CiudadDestinoId,
+			C2.Nombre as CiudadDestinoNombre,
+			Precio_BasePasaje,
+			Precio_BaseKG,
+			Tipo_Servicio,
+			Habilitada,
+			S.Descripcion as ServicioDescr
+	FROM [NORMALIZADOS].[Ruta_Aerea] RA
+	JOIN [NORMALIZADOS].[Ciudad] C1
+		ON RA.Ciudad_Origen=C1.Id
+	JOIN [NORMALIZADOS].[Ciudad] C2
+		ON RA.Ciudad_Destino=C2.Id
+	JOIN [NORMALIZADOS].[Servicio] S
+		ON S.Id=RA.Tipo_Servicio
+	WHERE RA.Id=@paramId
+END
