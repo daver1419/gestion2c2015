@@ -229,5 +229,22 @@ namespace AerolineaFrba.DAO
             }
             return ret == 1;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ruta"></param>
+        /// <returns></returns>
+        public static RutaDTO GetById(RutaDTO ruta)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[GetRutaById]", conn);
+                com.CommandType = CommandType.StoredProcedure;
+                com.Parameters.Add("@paramId",ruta.IdRuta);
+                SqlDataReader dataReader = com.ExecuteReader();
+                return getRutas(dataReader).FirstOrDefault();
+
+            }
+        }
     }
 }

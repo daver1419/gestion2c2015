@@ -11,6 +11,7 @@ using AerolineaFrba.DTO;
 using AerolineaFrba.DAO;
 using System.Text.RegularExpressions;
 using AerolineaFrba.Helpers;
+using AerolineaFrba.Generacion_Viaje;
 
 namespace AerolineaFrba.Abm_Aeronave
 {
@@ -53,8 +54,12 @@ namespace AerolineaFrba.Abm_Aeronave
             else aeronaveFilters.Fecha_Vuelta_Servicio = null;
             if (DateVueltaFin.Checked) aeronaveFilters.Fecha_Vuelta_Servicio_Fin = DateVueltaFin.Value;
             else aeronaveFilters.Fecha_Vuelta_Servicio_Fin = null;
-
-
+            aeronaveFilters.FechaSalida = ((GeneracionViaje)(this.Owner)).dateTimePickerFechSal.Value;
+            RutaDTO unaRuta = new RutaDTO();
+            unaRuta.IdRuta = Convert.ToInt32(((GeneracionViaje)this.Owner).textBoxRuta.Text);
+            aeronaveFilters.CiudadOrigen=RutaDAO.GetById(unaRuta ).CiudadOrigen;
+            aeronaveFilters.CiudadDestino = RutaDAO.GetById(unaRuta).CiudadDestino;
+            
             this.tablaDatos.DataSource = AeronaveDAO.GetByFilters(aeronaveFilters);
             if (Equals(this.tablaDatos.Rows.Count, 0))
             {

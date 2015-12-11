@@ -159,12 +159,20 @@ namespace AerolineaFrba.DAO
             }
             return ListaAeronaves;
         }
+        /// <summary>
+        /// Devuelve una lista de aeronaves a partir de filtros
+        /// </summary>
+        /// <param name="aeronaveFilter"></param>
+        /// <returns></returns>
         public static List<AeronaveDTO> GetByFilters(AeronaveFiltersDTO aeronaveFilter)
         {
             using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
             {
-                SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Busqueda_Aeronave]", conn);
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[GetAeronaveByFiltersParaViajes]", conn);
                 com.CommandType = CommandType.StoredProcedure;
+                com.Parameters.AddWithValue("@CiudadOrigen",aeronaveFilter.CiudadOrigen.IdCiudad);
+                com.Parameters.AddWithValue("@CiudadDestino", aeronaveFilter.CiudadDestino.IdCiudad);
+                com.Parameters.AddWithValue("@FechaSalida", aeronaveFilter.FechaSalida);
                 com.Parameters.AddWithValue("@Matricula", aeronaveFilter.Aeronave.Matricula);
                 com.Parameters.AddWithValue("@Kg_Disponibles", aeronaveFilter.Aeronave.KG);
 

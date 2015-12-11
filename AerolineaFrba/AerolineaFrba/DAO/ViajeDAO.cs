@@ -87,5 +87,23 @@ namespace AerolineaFrba.DAO
                 return getViajes(dataReader);
             }
         }
+        /// <summary>
+        /// Devuelve true si ya existe un viaje con la misma aeronave,ruta y fechas
+        /// de salida y llegada estimada
+        /// </summary>
+        /// <param name="viaje"></param>
+        /// <returns></returns>
+        public static bool Exist(ViajeDTO viaje)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[ExistViaje]", conn);
+                com.CommandType = CommandType.StoredProcedure;
+                com.Parameters.AddWithValue("@paramFechaSalida", viaje.FechaSalida);
+                com.Parameters.AddWithValue("@paramFechaLlegadaEstimada", viaje.FechaLlegadaEstimada);
+                com.Parameters.AddWithValue("@paramNroAeronave",viaje.Aeronave.Numero);
+                return com.ExecuteReader().HasRows;
+            }
+        }
     }
 }

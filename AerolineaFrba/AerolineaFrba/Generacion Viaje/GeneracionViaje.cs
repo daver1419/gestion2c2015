@@ -76,14 +76,21 @@ namespace AerolineaFrba.Generacion_Viaje
                 aeronave.Numero = Int32.Parse(textBoxAeronave.Text);
                 Viaje.Aeronave = aeronave;
 
-                if (!ViajeDAO.Generar(Viaje))
+                if (!ViajeDAO.Exist(Viaje))
                 {
-                    MessageBox.Show("No se pudo generar el viaje");
+                    if (!ViajeDAO.Generar(Viaje))
+                    {
+                        MessageBox.Show("No se pudo generar el viaje");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Se genero el viaje con exito");
+                        this.Close();
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Se genero el viaje con exito");
-                    this.Close();
+                    MessageBox.Show("Ya existe el viaje con los datos ingresados");
                 }
             }
         }

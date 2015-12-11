@@ -17,6 +17,8 @@ namespace AerolineaFrba.DTO
         public DateTime? Fecha_Baja_Temporal_Fin { get; set; }
         public DateTime? Fecha_Vuelta_Servicio { get; set; }
         public DateTime? Fecha_Vuelta_Servicio_Fin { get; set; }
-
+        public CiudadDTO CiudadOrigen { get; set; }
+        public CiudadDTO CiudadDestino { get; set; }
+        public DateTime FechaSalida { get; set; }
     }
 }
