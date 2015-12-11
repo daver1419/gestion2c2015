@@ -2337,8 +2337,8 @@ BEGIN
 			A.Matricula,
 			A.Tipo_Servicio,
 			S.Descripcion,
-			[NORMALIZADOS].[GetCantidadButacasDisponibles](V.Id) as CantButacasDisponibles,
-			[NORMALIZADOS].[KGs_Disponibles](V.Id) as KGs_Disponibles
+			ISNULL([NORMALIZADOS].[GetCantidadButacasDisponibles](V.Id),0) as CantButacasDisponibles,
+			ISNULL([NORMALIZADOS].[KGs_Disponibles](V.Id),0) as KGs_Disponibles
 	FROM [NORMALIZADOS].[Viaje] V
 	JOIN [NORMALIZADOS].[Ruta_Aerea] RA
 		ON V.Ruta_Aerea=RA.Id
