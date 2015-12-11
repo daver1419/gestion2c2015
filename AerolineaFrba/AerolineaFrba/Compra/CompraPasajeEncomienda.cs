@@ -52,7 +52,7 @@ namespace AerolineaFrba.Compra
             comboBoxCiudOrig.SelectedIndex = -1;
             dataGridView1.DataSource = null;
             label5.Hide();
-            label5.Hide();
+            label6.Hide();
             label7.Hide();
             label8.Hide();
             comboBoxCantPas.Hide();
@@ -125,14 +125,14 @@ namespace AerolineaFrba.Compra
         {
             errorProvider1.Clear();
             bool ret = true;
-            if (dateTimePickerEnt.Value < DateTime.Now)
+            if ((dateTimePickerEnt.Value - DateTime.Now).TotalMinutes < -1)
             {
                 errorProvider1.SetError(dateTimePickerEnt, "La fecha debe ser posterior al actual.");
                 ret = false;
             }
             if (this.dateTimePickerSal.Value < dateTimePickerEnt.Value)
             {
-                errorProvider1.SetError(dateTimePickerSal, "La fecha de salida debe ser posterior a la de entrada");
+                errorProvider1.SetError(dateTimePickerSal, "La fecha de llegada debe ser posterior a la de salida");
                 ret = false;
             }
             if (this.comboBoxCiudOrig.SelectedIndex == -1)
