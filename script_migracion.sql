@@ -547,7 +547,6 @@ ON B.Numero = M.Butaca_Nro AND B.Aeronave = A.Numero
 WHERE M.Pasaje_Codigo != 0
 )
 GO
-
 /***********************************************
 					ENCOMIENDA
 ***********************************************/
@@ -1007,7 +1006,6 @@ BEGIN
 
 END
 GO		
-
 --------------------------------------------------------------------------------
 -- FUNCION QUE BUSCA AERONAVES QUE NO ESTAN FUERA DE SERVICIO O DADOS DE BAJA
 --------------------------------------------------------------------------------
@@ -1787,7 +1785,7 @@ BEGIN
 		ON RA.Ciudad_Destino=C2.Id
 	JOIN Servicio S
 		ON RA.Tipo_Servicio=S.Id
-	WHERE (Ruta_Codigo=@codigo OR @codigo =0)
+	WHERE (CONVERT(varchar(18),Ruta_Codigo) LIKE '%'+(CONVERT(varchar(18),@codigo))+'%' OR @codigo =0)
 		AND (Ciudad_Origen=@ciudadOrigen OR @ciudadOrigen is null)
 		AND (Ciudad_Destino=@ciudadDestino OR @ciudadDestino is null)
 		AND (Tipo_Servicio=@tipoServicio OR @tipoServicio is null)
@@ -2398,7 +2396,7 @@ GO
 --         SP registra una compra y devuelve PNR y Id de Compra
 ------------------------------------------------------------------
 CREATE PROCEDURE [NORMALIZADOS].[SaveCompra]
-@paramPNR int OUTPUT,
+@paramPNR nvarchar(255) OUTPUT,
 @paramIdCompra int OUTPUT,
 @paramComprador numeric(18,0),
 @paramMedioPago int,
@@ -2412,6 +2410,10 @@ BEGIN
 		VALUES(GETDATE(), @paramComprador, @paramMedioPago, @paramTarjeta, @paramViaje)
 
 	SET @paramIdCompra=SCOPE_IDENTITY()
+
+	UPDATE [NORMALIZADOS].[Compra]
+	SET PNR=CONVERT(nvarchar(255),Fecha,112)+CAST(Id AS nvarchar(255))
+	WHERE Id=@paramIdCompra
 
 	SELECT @paramPNR=PNR
 	FROM [NORMALIZADOS].[Compra]
@@ -2428,6 +2430,9 @@ CREATE PROCEDURE [NORMALIZADOS].[SaveEncomienda]
 @paramCliente numeric(18,0)
 AS
 BEGIN
+		DECLARE @C_codigo numeric(18,0)
+		SET @C_codigo= [NORMALIZADOS].[Codigo_Maximo]()
+
 		SELECT @paramPrecio=RA.Precio_BaseKG*S.Porcentaje_Adicional+RA.Precio_BaseKG
 		FROM [NORMALIZADOS].[Servicio] S
 		JOIN [NORMALIZADOS].[Ruta_Aerea] RA
@@ -2438,8 +2443,8 @@ BEGIN
 			ON V.Id=C.Viaje
 			AND C.Id=@paramCompra
 
-		INSERT INTO [NORMALIZADOS].[Encomienda](Precio,Kg,Cliente,Compra)
-			VALUES(@paramPrecio,@paramKg,@paramCliente,@paramCompra)
+		INSERT INTO [NORMALIZADOS].[Encomienda](Precio,Kg,Cliente,Compra,Codigo)
+			VALUES(@paramPrecio,@paramKg,@paramCliente,@paramCompra,@C_codigo)
 END
 GO
 ------------------------------------------------------------------
@@ -2452,6 +2457,9 @@ CREATE PROCEDURE [NORMALIZADOS].[SavePasaje]
 @paramPasajero numeric(18,0)
 AS
 BEGIN
+		DECLARE @C_codigo numeric(18,0)
+		SET @C_codigo= [NORMALIZADOS].[Codigo_Maximo]()
+
 		SELECT @paramPrecio=RA.Precio_BasePasaje*S.Porcentaje_Adicional+RA.Precio_BasePasaje
 		FROM [NORMALIZADOS].[Servicio] S
 		JOIN [NORMALIZADOS].[Ruta_Aerea] RA
@@ -2462,8 +2470,8 @@ BEGIN
 			ON V.Id=C.Viaje
 			AND C.Id=@paramCompra
 
-		INSERT INTO [NORMALIZADOS].[Pasaje](Precio,Butaca,Pasajero,Compra)
-			VALUES(@paramPrecio,@paramButaca,@paramPasajero,@paramCompra)
+		INSERT INTO [NORMALIZADOS].[Pasaje](Precio,Butaca,Pasajero,Compra,Codigo)
+			VALUES(@paramPrecio,@paramButaca,@paramPasajero,@paramCompra,@C_codigo)
 END
 GO
 
@@ -2496,78 +2504,41 @@ AS
 	BEGIN
 		DECLARE @id_compra int
 		DECLARE @idCancelacion int
-		DECLARE @pasajes_cancelados int
-		DECLARE @encomiendas_canceladas int
-		DECLARE @pasaje int
-		DECLARE @encomienda int
-		DECLARE @retorno int
-			
-		SET @pasajes_cancelados = 0
-		SET @encomiendas_canceladas = 0
-		SET @retorno = -1
-
+		DECLARE @filas_modificadas int
+				
 		SELECT @id_compra = Id
 		FROM NORMALIZADOS.Compra
 		WHERE PNR LIKE @pnr
 		
+		SET @filas_modificadas = 0
+		
 		IF (@id_compra IS NOT NULL)
 			BEGIN
-				SET @retorno = 0
-
 				INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
 				VALUES (GETDATE(),@motivo)
 
 				SET @idCancelacion = SCOPE_IDENTITY()
 
-				DECLARE Pasajes CURSOR FOR
-				SELECT P.Id from NORMALIZADOS.Pasaje P
-				WHERE P.Compra = @id_compra
+				INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
+					SELECT P.Id, @idCancelacion
+					FROM NORMALIZADOS.Pasaje P
+					WHERE P.Compra = @id_compra
+					
+				SET @filas_modificadas = @@ROWCOUNT
 
-				OPEN Pasajes
-				FETCH NEXT FROM Pasajes INTO @pasaje
-				WHILE @@FETCH_STATUS = 0
-					BEGIN
-						IF NOT EXISTS (SELECT 1 FROM NORMALIZADOS.Pasajes_Cancelados PC 
-										WHERE PC.Pasaje = @pasaje)
-							BEGIN
-								INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
-									VALUES (@pasaje,@idCancelacion)
-
-								SET @pasajes_cancelados = @pasajes_cancelados + 1
-							END
-						
-						FETCH NEXT FROM Pasajes INTO @pasaje
-					END
-				CLOSE Pasajes
-				DEALLOCATE Pasajes
+				INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda, Cancelacion)
+					SELECT E.Id, @idCancelacion
+					FROM NORMALIZADOS.Encomienda E
+					WHERE E.Compra = @id_compra
 				
-				DECLARE Encomiendas CURSOR FOR
-				SELECT E.Id from NORMALIZADOS.Encomienda E
-				WHERE E.Compra = @id_compra
-
-				OPEN Encomiendas
-				FETCH NEXT FROM Encomiendas INTO @encomienda
-				WHILE @@FETCH_STATUS = 0
-					BEGIN
-						IF NOT EXISTS (SELECT 1 FROM NORMALIZADOS.Encomiendas_Canceladas EC
-										WHERE EC.Encomienda = @encomienda)
-							BEGIN
-								INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda, Cancelacion)
-									VALUES (@encomienda,@idCancelacion)	
-									
-								SET @encomiendas_canceladas = @encomiendas_canceladas + 1
-							END							
-						
-						FETCH NEXT FROM Encomiendas INTO @encomienda
-					END
-				CLOSE Encomiendas
-				DEALLOCATE Encomiendas
-
-				SET @retorno = @pasajes_cancelados + @encomiendas_canceladas
+				SET @filas_modificadas = @filas_modificadas + @@ROWCOUNT				
+				
 			END
-		SELECT @retorno
+		SELECT @filas_modificadas
 	END
 GO
+
+
 
 --------------------------------------------------------------------
 --        Cancelar un pasaje por pedido del cliente
@@ -2581,7 +2552,7 @@ AS
 		DECLARE @pasaje int
 		DECLARE @retorno int
 		
-		SET @retorno = -1
+		SET @retorno = 0
 		
 		SELECT @pasaje = P.Id
 		FROM NORMALIZADOS.Pasaje P
@@ -2595,7 +2566,7 @@ AS
 								WHERE P.Id = @pasaje)
 
 					BEGIN
-						SET @retorno = 0
+						SET @retorno = -1
 					END
 				ELSE
 					BEGIN
@@ -2631,7 +2602,7 @@ AS
 		FROM NORMALIZADOS.Encomienda E
 		WHERE E.Codigo = @codigo
 
-		SET @retorno = -1
+		SET @retorno = 0
 
 		IF (@encomienda IS NOT NULL)
 			BEGIN
@@ -2641,7 +2612,7 @@ AS
 								WHERE E.Id = @encomienda)
 
 					BEGIN
-						SET @retorno = 0
+						SET @retorno = -1
 					END
 				ELSE
 					BEGIN
@@ -2683,6 +2654,28 @@ BEGIN
 END
 GO
 --------------------------------------------------------------------
+--        SP devuelve 1 si ya existe el viaje con una misma
+--			aeronave,ruta,fecha de salida y estimada
+--------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[ExistViaje]
+@paramNroAeronave int,
+@paramFechaSalida datetime,
+@paramFechaLlegadaEstimada datetime
+AS
+BEGIN
+
+	SELECT 1
+	FROM [NORMALIZADOS].[Viaje]
+	WHERE YEAR(Fecha_Salida)=YEAR(@paramFechaSalida)
+		AND MONTH(Fecha_Salida)=MONTH(@paramFechaSalida)
+		AND DAY(Fecha_Salida)=DAY(@paramFechaSalida)
+		AND YEAR(Fecha_Llegada_Estimada)=YEAR(@paramFechaLlegadaEstimada)
+		AND MONTH(Fecha_Llegada_Estimada)=MONTH(@paramFechaLlegadaEstimada)
+		AND DAY(Fecha_Llegada_Estimada)=DAY(@paramFechaLlegadaEstimada)
+		AND Aeronave=@paramNroAeronave
+END
+GO
+--------------------------------------------------------------------
 --        SP devuelve aeronaves a partir de filtros
 --------------------------------------------------------------------
 CREATE PROCEDURE [NORMALIZADOS].[GetAeronaveByFiltersParaViajes]
@@ -2695,21 +2688,13 @@ CREATE PROCEDURE [NORMALIZADOS].[GetAeronaveByFiltersParaViajes]
 	@Fabricante nvarchar(255),
 	@Tipo_Servicio nvarchar(255),
 	@Fecha_Alta datetime,
-	@Fecha_Alta_Fin datetime,
-	@Fecha_Baja_Def datetime,
-	@Fecha_Baja_Def_Fin datetime,
-	@Fecha_Baja_Temporal datetime,
-	@Fecha_Baja_Temporal_Fin datetime,
-	@Fecha_Vuelta_Servicio datetime,
-	@Fecha_Vuelta_Servicio_Fin datetime
+	@Fecha_Alta_Fin datetime
 
 	AS
 	SELECT A.*, S.Descripcion, F.Nombre, M.Modelo_Desc
 	FROM [NORMALIZADOS].[Aeronaves_Para_Viaje](@CiudadOrigen,@CiudadDestino,@FechaSalida) AFE
 	JOIN [NORMALIZADOS].Aeronave A
 	ON A.Numero=AFE.Numero
-	LEFT JOIN [NORMALIZADOS].[Baja_Temporal_Aeronave] BTA
-	ON A.Numero = BTA.Aeronave
 	LEFT JOIN [NORMALIZADOS].Servicio S
 	ON A.Tipo_Servicio = S.Id
 	LEFT JOIN [NORMALIZADOS].Fabricante F
@@ -2723,12 +2708,6 @@ CREATE PROCEDURE [NORMALIZADOS].[GetAeronaveByFiltersParaViajes]
 		AND (S.Descripcion like @Tipo_Servicio OR @Tipo_Servicio is null)
 		AND (A.Fecha_Alta > @Fecha_Alta OR @Fecha_Alta is null) 
 		AND (A.Fecha_Alta < @Fecha_Alta_Fin OR @Fecha_Alta_Fin is null) 
-		AND (A.Fecha_Baja_Definitiva > @Fecha_Baja_Def OR @Fecha_Baja_Def is null) 
-		AND (A.Fecha_Baja_Definitiva < @Fecha_Baja_Def_Fin OR @Fecha_Baja_Def_Fin is null)
-		AND (BTA.Fecha_Fuera_Servicio > @Fecha_Baja_Temporal OR @Fecha_Baja_Temporal is null) 
-		AND (BTA.Fecha_Fuera_Servicio < @Fecha_Baja_Temporal_Fin OR @Fecha_Baja_Temporal_Fin is null) 
-		AND (BTA.Fecha_Vuelta_Al_Servicio > @Fecha_Vuelta_Servicio OR @Fecha_Vuelta_Servicio is null)
-		AND (BTA.Fecha_Vuelta_Al_Servicio < @Fecha_Vuelta_Servicio_Fin OR @Fecha_Vuelta_Servicio_Fin is null) 
 GO
 --------------------------------------------------------------------
 --        SP devuelve una ruta a partir del id
@@ -2745,7 +2724,7 @@ BEGIN
 			C2.Nombre as CiudadDestinoNombre,
 			Precio_BasePasaje,
 			Precio_BaseKG,
-			Tipo_Servicio,
+			Tipo_Servicio as ServicioId,
 			Habilitada,
 			S.Descripcion as ServicioDescr
 	FROM [NORMALIZADOS].[Ruta_Aerea] RA
