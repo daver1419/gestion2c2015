@@ -44,10 +44,10 @@
             this.Limpiar = new System.Windows.Forms.Button();
             this.Guardar = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.ComboModelo = new System.Windows.Forms.ComboBox();
             this.ButacaButton = new System.Windows.Forms.Button();
             this.ButacaNumeric = new System.Windows.Forms.NumericUpDown();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.ComboModelo = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ButacaNumeric)).BeginInit();
@@ -56,6 +56,8 @@
             // 
             // DateAlta
             // 
+            this.DateAlta.CustomFormat = "dd-MMM-yy HH:mm:ss";
+            this.DateAlta.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.DateAlta.Location = new System.Drawing.Point(129, 20);
             this.DateAlta.Name = "DateAlta";
             this.DateAlta.Size = new System.Drawing.Size(200, 20);
@@ -194,6 +196,14 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos Aeronave";
             // 
+            // ComboModelo
+            // 
+            this.ComboModelo.FormattingEnabled = true;
+            this.ComboModelo.Location = new System.Drawing.Point(129, 79);
+            this.ComboModelo.Name = "ComboModelo";
+            this.ComboModelo.Size = new System.Drawing.Size(200, 21);
+            this.ComboModelo.TabIndex = 16;
+            // 
             // ButacaButton
             // 
             this.ButacaButton.Location = new System.Drawing.Point(129, 220);
@@ -220,14 +230,6 @@
             // errorProvider1
             // 
             this.errorProvider1.ContainerControl = this;
-            // 
-            // ComboModelo
-            // 
-            this.ComboModelo.FormattingEnabled = true;
-            this.ComboModelo.Location = new System.Drawing.Point(129, 79);
-            this.ComboModelo.Name = "ComboModelo";
-            this.ComboModelo.Size = new System.Drawing.Size(200, 21);
-            this.ComboModelo.TabIndex = 16;
             // 
             // AltaAeronave
             // 

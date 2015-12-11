@@ -49,6 +49,12 @@ namespace AerolineaFrba.Generacion_Viaje
         {
             errorProvider1.Clear();
             bool ret = true;
+            if((dateTimePickerFechLLEstim.Value - dateTimePickerFechSal.Value).TotalHours > 24)
+            {
+                errorProvider1.SetError(dateTimePickerFechSal,"Los viajes no pueden durar mas de 24 hs");
+                errorProvider1.SetError(dateTimePickerFechLLEstim, "Los viajes no pueden durar mas de 24 hs");
+                ret = false;
+            }
             if (dateTimePickerFechSal.Value < DateTime.Now)
             {
                 errorProvider1.SetError(dateTimePickerFechSal, "Debe ingresar fecha de salida mayor al actual");

@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.ModeloCombo = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.NumericKG = new System.Windows.Forms.NumericUpDown();
             this.ComboTipoServicio = new System.Windows.Forms.ComboBox();
@@ -48,7 +49,6 @@
             this.Guardar = new System.Windows.Forms.Button();
             this.Limpiar = new System.Windows.Forms.Button();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
-            this.ModeloCombo = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumericKG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ButacaNumeric)).BeginInit();
@@ -79,6 +79,14 @@
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos Aeronave";
+            // 
+            // ModeloCombo
+            // 
+            this.ModeloCombo.FormattingEnabled = true;
+            this.ModeloCombo.Location = new System.Drawing.Point(129, 97);
+            this.ModeloCombo.Name = "ModeloCombo";
+            this.ModeloCombo.Size = new System.Drawing.Size(200, 21);
+            this.ModeloCombo.TabIndex = 28;
             // 
             // button1
             // 
@@ -213,6 +221,8 @@
             // 
             // DateAlta
             // 
+            this.DateAlta.CustomFormat = "dd-MMM-yy HH:mm:ss";
+            this.DateAlta.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.DateAlta.Location = new System.Drawing.Point(129, 20);
             this.DateAlta.Name = "DateAlta";
             this.DateAlta.Size = new System.Drawing.Size(200, 20);
@@ -241,14 +251,6 @@
             // errorProvider1
             // 
             this.errorProvider1.ContainerControl = this;
-            // 
-            // ModeloCombo
-            // 
-            this.ModeloCombo.FormattingEnabled = true;
-            this.ModeloCombo.Location = new System.Drawing.Point(129, 97);
-            this.ModeloCombo.Name = "ModeloCombo";
-            this.ModeloCombo.Size = new System.Drawing.Size(200, 21);
-            this.ModeloCombo.TabIndex = 28;
             // 
             // ModificarAeronave
             // 

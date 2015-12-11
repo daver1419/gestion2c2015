@@ -36,6 +36,7 @@ namespace AerolineaFrba.Compra
             label5.Hide();
             label6.Hide();
             label7.Hide();
+            label8.Hide();
             comboBoxCantPas.Hide();
             numericUpDown1.Hide();
 
@@ -53,6 +54,7 @@ namespace AerolineaFrba.Compra
             label5.Hide();
             label5.Hide();
             label7.Hide();
+            label8.Hide();
             comboBoxCantPas.Hide();
             comboBoxCantPas.SelectedIndex = -1;
             numericUpDown1.Hide();
@@ -67,7 +69,7 @@ namespace AerolineaFrba.Compra
             GridViajesDTO gridViaje = (GridViajesDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
             bool compraEncomienda = false;
 
-            if (comboBoxCantPas.SelectedItem != null )
+            if (comboBoxCantPas.SelectedItem != null)
             {
                 if (Convert.ToInt32(comboBoxCantPas.SelectedItem.ToString()) > 0)
                 {
@@ -76,7 +78,7 @@ namespace AerolineaFrba.Compra
                         MessageBox.Show("Todos los pasajes de este viaje estan vendidos");
                         return;
                     }
-                    if (Convert.ToInt32( comboBoxCantPas.SelectedItem.ToString()) > gridViaje.CantButacasDisp)
+                    if (Convert.ToInt32(comboBoxCantPas.SelectedItem.ToString()) > gridViaje.CantButacasDisp)
                     {
                         MessageBox.Show(string.Format("A la aeronave del viaje seleccionado solo le quedan: {0} pasajes disponibles", gridViaje.CantButacasDisp));
                         return;
@@ -88,6 +90,10 @@ namespace AerolineaFrba.Compra
                         ventana.ShowDialog(this);
                     }
                 }
+            }
+            else
+            {
+                return;
             }
             if (gridViaje.KgsDisponibles == 0 && numericUpDown1.Value != 0)
             {
@@ -168,9 +174,15 @@ namespace AerolineaFrba.Compra
                 label5.Show();
                 label6.Show();
                 label7.Show();
+                label8.Show();
                 comboBoxCantPas.Show();
                 numericUpDown1.Show();
             }
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

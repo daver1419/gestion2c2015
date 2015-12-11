@@ -60,8 +60,13 @@ namespace AerolineaFrba.Generacion_Viaje
             else aeronaveFilters.Aeronave.FechaAlta = null;
             if (DateAltaFin.Checked) aeronaveFilters.Fecha_Alta_Fin = DateAltaFin.Value;
             else aeronaveFilters.Fecha_Alta_Fin = null;
+            aeronaveFilters.FechaSalida = ((GeneracionViaje)(this.Owner)).dateTimePickerFechSal.Value;
+            RutaDTO unaRuta = new RutaDTO();
+            unaRuta.IdRuta = Convert.ToInt32(((GeneracionViaje)this.Owner).textBoxRuta.Text);
+            aeronaveFilters.CiudadOrigen = RutaDAO.GetById(unaRuta).CiudadOrigen;
+            aeronaveFilters.CiudadDestino = RutaDAO.GetById(unaRuta).CiudadDestino;
 
-            this.tablaDatos.DataSource = AeronaveDAO.GetByFiltersSinViajesProgramados(aeronaveFilters,this.FormPadre.dateTimePickerFechSal.Value,this.FormPadre.dateTimePickerFechLLEstim.Value);
+            this.tablaDatos.DataSource = AeronaveDAO.GetByFiltersSinViajesProgramados(aeronaveFilters);
             if (Equals(this.tablaDatos.Rows.Count, 0))
             {
                 MessageBox.Show("No se encontraron datos");

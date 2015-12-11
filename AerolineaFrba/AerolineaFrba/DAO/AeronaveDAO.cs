@@ -168,11 +168,8 @@ namespace AerolineaFrba.DAO
         {
             using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
             {
-                SqlCommand com = new SqlCommand("[NORMALIZADOS].[GetAeronaveByFiltersParaViajes]", conn);
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Busqueda_Aeronave]", conn);
                 com.CommandType = CommandType.StoredProcedure;
-                com.Parameters.AddWithValue("@CiudadOrigen",aeronaveFilter.CiudadOrigen.IdCiudad);
-                com.Parameters.AddWithValue("@CiudadDestino", aeronaveFilter.CiudadDestino.IdCiudad);
-                com.Parameters.AddWithValue("@FechaSalida", aeronaveFilter.FechaSalida);
                 com.Parameters.AddWithValue("@Matricula", aeronaveFilter.Aeronave.Matricula);
                 com.Parameters.AddWithValue("@Kg_Disponibles", aeronaveFilter.Aeronave.KG);
 
@@ -237,12 +234,15 @@ namespace AerolineaFrba.DAO
             }
         }
 
-        public static List<AeronaveDTO> GetByFiltersSinViajesProgramados(AeronaveFiltersDTO aeronaveFilter,DateTime fechaSalida,DateTime fechaLlegada)
+        public static List<AeronaveDTO> GetByFiltersSinViajesProgramados(AeronaveFiltersDTO aeronaveFilter)
         {
             using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
             {
-                SqlCommand com = new SqlCommand("[NORMALIZADOS].[SP_Busqueda_Aeronaves_Sin_Viajes_Programados]", conn);
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[GetAeronaveByFiltersParaViajes]", conn);
                 com.CommandType = CommandType.StoredProcedure;
+                com.Parameters.AddWithValue("@CiudadOrigen", aeronaveFilter.CiudadOrigen.IdCiudad);
+                com.Parameters.AddWithValue("@CiudadDestino", aeronaveFilter.CiudadDestino.IdCiudad);
+                com.Parameters.AddWithValue("@FechaSalida", aeronaveFilter.FechaSalida);
                 com.Parameters.AddWithValue("@Matricula", aeronaveFilter.Aeronave.Matricula);
                 com.Parameters.AddWithValue("@Kg_Disponibles", aeronaveFilter.Aeronave.KG);
 
@@ -270,9 +270,6 @@ namespace AerolineaFrba.DAO
                     com.Parameters.AddWithValue("@Fecha_Alta_Fin", aeronaveFilter.Fecha_Alta_Fin);
                 else
                     com.Parameters.AddWithValue("@Fecha_Alta_Fin", DBNull.Value);
-                
-                com.Parameters.AddWithValue("@fechaDesde", fechaSalida);
-                com.Parameters.AddWithValue("@fechaHasta",fechaLlegada);
 
                 SqlDataReader dataReader = com.ExecuteReader();
                 return getAeronaves(dataReader);

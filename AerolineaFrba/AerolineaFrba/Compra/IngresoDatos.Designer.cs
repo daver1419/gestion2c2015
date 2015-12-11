@@ -46,6 +46,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxApe = new System.Windows.Forms.TextBox();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -148,7 +149,7 @@
             // 
             // buttonLimpiar
             // 
-            this.buttonLimpiar.Location = new System.Drawing.Point(50, 264);
+            this.buttonLimpiar.Location = new System.Drawing.Point(50, 305);
             this.buttonLimpiar.Name = "buttonLimpiar";
             this.buttonLimpiar.Size = new System.Drawing.Size(75, 23);
             this.buttonLimpiar.TabIndex = 14;
@@ -158,7 +159,7 @@
             // 
             // buttonRegistrar
             // 
-            this.buttonRegistrar.Location = new System.Drawing.Point(400, 264);
+            this.buttonRegistrar.Location = new System.Drawing.Point(405, 305);
             this.buttonRegistrar.Name = "buttonRegistrar";
             this.buttonRegistrar.Size = new System.Drawing.Size(75, 23);
             this.buttonRegistrar.TabIndex = 15;
@@ -186,11 +187,23 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // label8
+            // 
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.ForeColor = System.Drawing.Color.Red;
+            this.label8.Location = new System.Drawing.Point(72, 251);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(374, 35);
+            this.label8.TabIndex = 36;
+            this.label8.Text = "Si el cliente ya se encuentra registrado, ingresar solamente el DNI. Los datos se" +
+    " cargaran automaticamente";
+            // 
             // IngresoDatos
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(530, 322);
+            this.ClientSize = new System.Drawing.Size(530, 349);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.textBoxApe);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.buttonRegistrar);
@@ -235,5 +248,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBoxApe;
         private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.Label label8;
     }
 }

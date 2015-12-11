@@ -127,6 +127,7 @@ namespace AerolineaFrba.Abm_Aeronave
         {
             errorProvider1.Clear();
             bool ret = false;
+
             if (this.ComboFabricante.SelectedIndex == -1)
             {
                 errorProvider1.SetError(ComboFabricante, "Debe seleccionar un fabricante.");

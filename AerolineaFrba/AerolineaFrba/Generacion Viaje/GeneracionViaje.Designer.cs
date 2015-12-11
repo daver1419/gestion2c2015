@@ -103,7 +103,7 @@
             // 
             // dateTimePickerFechSal
             // 
-            this.dateTimePickerFechSal.CustomFormat = "dd-MMM-yy hh:mm:ss";
+            this.dateTimePickerFechSal.CustomFormat = "dd-MMM-yy HH:mm:ss";
             this.dateTimePickerFechSal.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dateTimePickerFechSal.Location = new System.Drawing.Point(169, 52);
             this.dateTimePickerFechSal.Name = "dateTimePickerFechSal";
@@ -112,7 +112,7 @@
             // 
             // dateTimePickerFechLLEstim
             // 
-            this.dateTimePickerFechLLEstim.CustomFormat = "dd-MMM-yy hh:mm:ss";
+            this.dateTimePickerFechLLEstim.CustomFormat = "dd-MMM-yy HH:mm:ss";
             this.dateTimePickerFechLLEstim.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dateTimePickerFechLLEstim.Location = new System.Drawing.Point(169, 96);
             this.dateTimePickerFechLLEstim.Name = "dateTimePickerFechLLEstim";

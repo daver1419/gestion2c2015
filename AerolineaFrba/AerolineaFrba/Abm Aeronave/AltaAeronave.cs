@@ -49,6 +49,7 @@ namespace AerolineaFrba.Abm_Aeronave
 
         private void Guardar_Click(object sender, EventArgs e)
         {
+
             if (validar()) return;
             Aeronave.Fabricante = ((FabricanteDTO)ComboFabricante.SelectedValue);
             Aeronave.TipoServicio = ((TipoServicioDTO)ComboTipoServicio.SelectedValue);
@@ -92,9 +93,11 @@ namespace AerolineaFrba.Abm_Aeronave
         {
             errorProvider1.Clear();
             bool ret = false;
+            AeronaveDTO unaAero = new AeronaveDTO();
+            unaAero.Matricula = TextMatricula.Text;
             if (DateAlta.Value < DateTime.Now)
             {
-                errorProvider1.SetError(DateAlta, "La fecha debe ser posterior al momento de ser ingresada.");
+                errorProvider1.SetError(DateAlta, "La fecha debe ser posterior al momento de ser ingresada (al menos algunos minutos).");
                 ret = true;
             }
             if (this.ComboFabricante.SelectedIndex == -1)
@@ -120,6 +123,11 @@ namespace AerolineaFrba.Abm_Aeronave
             if (this.ButacaNumeric.Value == 0)
             {
                 errorProvider1.SetError(ButacaNumeric, "Debe ingresar butacas.");
+                ret = true;
+            }
+            if (AeronaveDAO.GetByMatricula(unaAero).FirstOrDefault() != null)
+            {
+                errorProvider1.SetError(TextMatricula,"Matricula duplicada");
                 ret = true;
             }
             return ret;
