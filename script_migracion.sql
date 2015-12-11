@@ -2626,3 +2626,26 @@ AS
 		SELECT @retorno
 	END
 GO
+--------------------------------------------------------------------
+--        SP devuelve las butacas disponibles para compra 
+--			y que se encuentran	habilitadas
+--------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetButacasDisponibles_SEL_ByAeronave]
+@paramNroAeronave int,
+@paramViaje int
+AS
+BEGIN
+	SELECT B.*, TB.Descripcion
+	FROM [NORMALIZADOS].[Butaca] B
+	JOIN [NORMALIZADOS].[Tipo_Butaca] TB
+	ON TB.Id = B.Tipo_Butaca
+	WHERE Aeronave = @paramNroAeronave
+		AND B.Habilitada=1
+		AND B.Id NOT IN (SELECT Butaca
+							FROM [NORMALIZADOS].[Pasaje] P
+							JOIN [NORMALIZADOS].[Compra] C
+								ON P.Compra=C.Id
+								AND c.Viaje=@paramViaje
+							)
+END
+GO
