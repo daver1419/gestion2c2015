@@ -2327,7 +2327,11 @@ CREATE PROCEDURE [NORMALIZADOS].[GetViajes_SEL_ByFechasCiudades]
 @paramCiudadDestino int
 AS
 BEGIN
-	SELECT V.Id,
+	IF(YEAR(@paramFechaSalida) = YEAR(GETDATE())
+		AND MONTH(@paramFechaSalida) = MONTH(GETDATE())
+		AND DAY(@paramFechaSalida)= DAY(GETDATE()))
+	BEGIN
+		SELECT V.Id,
 			V.Fecha_Salida,
 			V.Fecha_Llegada_Estimada,
 			V.Ruta_Aerea,
@@ -2339,26 +2343,63 @@ BEGIN
 			S.Descripcion,
 			ISNULL([NORMALIZADOS].[GetCantidadButacasDisponibles](V.Id),0) as CantButacasDisponibles,
 			ISNULL([NORMALIZADOS].[KGs_Disponibles](V.Id),0) as KGs_Disponibles
-	FROM [NORMALIZADOS].[Viaje] V
-	JOIN [NORMALIZADOS].[Ruta_Aerea] RA
-		ON V.Ruta_Aerea=RA.Id
-		AND RA.Habilitada=1
-		AND RA.Ciudad_Origen=@paramCiudadOrigen
-		AND RA.Ciudad_Destino=@paramCiudadDestino
-	JOIN [NORMALIZADOS].[Ciudad] C1
-		ON C1.Id=RA.Ciudad_Origen
-	JOIN [NORMALIZADOS].[Ciudad] C2
-		ON C2.Id=RA.Ciudad_Destino
-	JOIN [NORMALIZADOS].[Aeronave] A
-		ON V.Aeronave=A.Numero
-	JOIN [NORMALIZADOS].[Servicio] S
-		ON S.Id=A.Tipo_Servicio
-	WHERE YEAR(Fecha_Salida)=YEAR(@paramFechaSalida)
-		AND MONTH(Fecha_Salida)=MONTH(@paramFechaSalida)
-		AND DAY(Fecha_Salida)=DAY(@paramFechaSalida)
-		AND YEAR(Fecha_Llegada_Estimada)=YEAR(@paramFechaLlegadaEstimada)
-		AND MONTH(Fecha_Llegada_Estimada)=MONTH(@paramFechaLlegadaEstimada)
-		AND DAY(Fecha_Llegada_Estimada)=DAY(@paramFechaLlegadaEstimada)
+		FROM [NORMALIZADOS].[Viaje] V
+		JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+			ON V.Ruta_Aerea=RA.Id
+			AND RA.Habilitada=1
+			AND RA.Ciudad_Origen=@paramCiudadOrigen
+			AND RA.Ciudad_Destino=@paramCiudadDestino
+		JOIN [NORMALIZADOS].[Ciudad] C1
+			ON C1.Id=RA.Ciudad_Origen
+		JOIN [NORMALIZADOS].[Ciudad] C2
+			ON C2.Id=RA.Ciudad_Destino
+		JOIN [NORMALIZADOS].[Aeronave] A
+			ON V.Aeronave=A.Numero
+		JOIN [NORMALIZADOS].[Servicio] S
+			ON S.Id=A.Tipo_Servicio
+		WHERE YEAR(Fecha_Salida)=YEAR(@paramFechaSalida)
+			AND MONTH(Fecha_Salida)=MONTH(@paramFechaSalida)
+			AND DAY(Fecha_Salida)=DAY(@paramFechaSalida)
+			AND YEAR(Fecha_Llegada_Estimada)=YEAR(@paramFechaLlegadaEstimada)
+			AND MONTH(Fecha_Llegada_Estimada)=MONTH(@paramFechaLlegadaEstimada)
+			AND DAY(Fecha_Llegada_Estimada)=DAY(@paramFechaLlegadaEstimada)
+			AND (DATEPART(HOUR,Fecha_Salida) - DATEPART(HOUR,@paramFechaSalida)) > 2
+	END
+	ELSE
+	BEGIN
+		SELECT V.Id,
+			V.Fecha_Salida,
+			V.Fecha_Llegada_Estimada,
+			V.Ruta_Aerea,
+			C1.Nombre as CiudadOrigenNombre,
+			C2.Nombre as CiudadDestinoNombre,
+			V.Aeronave,
+			A.Matricula,
+			A.Tipo_Servicio,
+			S.Descripcion,
+			ISNULL([NORMALIZADOS].[GetCantidadButacasDisponibles](V.Id),0) as CantButacasDisponibles,
+			ISNULL([NORMALIZADOS].[KGs_Disponibles](V.Id),0) as KGs_Disponibles
+		FROM [NORMALIZADOS].[Viaje] V
+		JOIN [NORMALIZADOS].[Ruta_Aerea] RA
+			ON V.Ruta_Aerea=RA.Id
+			AND RA.Habilitada=1
+			AND RA.Ciudad_Origen=@paramCiudadOrigen
+			AND RA.Ciudad_Destino=@paramCiudadDestino
+		JOIN [NORMALIZADOS].[Ciudad] C1
+			ON C1.Id=RA.Ciudad_Origen
+		JOIN [NORMALIZADOS].[Ciudad] C2
+			ON C2.Id=RA.Ciudad_Destino
+		JOIN [NORMALIZADOS].[Aeronave] A
+			ON V.Aeronave=A.Numero
+		JOIN [NORMALIZADOS].[Servicio] S
+			ON S.Id=A.Tipo_Servicio
+		WHERE YEAR(Fecha_Salida)=YEAR(@paramFechaSalida)
+			AND MONTH(Fecha_Salida)=MONTH(@paramFechaSalida)
+			AND DAY(Fecha_Salida)=DAY(@paramFechaSalida)
+			AND YEAR(Fecha_Llegada_Estimada)=YEAR(@paramFechaLlegadaEstimada)
+			AND MONTH(Fecha_Llegada_Estimada)=MONTH(@paramFechaLlegadaEstimada)
+			AND DAY(Fecha_Llegada_Estimada)=DAY(@paramFechaLlegadaEstimada)
+	END
 END
 GO
 
