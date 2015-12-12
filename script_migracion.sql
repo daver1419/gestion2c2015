@@ -2447,7 +2447,7 @@ CREATE PROCEDURE [NORMALIZADOS].[SaveEncomienda]
 AS
 BEGIN
 		DECLARE @C_codigo numeric(18,0)
-		SET @C_codigo= [NORMALIZADOS].[Codigo_Maximo]()
+		SET @C_codigo= [NORMALIZADOS].[Codigo_Maximo]()+1
 
 		SELECT @paramPrecio=RA.Precio_BaseKG*S.Porcentaje_Adicional+RA.Precio_BaseKG
 		FROM [NORMALIZADOS].[Servicio] S
@@ -2474,7 +2474,7 @@ CREATE PROCEDURE [NORMALIZADOS].[SavePasaje]
 AS
 BEGIN
 		DECLARE @C_codigo numeric(18,0)
-		SET @C_codigo= [NORMALIZADOS].[Codigo_Maximo]()
+		SET @C_codigo= [NORMALIZADOS].[Codigo_Maximo]()+1
 
 		SELECT @paramPrecio=RA.Precio_BasePasaje*S.Porcentaje_Adicional+RA.Precio_BasePasaje
 		FROM [NORMALIZADOS].[Servicio] S
