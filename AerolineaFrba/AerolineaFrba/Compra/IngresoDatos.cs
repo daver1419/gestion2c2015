@@ -76,10 +76,13 @@ namespace AerolineaFrba.Compra
                 errorProvider1.SetError(this.textBoxTel, "Ingrese un telefono");
                 ret = false;
             }
-            if (!validarPasajero())
+            if (this.clienteExistente)
             {
-                ret = false;
-                MessageBox.Show("El pasajero ya compro un viaje entre las fechas ingresadas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!validarPasajero())
+                {
+                    ret = false;
+                    MessageBox.Show("El pasajero ya compro un viaje entre las fechas ingresadas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             return ret;
         }
@@ -121,6 +124,7 @@ namespace AerolineaFrba.Compra
                 }
                 if (!this.compraEncomienda)
                 {
+
                     SeleccionButaca ventana = new SeleccionButaca(this.gridViaje);
                     ventana.ShowDialog(this);
                     if(ventana.DialogResult == DialogResult.OK)

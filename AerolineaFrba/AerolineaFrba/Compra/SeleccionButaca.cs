@@ -35,7 +35,8 @@ namespace AerolineaFrba.Compra
 
         private void SeleccionButaca_Load(object sender, EventArgs e)
         {
-            this.dataGridView1.DataSource=ButacaDAO.GetDisponiblesByAeronave(this.gridViaje);
+            List<ButacaDTO> listaButacas=((CompraPasajeEncomienda)((IngresoDatos)(this.Owner)).Owner).listaPasajerosButacas.Select(t => t.Item2).ToList<ButacaDTO>();
+            this.dataGridView1.DataSource=ButacaDAO.GetDisponiblesByAeronave(this.gridViaje).Except(listaButacas).ToList();
         }
     }
 }
