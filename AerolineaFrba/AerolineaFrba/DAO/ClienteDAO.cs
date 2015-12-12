@@ -114,10 +114,10 @@ namespace AerolineaFrba.DAO
                 SqlCommand comm = new SqlCommand("[NORMALIZADOS].[Validar_PasajesEnCompra]", conn);
                 comm.CommandType = CommandType.StoredProcedure;
                 comm.Parameters.AddWithValue("@dniPasajero", unCliente.Dni);
-                comm.Parameters.AddWithValue("@fecha_salida", unCliente.Dni);
-                comm.Parameters.AddWithValue("@fecha_llegada_estimada", unCliente.Dni);
+                comm.Parameters.AddWithValue("@fecha_salida", FechaSalida);
+                comm.Parameters.AddWithValue("@fecha_llegada_estimada", FechaLlegada);
 
-                return Convert.ToInt32( comm.ExecuteScalar().ToString()) == 0;
+                return Convert.ToInt32( comm.ExecuteScalar()) == 0;
             }
         }
     }

@@ -79,7 +79,7 @@ namespace AerolineaFrba.Compra
             if (!validarPasajero())
             {
                 ret = false;
-                MessageBox.Show("El pasajero ya compro un viaje entre las fechas ingresadas");
+                MessageBox.Show("El pasajero ya compro un viaje entre las fechas ingresadas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return ret;
         }

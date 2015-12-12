@@ -59,6 +59,7 @@ namespace AerolineaFrba.Compra
             comboBoxCantPas.SelectedIndex = -1;
             numericUpDown1.Hide();
             numericUpDown1.Value = 0;
+            errorProvider1.Clear();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -101,6 +102,7 @@ namespace AerolineaFrba.Compra
             }
             else
             {
+                errorProvider1.SetError(comboBoxCantPas,"Ingrese una cantidad de pasajes");
                 return;
             }
             if (gridViaje.KgsDisponibles == 0 && numericUpDown1.Value != 0)
@@ -148,7 +150,7 @@ namespace AerolineaFrba.Compra
         {
             errorProvider1.Clear();
             bool ret = true;
-            if ((dateTimePickerEnt.Value - DateTime.Now).TotalMinutes < -1)
+            if ((dateTimePickerEnt.Value - DateTime.Today).TotalDays <= 0)
             {
                 errorProvider1.SetError(dateTimePickerEnt, "La fecha debe ser posterior al actual.");
                 ret = false;
@@ -206,6 +208,11 @@ namespace AerolineaFrba.Compra
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void comboBoxCantPas_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            errorProvider1.Clear();
         }
     }
 }

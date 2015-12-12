@@ -104,7 +104,7 @@ namespace AerolineaFrba.Compra
             compra.Comprador = ClienteDAO.GetByDNI(cliente);
             compra.MedioPago = (TipoPagoDTO)comboBoxMedioPago.SelectedItem;
             TarjetaCreditoDTO tarjeta = new TarjetaCreditoDTO();
-            tarjeta.Numero =Convert.ToInt32( textBoxNro.Text);
+            tarjeta.Numero =Convert.ToInt64( textBoxNro.Text);
             tarjeta.Codigo = Convert.ToInt32(textBoxCodSeg.Text);
             tarjeta.FechaVencimiento = Convert.ToInt32(textBoxFechVenc.Text);
             tarjeta.TipoTarjeta = (TipoTarjetaDTO)comboBoxTipoTarj.SelectedItem;

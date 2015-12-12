@@ -194,6 +194,7 @@
             this.comboBoxCantPas.Name = "comboBoxCantPas";
             this.comboBoxCantPas.Size = new System.Drawing.Size(121, 21);
             this.comboBoxCantPas.TabIndex = 13;
+            this.comboBoxCantPas.SelectedIndexChanged += new System.EventHandler(this.comboBoxCantPas_SelectedIndexChanged);
             // 
             // label7
             // 

@@ -8,7 +8,7 @@ namespace AerolineaFrba.DTO
 {
     public class TarjetaCreditoDTO
     {
-        public int Numero { get; set; }
+        public long Numero { get; set; }
         public int Codigo { get; set; }
         public int FechaVencimiento { get; set; }
         public TipoTarjetaDTO TipoTarjeta { get; set; }

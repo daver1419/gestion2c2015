@@ -113,6 +113,7 @@
             // textBoxNro
             // 
             this.textBoxNro.Location = new System.Drawing.Point(188, 66);
+            this.textBoxNro.MaxLength = 16;
             this.textBoxNro.Name = "textBoxNro";
             this.textBoxNro.Size = new System.Drawing.Size(100, 20);
             this.textBoxNro.TabIndex = 6;
@@ -120,7 +121,9 @@
             // textBoxCodSeg
             // 
             this.textBoxCodSeg.Location = new System.Drawing.Point(188, 99);
+            this.textBoxCodSeg.MaxLength = 3;
             this.textBoxCodSeg.Name = "textBoxCodSeg";
+            this.textBoxCodSeg.PasswordChar = '*';
             this.textBoxCodSeg.Size = new System.Drawing.Size(100, 20);
             this.textBoxCodSeg.TabIndex = 7;
             // 
