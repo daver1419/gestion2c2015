@@ -15,6 +15,8 @@ namespace AerolineaFrba.Devolucion
 {
     public partial class Form1 : Form
     {
+        private List<PasajeDTO> listaPasajes;
+
         public Form1()
         {
             InitializeComponent();
@@ -22,7 +24,8 @@ namespace AerolineaFrba.Devolucion
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            List<PasajeDTO> lista = new List<PasajeDTO>();
+            this.listaPasajes = lista;
         }
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
@@ -86,24 +89,18 @@ namespace AerolineaFrba.Devolucion
             if (!String.IsNullOrEmpty(textBoxMot.Text))
             {
                 PasajeDTO unPasaje = (PasajeDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
-
-                DialogResult dialogResult = MessageBox.Show("Seguro que quieres cancelar este pasaje?", "Confirmacion cancelacion", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
+                if (listaPasajes.Contains(unPasaje))
                 {
-                    if (!PasajeDAO.Cancelar(unPasaje,this.textBoxMot.Text))
-                    {
-                        MessageBox.Show("No se pudo cancelar el pasaje");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Se cancelo el pasaje exitosamente");
-                        this.dataGridView1.DataSource = null;
-                        this.textBoxMot.Text = "";
-                    }
+                    listaPasajes.Remove(unPasaje);
+                    dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
+                    dataGridView1.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.Black;
+                    return;
                 }
-                else if (dialogResult == DialogResult.No)
+                else
                 {
-                    this.Close();
+                    listaPasajes.Add(unPasaje);
+                    dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Red;
+                    dataGridView1.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.White;
                 }
             }
             else
@@ -183,6 +180,24 @@ namespace AerolineaFrba.Devolucion
                 {
                     errorProvider1.SetError(textBoxMot,"Ingrese un motivo");
                 }
+            }
+        }
+
+        private void buttonCancelPasajes_Click(object sender, EventArgs e)
+        {
+            if (this.listaPasajes.Count > 0)
+            {
+                foreach (PasajeDTO unPasaje in this.listaPasajes)
+                {
+                    PasajeDAO.Cancelar(unPasaje, this.textBoxMot.Text);
+                }
+                MessageBox.Show("Los pasajes  se cancelaron exitosamente");
+                this.dataGridView1.DataSource = null;
+                this.textBoxMot.Text = "";
+            }
+            else
+            {
+                MessageBox.Show("Debe ingresar al menos un pasaje para cancelar");
             }
         }
     }

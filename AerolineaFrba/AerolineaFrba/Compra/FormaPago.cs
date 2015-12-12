@@ -114,39 +114,45 @@ namespace AerolineaFrba.Compra
             compra.Viaje = viaje;
             compra.IdCompra = 0;
             compra.PNR = "0";
-
-            TarjetaDAO.Save(tarjeta);
-            this.compra =CompraDAO.Save(compra);
-
-            if (string.IsNullOrEmpty( this.compra.PNR))
+            try
             {
-                MessageBox.Show("No se pudo realizar la compra");
-                retValue = false;
-            }
-            this.monto = 0;
+                TarjetaDAO.Save(tarjeta);
+                this.compra = CompraDAO.Save(compra);
 
-            if (this.listaPasajeroButacas != null)
-            {
-                foreach (Tuple<ClienteDTO, ButacaDTO> tupla in this.listaPasajeroButacas)
+                if (string.IsNullOrEmpty(this.compra.PNR))
                 {
-                    PasajeDTO pasaje = new PasajeDTO();
-                    pasaje.Pasajero = tupla.Item1;
-                    pasaje.Compra = this.compra;
-                    pasaje.Butaca = tupla.Item2;
-                    pasaje.Precio = 0;
+                    MessageBox.Show("No se pudo realizar la compra");
+                    retValue = false;
+                }
+                this.monto = 0;
 
-                    this.monto = PasajeDAO.Save(pasaje).Precio + this.monto;
+                if (this.listaPasajeroButacas != null)
+                {
+                    foreach (Tuple<ClienteDTO, ButacaDTO> tupla in this.listaPasajeroButacas)
+                    {
+                        PasajeDTO pasaje = new PasajeDTO();
+                        pasaje.Pasajero = tupla.Item1;
+                        pasaje.Compra = this.compra;
+                        pasaje.Butaca = tupla.Item2;
+                        pasaje.Precio = 0;
+
+                        this.monto = PasajeDAO.Save(pasaje).Precio + this.monto;
+                    }
+                }
+                if (this.clienteAcargoDeEncomienda != null)
+                {
+                    EncomiendaDTO encomienda = new EncomiendaDTO();
+                    encomienda.Cliente = this.clienteAcargoDeEncomienda;
+                    encomienda.Compra = this.compra;
+                    encomienda.Precio = 0;
+                    encomienda.Kg = this.KgsDeEncomienda;
+
+                    this.monto = EncomiendaDAO.Save(encomienda).Precio + this.monto;
                 }
             }
-            if (this.clienteAcargoDeEncomienda != null)
+            catch (Exception ex)
             {
-                EncomiendaDTO encomienda = new EncomiendaDTO();
-                encomienda.Cliente = this.clienteAcargoDeEncomienda;
-                encomienda.Compra = this.compra;
-                encomienda.Precio = 0;
-                encomienda.Kg = this.KgsDeEncomienda;
-
-                this.monto = EncomiendaDAO.Save(encomienda).Precio + this.monto;
+                MessageBox.Show(string.Format( "Error al finalizar la transaccion: {0}", ex), "Error Compra", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             this.DialogResult = DialogResult.OK;
             return retValue;

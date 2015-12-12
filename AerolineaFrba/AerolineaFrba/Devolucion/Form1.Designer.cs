@@ -33,7 +33,6 @@
             this.textBoxPnr = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.ColumnSel = new System.Windows.Forms.DataGridViewButtonColumn();
             this.buttonLimpiar = new System.Windows.Forms.Button();
             this.buttonBuscar = new System.Windows.Forms.Button();
             this.buttonCancTodo = new System.Windows.Forms.Button();
@@ -48,6 +47,8 @@
             this.textBoxMot = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.buttonCancEnco = new System.Windows.Forms.Button();
+            this.ColumnSel = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.buttonCancelPasajes = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -56,7 +57,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(42, 71);
+            this.label1.Location = new System.Drawing.Point(365, 68);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(33, 13);
             this.label1.TabIndex = 0;
@@ -64,7 +65,7 @@
             // 
             // textBoxPnr
             // 
-            this.textBoxPnr.Location = new System.Drawing.Point(105, 64);
+            this.textBoxPnr.Location = new System.Drawing.Point(435, 61);
             this.textBoxPnr.Name = "textBoxPnr";
             this.textBoxPnr.Size = new System.Drawing.Size(100, 20);
             this.textBoxPnr.TabIndex = 1;
@@ -72,7 +73,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(42, 30);
+            this.label2.Location = new System.Drawing.Point(349, 22);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(186, 13);
             this.label2.TabIndex = 2;
@@ -85,24 +86,18 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ColumnSel});
-            this.dataGridView1.Location = new System.Drawing.Point(45, 163);
+            this.dataGridView1.Location = new System.Drawing.Point(268, 185);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(519, 111);
+            this.dataGridView1.Size = new System.Drawing.Size(348, 111);
             this.dataGridView1.TabIndex = 3;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
-            // ColumnSel
-            // 
-            this.ColumnSel.HeaderText = "Cancelar";
-            this.ColumnSel.Name = "ColumnSel";
-            this.ColumnSel.ReadOnly = true;
-            // 
             // buttonLimpiar
             // 
-            this.buttonLimpiar.Location = new System.Drawing.Point(45, 102);
+            this.buttonLimpiar.Location = new System.Drawing.Point(832, 400);
             this.buttonLimpiar.Name = "buttonLimpiar";
-            this.buttonLimpiar.Size = new System.Drawing.Size(100, 36);
+            this.buttonLimpiar.Size = new System.Drawing.Size(52, 29);
             this.buttonLimpiar.TabIndex = 4;
             this.buttonLimpiar.Text = "Limpiar";
             this.buttonLimpiar.UseVisualStyleBackColor = true;
@@ -110,7 +105,7 @@
             // 
             // buttonBuscar
             // 
-            this.buttonBuscar.Location = new System.Drawing.Point(454, 102);
+            this.buttonBuscar.Location = new System.Drawing.Point(397, 115);
             this.buttonBuscar.Name = "buttonBuscar";
             this.buttonBuscar.Size = new System.Drawing.Size(110, 36);
             this.buttonBuscar.TabIndex = 5;
@@ -120,9 +115,9 @@
             // 
             // buttonCancTodo
             // 
-            this.buttonCancTodo.Location = new System.Drawing.Point(491, 378);
+            this.buttonCancTodo.Location = new System.Drawing.Point(675, 333);
             this.buttonCancTodo.Name = "buttonCancTodo";
-            this.buttonCancTodo.Size = new System.Drawing.Size(110, 23);
+            this.buttonCancTodo.Size = new System.Drawing.Size(110, 43);
             this.buttonCancTodo.TabIndex = 6;
             this.buttonCancTodo.Text = "Cancelar todo";
             this.buttonCancTodo.UseVisualStyleBackColor = true;
@@ -140,7 +135,7 @@
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Location = new System.Drawing.Point(12, 291);
+            this.groupBox1.Location = new System.Drawing.Point(45, 185);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(200, 111);
             this.groupBox1.TabIndex = 7;
@@ -200,7 +195,7 @@
             // 
             // textBoxMot
             // 
-            this.textBoxMot.Location = new System.Drawing.Point(350, 307);
+            this.textBoxMot.Location = new System.Drawing.Point(637, 213);
             this.textBoxMot.Multiline = true;
             this.textBoxMot.Name = "textBoxMot";
             this.textBoxMot.Size = new System.Drawing.Size(251, 57);
@@ -209,7 +204,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(347, 291);
+            this.label6.Location = new System.Drawing.Point(634, 185);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(42, 13);
             this.label6.TabIndex = 9;
@@ -217,7 +212,7 @@
             // 
             // buttonCancEnco
             // 
-            this.buttonCancEnco.Location = new System.Drawing.Point(218, 363);
+            this.buttonCancEnco.Location = new System.Drawing.Point(93, 335);
             this.buttonCancEnco.Name = "buttonCancEnco";
             this.buttonCancEnco.Size = new System.Drawing.Size(112, 39);
             this.buttonCancEnco.TabIndex = 10;
@@ -225,11 +220,28 @@
             this.buttonCancEnco.UseVisualStyleBackColor = true;
             this.buttonCancEnco.Click += new System.EventHandler(this.buttonCancEnco_Click);
             // 
+            // ColumnSel
+            // 
+            this.ColumnSel.HeaderText = "Seleccionar";
+            this.ColumnSel.Name = "ColumnSel";
+            this.ColumnSel.ReadOnly = true;
+            // 
+            // buttonCancelPasajes
+            // 
+            this.buttonCancelPasajes.Location = new System.Drawing.Point(383, 335);
+            this.buttonCancelPasajes.Name = "buttonCancelPasajes";
+            this.buttonCancelPasajes.Size = new System.Drawing.Size(108, 39);
+            this.buttonCancelPasajes.TabIndex = 11;
+            this.buttonCancelPasajes.Text = "Cancelar Pasajes";
+            this.buttonCancelPasajes.UseVisualStyleBackColor = true;
+            this.buttonCancelPasajes.Click += new System.EventHandler(this.buttonCancelPasajes_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(624, 423);
+            this.ClientSize = new System.Drawing.Size(912, 450);
+            this.Controls.Add(this.buttonCancelPasajes);
             this.Controls.Add(this.buttonCancEnco);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.textBoxMot);
@@ -270,9 +282,10 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.DataGridViewButtonColumn ColumnSel;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox textBoxMot;
         private System.Windows.Forms.Button buttonCancEnco;
+        private System.Windows.Forms.DataGridViewButtonColumn ColumnSel;
+        private System.Windows.Forms.Button buttonCancelPasajes;
     }
 }

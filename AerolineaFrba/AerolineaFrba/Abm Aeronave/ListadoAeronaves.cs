@@ -68,11 +68,20 @@ namespace AerolineaFrba.Abm_Aeronave
         private void tablaDatos_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             //Ignora los clicks que no son sobre los elementos de la columna de botones
-            if (e.RowIndex < 0 || e.ColumnIndex != tablaDatos.Columns.IndexOf(tablaDatos.Columns["Comprar"]) || tablaDatos.DataSource == null)
+            if (e.RowIndex < 0 || e.ColumnIndex != tablaDatos.Columns.IndexOf(tablaDatos.Columns["Seleccionar"]) || tablaDatos.DataSource == null)
                 return;
 
             AeronaveDTO aeronave = (AeronaveDTO)tablaDatos.Rows[e.RowIndex].DataBoundItem;
 
+            if (!AeronaveDAO.ViajesProgramados(aeronave))
+            {
+                ModificarAeronave vent = new ModificarAeronave(aeronave);
+                vent.ShowDialog(this);
+            }
+            else
+            {
+                MessageBox.Show("No se puede modificar la Aeronave porque tiene viajes planificados.");
+            }
         }
 
         private void Limpiar_Click(object sender, EventArgs e)
