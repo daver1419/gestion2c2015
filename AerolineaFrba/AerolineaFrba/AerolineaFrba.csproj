@@ -419,6 +419,9 @@
     <EmbeddedResource Include="Consulta Millas\ConsultaMillas.resx">
       <DependentUpon>ConsultaMillas.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Devolucion\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Generacion Viaje\GeneracionViaje.resx">
       <DependentUpon>GeneracionViaje.cs</DependentUpon>
     </EmbeddedResource>

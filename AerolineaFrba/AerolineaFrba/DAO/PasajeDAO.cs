@@ -30,5 +30,23 @@ namespace AerolineaFrba.DAO
                 return retValue;
             }
         }
+        /// <summary>
+        /// Cancela un pasaje
+        /// </summary>
+        /// <param name="unPasaje"></param>
+        /// <returns></returns>
+        public static bool Cancelar(PasajeDTO unPasaje, string motivo)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[Cancelar_Pasaje]", conn);
+                com.CommandType = CommandType.StoredProcedure;
+                com.Parameters.AddWithValue("@codigo", unPasaje.Codigo);
+                com.Parameters.AddWithValue("@motivo", motivo);
+
+                return com.ExecuteNonQuery() > 0;
+
+            }
+        }
     }
 }

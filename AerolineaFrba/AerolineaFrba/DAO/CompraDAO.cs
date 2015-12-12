@@ -40,5 +40,101 @@ namespace AerolineaFrba.DAO
                 return retValue;
             }
         }
+        private static List<PasajeDTO> getPasajes(SqlDataReader dataReader)
+        {
+            List<PasajeDTO> ListaPasajes = new List<PasajeDTO>();
+            if (dataReader.HasRows)
+            {
+                while (dataReader.Read())
+                {
+                    PasajeDTO pasaje = new PasajeDTO();
+
+                    pasaje.IdPasaje = Convert.ToInt32(dataReader["Id"]);
+                    pasaje.Codigo = Convert.ToInt32(dataReader["Codigo"]);
+                    pasaje.Precio = Convert.ToDecimal(dataReader["Precio"]);
+
+                    ListaPasajes.Add(pasaje);
+                }
+                dataReader.Close();
+                dataReader.Dispose();
+
+            }
+            return ListaPasajes;
+        }
+        /// <summary>
+        /// Devuelve una lista de pasajes a partir de un PNR
+        /// </summary>
+        /// <param name="compra"></param>
+        /// <returns></returns>
+        public static List<PasajeDTO> GetPasajesByPnr(CompraDTO compra)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[GetPasajesByPnr]", conn);
+                com.CommandType = CommandType.StoredProcedure;
+
+                com.Parameters.AddWithValue("@paramPnr", compra.PNR);
+                SqlDataReader dataReader=com.ExecuteReader();
+
+                return getPasajes(dataReader);
+            }
+        }
+        private static List<EncomiendaDTO> getEncomiendas(SqlDataReader dataReader)
+        {
+            List<EncomiendaDTO> ListaEncomiendas = new List<EncomiendaDTO>();
+            if (dataReader.HasRows)
+            {
+                while (dataReader.Read())
+                {
+                    EncomiendaDTO encomienda = new EncomiendaDTO();
+
+                    encomienda.IdEncomienda = Convert.ToInt32(dataReader["Id"]);
+                    encomienda.Codigo = Convert.ToInt32(dataReader["Codigo"]);
+                    encomienda.Precio = Convert.ToDecimal(dataReader["Precio"]);
+                    encomienda.Kg = Convert.ToInt32(dataReader["Kg"]);
+
+                    ListaEncomiendas.Add(encomienda);
+                }
+                dataReader.Close();
+                dataReader.Dispose();
+
+            }
+            return ListaEncomiendas;
+        }
+        /// <summary>
+        /// Devuelve una encomienda con una compra con cierto PNR
+        /// </summary>
+        /// <param name="compra"></param>
+        /// <returns></returns>
+        public static EncomiendaDTO GetEncomiendaByPnr(CompraDTO compra)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[GetEncomiendaByPnr]", conn);
+                com.CommandType = CommandType.StoredProcedure;
+
+                com.Parameters.AddWithValue("@paramPnr", compra.PNR);
+                SqlDataReader dataReader = com.ExecuteReader();
+
+                return getEncomiendas(dataReader).FirstOrDefault();
+            }
+        }
+        /// <summary>
+        /// Cancela todos los pasajes y encomienda asociados a la compra
+        /// </summary>
+        /// <param name="unaCompra"></param>
+        /// <returns></returns>
+        public static bool Cancelar(CompraDTO unaCompra,string motivo)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand com = new SqlCommand("[NORMALIZADOS].[Cancelar_Compra]", conn);
+                com.CommandType = CommandType.StoredProcedure;
+
+                com.Parameters.AddWithValue("@pnr", unaCompra.PNR);
+                com.Parameters.AddWithValue("@motivo", motivo);
+                return com.ExecuteNonQuery() > 0;
+            }
+        }
     }
 }
