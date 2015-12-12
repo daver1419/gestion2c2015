@@ -113,7 +113,7 @@ namespace AerolineaFrba.DAO
             {
                 SqlCommand comm = new SqlCommand("[NORMALIZADOS].[Validar_PasajesEnCompra]", conn);
                 comm.CommandType = CommandType.StoredProcedure;
-                SqlParameter rv = new SqlParameter("@retorno", SqlDbType.Int);
+                SqlParameter rv = new SqlParameter("@retorno", SqlDbType.Bit);
                 rv.Direction = ParameterDirection.ReturnValue;
                 comm.Parameters.Add(rv);
                 comm.Parameters.AddWithValue("@dniPasajero", unCliente.Dni);

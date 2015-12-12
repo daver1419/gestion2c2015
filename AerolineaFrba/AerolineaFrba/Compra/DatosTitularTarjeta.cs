@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AerolineaFrba.DTO;
 using AerolineaFrba.DAO;
+using AerolineaFrba.Helpers;
 
 namespace AerolineaFrba.Compra
 {
@@ -30,6 +31,16 @@ namespace AerolineaFrba.Compra
         {
             errorProvider1.Clear();
             bool ret = true;
+            if (!Utility.esDNI(this.textBoxDni))
+            {
+                errorProvider1.SetError(this.textBoxDni, "Ingresar correctamente");
+                ret = false;
+            }
+            if (!Utility.esNumero(this.textBoxTel))
+            {
+                errorProvider1.SetError(textBoxTel, "Ingresar solo numeros");
+                ret = false;
+            }
             if (this.textBoxNom.Text=="")
             {
                 errorProvider1.SetError(textBoxNom, "Ingrese un nombre.");

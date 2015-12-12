@@ -132,6 +132,7 @@
             this.textBoxTel.Name = "textBoxTel";
             this.textBoxTel.Size = new System.Drawing.Size(100, 20);
             this.textBoxTel.TabIndex = 10;
+            this.textBoxTel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxTel_KeyDown);
             // 
             // textBoxMail
             // 

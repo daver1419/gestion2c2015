@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AerolineaFrba.DTO;
 using AerolineaFrba.DAO;
+using AerolineaFrba.Helpers;
 
 namespace AerolineaFrba.Compra
 {
@@ -24,6 +25,14 @@ namespace AerolineaFrba.Compra
             InitializeComponent();
             this.gridViaje = unGridViaje;
             this.compraEncomienda = esCompraEncomienda;
+            if (this.compraEncomienda)
+            {
+                this.Text = "Ingreso de Datos para Encomienda";
+            }
+            else
+            {
+                this.Text = "Ingreso de Datos para Pasaje";
+            }
         }
 
         private void IngresoDatos_Load(object sender, EventArgs e)
@@ -35,22 +44,27 @@ namespace AerolineaFrba.Compra
 
         private bool validarPasajero()
         {
-            bool retValue = true;
             ClienteDTO cliente = new ClienteDTO();
             cliente.Dni =Convert.ToInt32( textBoxDni.Text);
             cliente = ClienteDAO.GetByDNI(cliente);
 
-            if (ClienteDAO.ViajaAMasDeUnDestino(cliente, this.gridViaje.FechaSalida,this.gridViaje.FechaLlegadaEstimada))
-            {
-                retValue = false;
-            }
-            return retValue;
+             return ClienteDAO.ViajaAMasDeUnDestino(cliente, this.gridViaje.FechaSalida,this.gridViaje.FechaLlegadaEstimada);
         }
 
         private bool validar()
         {
             errorProvider1.Clear();
             bool ret = true;
+            if (!Utility.esDNI(this.textBoxDni))
+            {
+                errorProvider1.SetError(this.textBoxDni,"Ingresar correctamente");
+                ret = false;
+            }
+            if (!Utility.esNumero(this.textBoxTel))
+            {
+                errorProvider1.SetError(textBoxTel,"Ingresar solo numeros");
+                ret = false;
+            }
             if (this.textBoxNom.Text == "")
             {
                 errorProvider1.SetError(textBoxNom, "Ingrese un nombre.");
@@ -170,6 +184,11 @@ namespace AerolineaFrba.Compra
                 dateTimePicker1.Value = cliente.Fecha_Nac;
                 this.clienteExistente = true;
             }
+        }
+
+        private void textBoxTel_KeyDown(object sender, KeyEventArgs e)
+        {
+
         }
     }
 }
