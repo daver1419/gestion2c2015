@@ -2792,3 +2792,39 @@ BEGIN
 		ON S.Id=RA.Tipo_Servicio
 	WHERE RA.Id=@paramId
 END
+GO
+--------------------------------------------------------------------
+--        SP devuelve pasajes asociados a una compra con
+--			un determinado Pnr
+--------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetPasajesByPnr]
+@paramPnr nvarchar(255)
+AS
+BEGIN
+	SELECT P.Id,P.Codigo,P.Precio
+	FROM [NORMALIZADOS].[Pasaje] P
+	JOIN [NORMALIZADOS].[Compra] C
+		ON P.Compra=C.Id
+		AND C.PNR=@paramPnr
+	WHERE P.Id NOT IN (SELECT Pasaje
+						FROM [NORMALIZADOS].[Pasajes_Cancelados]
+						)
+END
+GO
+--------------------------------------------------------------------
+--        SP devuelve una encomienda asociada a una compra con
+--			un determinado Pnr
+--------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[GetEncomiendaByPnr]
+@paramPnr nvarchar(255)
+AS
+BEGIN
+	SELECT E.Id,E.Codigo,E.Precio,E.Kg
+	FROM [NORMALIZADOS].[Encomienda] E
+	JOIN [NORMALIZADOS].[Compra] C
+		ON E.Compra=C.Id
+		AND C.PNR=@paramPnr
+	WHERE E.Id NOT IN (SELECT Encomienda
+						FROM [NORMALIZADOS].[Encomiendas_Canceladas]
+						)
+END
