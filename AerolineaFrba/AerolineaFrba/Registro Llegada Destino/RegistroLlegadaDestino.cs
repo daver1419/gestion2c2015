@@ -45,12 +45,6 @@ namespace AerolineaFrba.Registro_Llegada_Destino
             errorProvider1.Clear();
             bool ret = true;
 
-            if (dateTimePicker1.Value < DateTime.Now)
-            {
-                errorProvider1.SetError(dateTimePicker1, "La fecha no puede ser anterior a la actual");
-                ret = false;
-            }
-
             if (this.textBoxMatricula.Text == "" || !Utility.buenFormatoMatricula(this.textBoxMatricula))
             {
                 errorProvider1.SetError(textBoxMatricula, "Debe ingresar una matricula en el formato XXX-000");

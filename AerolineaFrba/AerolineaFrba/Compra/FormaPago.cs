@@ -210,17 +210,17 @@ namespace AerolineaFrba.Compra
         {
             if (validarCampos())
             { 
-                if (!FinalizarTransaccion())
-                {
-                     MessageBox.Show("Se ha producido un error. La transaccion no pudo ser finalizada");
+                    if (!FinalizarTransaccion())
+                    {
+                        MessageBox.Show("Se ha producido un error. La transaccion no pudo ser finalizada");
+                    }
+                    else
+                    {
+                        MessageBox.Show(String.Format("La transaccion de la compra ha finalizado con exito. Monto a abonar: {0:f2}. PNR: {1}", this.monto, this.compra.PNR));
+                        this.Close();
+                    }
                 }
-                else
-                {
-                     MessageBox.Show(String.Format("La transaccion de la compra ha finalizado con exito. Monto a abonar: {0}. PNR: {1}", this.monto, this.compra.PNR));
-                     this.Close();
-                }
-             }
-        }
+            }
 
         private void buttonAtras_Click(object sender, EventArgs e)
         {
