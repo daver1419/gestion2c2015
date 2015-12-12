@@ -68,6 +68,7 @@ namespace AerolineaFrba.Compra
                 return;
             GridViajesDTO gridViaje = (GridViajesDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
             bool compraEncomienda = false;
+            bool ret = true;
 
             if (comboBoxCantPas.SelectedItem != null)
             {
@@ -83,11 +84,18 @@ namespace AerolineaFrba.Compra
                         MessageBox.Show(string.Format("A la aeronave del viaje seleccionado solo le quedan: {0} pasajes disponibles", gridViaje.CantButacasDisp));
                         return;
                     }
+                    bool retValue = true;
+
                     for (int i = 1; i <= Convert.ToInt32(comboBoxCantPas.SelectedItem.ToString()); i++)
                     {
                         compraEncomienda = false;
                         IngresoDatos ventana = new IngresoDatos(gridViaje, compraEncomienda);
                         ventana.ShowDialog(this);
+                        if(ventana.DialogResult != DialogResult.OK)
+                        {
+                            retValue = false;
+                        }
+                        ret = ret && retValue;
                     }
                 }
             }
@@ -108,17 +116,32 @@ namespace AerolineaFrba.Compra
 
             if (numericUpDown1.Value > 0)
             {
+                bool retValue = true;
                 compraEncomienda = true;
                 IngresoDatos vent = new IngresoDatos(gridViaje, compraEncomienda);
                 vent.ShowDialog(this);
-                ClienteDTO clienteEnco = new ClienteDTO();
-                this.clienteEncomienda = clienteEnco;
-            } 
-            
+                if(vent.DialogResult != DialogResult.OK)
+                {
+                    retValue = false;
+                }
+                else
+                {
+                    ClienteDTO clienteEnco = new ClienteDTO();
+                    this.clienteEncomienda = clienteEnco;
+                }
+                ret= ret && retValue;
+            }
 
-            FormaPago formPago = new FormaPago(gridViaje.IdViaje,this.listaPasajerosButacas,this.clienteEncomienda,Convert.ToInt32( numericUpDown1.Value));
-            formPago.ShowDialog(this);
-            this.Close();
+            if (ret)
+            {
+                FormaPago formPago = new FormaPago(gridViaje.IdViaje, this.listaPasajerosButacas, this.clienteEncomienda, Convert.ToInt32(numericUpDown1.Value));
+                formPago.ShowDialog(this);
+                if (formPago.DialogResult == DialogResult.OK)
+                {
+                    this.Close();
+                }
+            }
+            
         }
 
         private bool validar()

@@ -101,7 +101,13 @@ namespace AerolineaFrba.Compra
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
-
+            this.textBoxNom.Text = "";
+            this.textBoxApe.Text = "";
+            this.textBoxDir.Text = "";
+            this.textBoxMail.Text = "";
+            this.textBoxTel.Text = "";
+            this.textBoxDni.Text = "";
+            this.dateTimePicker1.Value = DateTime.Now;
         }
 
         private void textBoxDni_Leave(object sender, EventArgs e)

@@ -148,6 +148,7 @@ namespace AerolineaFrba.Compra
 
                 this.monto = EncomiendaDAO.Save(encomienda).Precio + this.monto;
             }
+            this.DialogResult = DialogResult.OK;
             return retValue;
         }
 
@@ -209,19 +210,16 @@ namespace AerolineaFrba.Compra
         {
             if (validarCampos())
             { 
-                if(true)//VALIDAR PASAJEROS NO VIAJEN A MAS DE UNA DESTINO A LA VEZ
+                if (!FinalizarTransaccion())
                 {
-                    if (!FinalizarTransaccion())
-                    {
-                        MessageBox.Show("Se ha producido un error. La transaccion no pudo ser finalizada");
-                    }
-                    else
-                    {
-                        MessageBox.Show(String.Format("La transaccion de la compra ha finalizado con exito. Monto a abonar: {0}. PNR: {1}", this.monto, this.compra.PNR));
-                        this.Close();
-                    }
+                     MessageBox.Show("Se ha producido un error. La transaccion no pudo ser finalizada");
                 }
-            }
+                else
+                {
+                     MessageBox.Show(String.Format("La transaccion de la compra ha finalizado con exito. Monto a abonar: {0}. PNR: {1}", this.monto, this.compra.PNR));
+                     this.Close();
+                }
+             }
         }
 
         private void buttonAtras_Click(object sender, EventArgs e)
