@@ -2831,3 +2831,69 @@ BEGIN
 						)
 END
 GO
+
+-------------------------------------------------------------------
+--       SP reemplaza una aeronava
+-------------------------------------------------------------------
+CREATE PROCEDURE SP_Reemplazar_Aeronave @aeronave int, @fecha datetime
+AS
+	BEGIN
+		DECLARE @modelo int
+		DECLARE @fabricante int
+		DECLARE @tipo_servicio int
+		DECLARE @ciudadOrigen int
+		DECLARE @posibleReemplazo int
+		DECLARE @ultimoDestino int
+		DECLARE @tieneViajes bit
+		DECLARE @retorno int
+		
+		SET @retorno = -1
+
+		SELECT TOP 1 @ciudadOrigen = R.Aeropuerto_Destino
+		FROM NORMALIZADOS.Registro_De_Llegada_Destino R
+		WHERE R.Fecha_Llegada < @fecha
+		ORDER BY R.Fecha_Llegada
+
+		SELECT @modelo = A.modelo, @fabricante = A.Fabricante, @tipo_servicio = A.Tipo_Servicio
+		FROM NORMALIZADOS.Aeronave A
+		WHERE A.Numero = @aeronave
+
+		DECLARE Aeronaves CURSOR FOR
+			SELECT A.Numero FROM NORMALIZADOS.Aeronave A 
+			WHERE A.Modelo = @modelo AND A.Fabricante = @fabricante AND A.Tipo_Servicio = @tipo_servicio AND A.Estado = 1 AND A.Numero <> @aeronave
+
+		OPEN Aeronaves
+		FETCH NEXT FROM Aeronaves INTO @posibleReemplazo
+		WHILE @@FETCH_STATUS = 0
+			BEGIN
+
+				SET @tieneViajes = 1
+				
+				SELECT TOP 1 @ultimoDestino = R.Aeropuerto_Destino
+				FROM NORMALIZADOS.Registro_De_Llegada_Destino R
+				WHERE R.Fecha_Llegada < @fecha
+				ORDER BY R.Fecha_Llegada
+
+				IF NOT EXISTS(SELECT 1 FROM NORMALIZADOS.Viaje V
+							JOIN NORMALIZADOS.Baja_Temporal_Aeronave B ON V.Aeronave = B.Aeronave
+							WHERE (V.Fecha_Salida > @fecha OR @fecha BETWEEN V.Fecha_Salida AND V.Fecha_Llegada_Estimada OR B.Fecha_Vuelta_Al_Servicio >@fecha) 
+							AND V.Aeronave = @posibleReemplazo) --Tiene viajes en el futuro o esta volando
+					BEGIN
+						UPDATE NORMALIZADOS.Viaje 
+							SET Aeronave = @posibleReemplazo
+							WHERE Fecha_Salida > @fecha AND Aeronave = @aeronave
+
+						SET @retorno = @posibleReemplazo
+						BREAK
+					END
+
+				FETCH NEXT FROM Aeronaves INTO @posibleReemplazo
+			END
+			
+			CLOSE Aeronaves
+			DEALLOCATE Aeronaves	
+
+		SELECT @retorno
+
+	END
+GO
