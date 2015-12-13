@@ -68,6 +68,12 @@
     <Compile Include="Abm Aeronave\BajaTemporal.Designer.cs">
       <DependentUpon>BajaTemporal.cs</DependentUpon>
     </Compile>
+    <Compile Include="Abm Aeronave\BajaVidaUtil.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Aeronave\BajaVidaUtil.Designer.cs">
+      <DependentUpon>BajaVidaUtil.cs</DependentUpon>
+    </Compile>
     <Compile Include="Abm Aeronave\ModificarButaca.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -344,6 +350,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Aeronave\BajaTemporal.resx">
       <DependentUpon>BajaTemporal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Aeronave\BajaVidaUtil.resx">
+      <DependentUpon>BajaVidaUtil.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Aeronave\ModificarButaca.resx">
       <DependentUpon>ModificarButaca.cs</DependentUpon>

@@ -57,6 +57,7 @@
             // 
             // tablaDatos
             // 
+            this.tablaDatos.AllowUserToAddRows = false;
             this.tablaDatos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.tablaDatos.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Baja_Temporal,

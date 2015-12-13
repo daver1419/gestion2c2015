@@ -81,6 +81,7 @@ namespace AerolineaFrba.Registro_Llegada_Destino
                 else
                 {
                     MessageBox.Show("Se registro la llegada a destino exitosamente");
+                    this.Close();
                 }
             }
         }

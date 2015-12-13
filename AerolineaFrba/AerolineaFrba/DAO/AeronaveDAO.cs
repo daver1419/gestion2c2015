@@ -316,14 +316,15 @@ namespace AerolineaFrba.DAO
 
             }
         }
-        public static void BajaDefCancelar(AeronaveDTO aeronave)
+        public static bool BajaDefCancelar(AeronaveDTO aeronave,DateTime fechaBaja)
         {
             using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
             {
-                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[SP_Baja_Def_Aeronave_Cancelar]", conn);
+                SqlCommand comm = new SqlCommand("NORMALIZADOS.DarDeBajaAeronave", conn);
                 comm.CommandType = CommandType.StoredProcedure;
                 comm.Parameters.AddWithValue("@nroAeronave", aeronave.Numero);
-                comm.ExecuteNonQuery();
+                comm.Parameters.AddWithValue("@fechaBaja", fechaBaja);
+                return comm.ExecuteNonQuery() > 0;
             }
         }
         public static bool BajaTempCancelar(BajaTemporalDTO BajaTemporal)
@@ -341,21 +342,6 @@ namespace AerolineaFrba.DAO
             }
             return retValue > 0;
         }
-
-        public static bool Reemplazar(BajaTemporalDTO BajaTemporal)
-        {
-            int retValue = 0;
-            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
-            {
-                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[SP_Reemplazar_Aeronave]", conn);
-                comm.CommandType = CommandType.StoredProcedure;
-                comm.Parameters.AddWithValue("@nroAeronave", BajaTemporal.NroAeronave);
-                comm.Parameters.AddWithValue("@fechaDesde", BajaTemporal.FechaDesde);
-                comm.Parameters.AddWithValue("@fechaHasta", BajaTemporal.FechaHasta);
-                retValue = comm.ExecuteNonQuery();
-            }
-            return retValue > 0;
-        }
         public static List<AeronaveDTO> GetByMatricula(AeronaveDTO aeronave)
         {
             using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
@@ -365,6 +351,28 @@ namespace AerolineaFrba.DAO
                 comm.Parameters.AddWithValue("@matricula", aeronave.Matricula);
                 SqlDataReader dataReader = comm.ExecuteReader();
                 return getAeronaves(dataReader);
+            }
+        }
+        public static bool ReemplazarTemporal(BajaTemporalDTO baja)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[SP_Reemplazar_Aeronave]", conn);
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.Parameters.AddWithValue("@aeronave", baja.NroAeronave);
+                comm.Parameters.AddWithValue("@fecha", baja.FechaDesde);
+                return comm.ExecuteNonQuery() > 0;
+            }
+        }
+        public static bool ReemplazarDefinitiva(AeronaveDTO unaAeronave, DateTime fechaBaja)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[SP_Reemplazar_Aeronave]", conn);
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.Parameters.AddWithValue("@aeronave", unaAeronave.Numero);
+                comm.Parameters.AddWithValue("@fecha", fechaBaja);
+                return comm.ExecuteNonQuery() > 0;
             }
         }
     }

@@ -57,7 +57,7 @@ namespace AerolineaFrba.Abm_Aeronave
         private void tablaDatos_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             //Ignora los clicks que no son sobre los elementos de la columna de botones
-            if (e.RowIndex < 0 || tablaDatos.RowCount == e.RowIndex + 1 || (e.ColumnIndex != tablaDatos.Columns.IndexOf(tablaDatos.Columns["Baja_Temporal"]) && e.ColumnIndex != tablaDatos.Columns.IndexOf(tablaDatos.Columns["Baja_Def"])))
+            if (e.RowIndex < 0 || tablaDatos.RowCount == e.RowIndex || (e.ColumnIndex != tablaDatos.Columns.IndexOf(tablaDatos.Columns["Baja_Temporal"]) && e.ColumnIndex != tablaDatos.Columns.IndexOf(tablaDatos.Columns["Baja_Def"])))
                 return;
 
             AeronaveDTO aeronave = (AeronaveDTO)tablaDatos.Rows[e.RowIndex].DataBoundItem;
@@ -93,14 +93,8 @@ namespace AerolineaFrba.Abm_Aeronave
                     MessageBoxButtons.YesNo);
                 if (confirmResult == DialogResult.Yes)
                 {
-                    if (reemplazar)
-                    {
-
-                    }
-                    else
-                    {
-                        AeronaveDAO.BajaDefCancelar(aeronave);
-                    }
+                    BajaVidaUtil ventana = new BajaVidaUtil(reemplazar,aeronave);
+                    ventana.ShowDialog(this);
                     Reload();
                 }
             }

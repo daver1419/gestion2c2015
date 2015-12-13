@@ -34,10 +34,18 @@ namespace AerolineaFrba.Abm_Aeronave
             bajaTemporal.Motivo=TextMotivo.Text;
             if (Reemplazar)
             { 
-                //NV SP que reemplaza aeronave
-                if(true)//AeronaveDAO.Reemplazar(Aeronave))
+                if(this.Reemplazar)
                 {
-                    MessageBox.Show("Se reemplazo la aeronave con exito");
+                    if (AeronaveDAO.ReemplazarTemporal(bajaTemporal))
+                    {
+                        MessageBox.Show("Se reemplazo la aeronave con exito");
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se encontro una aeronave que haga el reemplazo. Debe dar de alta una nueva");
+                        AltaAeronave vent = new AltaAeronave();
+                        vent.ShowDialog(this);
+                    }
                 }
                 else
                 {
@@ -56,6 +64,7 @@ namespace AerolineaFrba.Abm_Aeronave
                     MessageBox.Show("No se pudo dar de baja la aeronave");
                 }
             }
+            this.Close();
         }
 
         private void Limpiar_Click(object sender, EventArgs e)
