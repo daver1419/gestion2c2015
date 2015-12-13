@@ -30,12 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.TextMotivo = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.DateVuelta = new System.Windows.Forms.DateTimePicker();
             this.label2 = new System.Windows.Forms.Label();
             this.DateFuera = new System.Windows.Forms.DateTimePicker();
-            this.label1 = new System.Windows.Forms.Label();
-            this.TextMotivo = new System.Windows.Forms.TextBox();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.Limpiar = new System.Windows.Forms.Button();
             this.Guardar = new System.Windows.Forms.Button();
@@ -57,6 +57,22 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Datos baja";
+            // 
+            // TextMotivo
+            // 
+            this.TextMotivo.Location = new System.Drawing.Point(158, 91);
+            this.TextMotivo.Name = "TextMotivo";
+            this.TextMotivo.Size = new System.Drawing.Size(193, 20);
+            this.TextMotivo.TabIndex = 49;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(40, 95);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(39, 13);
+            this.label1.TabIndex = 48;
+            this.label1.Text = "Motivo";
             // 
             // label3
             // 
@@ -92,22 +108,6 @@
             this.DateFuera.Size = new System.Drawing.Size(193, 20);
             this.DateFuera.TabIndex = 44;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(40, 95);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(39, 13);
-            this.label1.TabIndex = 48;
-            this.label1.Text = "Motivo";
-            // 
-            // TextMotivo
-            // 
-            this.TextMotivo.Location = new System.Drawing.Point(158, 91);
-            this.TextMotivo.Name = "TextMotivo";
-            this.TextMotivo.Size = new System.Drawing.Size(193, 20);
-            this.TextMotivo.TabIndex = 49;
-            // 
             // errorProvider1
             // 
             this.errorProvider1.ContainerControl = this;
@@ -142,6 +142,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "BajaTemporal";
             this.Text = "Baja por fuera de servicio";
+            this.Load += new System.EventHandler(this.BajaTemporal_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();

@@ -16,6 +16,7 @@ namespace AerolineaFrba.Devolucion
     public partial class Form1 : Form
     {
         private List<PasajeDTO> listaPasajes;
+        private CompraDTO compra;
 
         public Form1()
         {
@@ -36,6 +37,7 @@ namespace AerolineaFrba.Devolucion
             this.textBoxKgs.Text = "";
             this.textBoxPrecio.Text = "";
             errorProvider1.Clear();
+            this.listaPasajes.Clear();
         }
         private bool validarCampos()
         {
@@ -57,6 +59,7 @@ namespace AerolineaFrba.Devolucion
 
         private void buttonBuscar_Click(object sender, EventArgs e)
         {
+            this.listaPasajes.Clear();
             this.textBoxCodigo.Text = "";
             this.textBoxKgs.Text = "";
             this.textBoxPrecio.Text = "";
@@ -71,7 +74,8 @@ namespace AerolineaFrba.Devolucion
                 dataGridView1.Columns[5].Visible = false;
                 dataGridView1.Columns[6].Visible = false;
                 EncomiendaDTO unaEncomienda = new EncomiendaDTO();
-                unaEncomienda = CompraDAO.GetEncomiendaByPnr(compra);
+                this.compra = compra;
+                unaEncomienda = CompraDAO.GetEncomiendaByPnr(this.compra);
                 if (unaEncomienda != null)
                 {
                     this.textBoxCodigo.Text = unaEncomienda.Codigo.ToString();
@@ -138,12 +142,14 @@ namespace AerolineaFrba.Devolucion
         {
             if (validarCargaDatos())
             {
+                DetalleCancelacionDTO unDetalle = new DetalleCancelacionDTO();
                 EncomiendaDTO encomienda = new EncomiendaDTO();
                 encomienda.Codigo =Convert.ToInt32( textBoxCodigo.Text);
                 encomienda.Precio =Convert.ToDecimal( textBoxPrecio.Text);
                 encomienda.Kg = Convert.ToInt32(textBoxKgs.Text);
+                unDetalle=DetalleCancelacionDAO.Save(this.textBoxMot.Text);
 
-                if (EncomiendaDAO.Cancelar(encomienda,this.textBoxMot.Text))
+                if (EncomiendaDAO.Cancelar(encomienda,unDetalle))
                 {
                     MessageBox.Show("Se cancelo la encomienda con exito");
                     this.textBoxCodigo.Text = "";
@@ -187,12 +193,14 @@ namespace AerolineaFrba.Devolucion
         {
             if (this.listaPasajes.Count > 0)
             {
+                DetalleCancelacionDTO unDetalle = new DetalleCancelacionDTO();
+                unDetalle = DetalleCancelacionDAO.Save(this.textBoxMot.Text);
                 foreach (PasajeDTO unPasaje in this.listaPasajes)
                 {
-                    PasajeDAO.Cancelar(unPasaje, this.textBoxMot.Text);
+                    PasajeDAO.Cancelar(unPasaje, unDetalle);
                 }
                 MessageBox.Show("Los pasajes  se cancelaron exitosamente");
-                this.dataGridView1.DataSource = null;
+                this.dataGridView1.DataSource = CompraDAO.GetPasajesByPnr(this.compra);
                 this.textBoxMot.Text = "";
             }
             else

@@ -86,6 +86,12 @@ namespace AerolineaFrba.Abm_Aeronave
             return ret;
         }
 
+        private void BajaTemporal_Load(object sender, EventArgs e)
+        {
+            BajaTemporalDTO baja = new BajaTemporalDTO();
+            this.bajaTemporal = baja;
+        }
+
         
     }
 }

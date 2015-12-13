@@ -35,14 +35,14 @@ namespace AerolineaFrba.DAO
                 return retValue;
             }
         }
-        public static bool Cancelar(EncomiendaDTO unaEncomienda,string motivo)
+        public static bool Cancelar(EncomiendaDTO unaEncomienda,DetalleCancelacionDTO unDetalle)
         {
             using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
             {
                 SqlCommand com = new SqlCommand("[NORMALIZADOS].[Cancelar_Encomienda]", conn);
                 com.CommandType = CommandType.StoredProcedure;
                 com.Parameters.AddWithValue("@codigo", unaEncomienda.Codigo);
-                com.Parameters.AddWithValue("@motivo", motivo);
+                com.Parameters.AddWithValue("@motivo", unDetalle.IdCancelacion);
 
                 return com.ExecuteNonQuery() > 0;
 
