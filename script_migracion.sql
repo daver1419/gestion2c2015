@@ -2845,7 +2845,7 @@ GO
 -------------------------------------------------------------------
 --       SP reemplaza una aeronava
 -------------------------------------------------------------------
-CREATE PROCEDURE SP_Reemplazar_Aeronave @aeronave int, @fecha datetime
+CREATE PROCEDURE NORMALIZADOS.SP_Reemplazar_Aeronave @aeronave int, @fecha datetime
 AS
 	BEGIN
 		DECLARE @modelo int
