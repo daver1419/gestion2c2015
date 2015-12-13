@@ -2601,18 +2601,17 @@ AS
 --------------------------------------------------------------------
 CREATE PROCEDURE NORMALIZADOS.Cancelar_Pasaje
 @codigo numeric(18,8),
-@motivo nvarchar(255)
+@motivo int
 AS
 	BEGIN
-		DECLARE @idCancelacion int
 		DECLARE @pasaje int
 		DECLARE @retorno int
-		
-		SET @retorno = -1
 		
 		SELECT @pasaje = P.Id
 		FROM NORMALIZADOS.Pasaje P
 		WHERE P.Codigo = @codigo
+
+		SET @retorno = -1
 		
 		IF (@pasaje IS NOT NULL)
 			BEGIN
@@ -2626,13 +2625,8 @@ AS
 					END
 				ELSE
 					BEGIN
-						INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
-							VALUES (GETDATE(),@motivo)
-						
-						SET @idCancelacion = SCOPE_IDENTITY()
-						
 						INSERT INTO NORMALIZADOS.Pasajes_Cancelados (Pasaje,Cancelacion)
-							VALUES (@pasaje,@idCancelacion)
+							VALUES (@pasaje,@motivo)
 							
 						SET @retorno = @@ROWCOUNT
 					END			
@@ -2640,17 +2634,15 @@ AS
 		SELECT @retorno
 	END
 GO
-
 --------------------------------------------------------------------
 --        Cancelar una encomienda por pedido del cliente
 --------------------------------------------------------------------
 CREATE PROCEDURE NORMALIZADOS.Cancelar_Encomienda
 @codigo numeric(18,8), 
-@motivo nvarchar(255)
+@motivo int
 AS
 	BEGIN
 	
-		DECLARE @idCancelacion int
 		DECLARE @encomienda int
 		DECLARE @retorno int
 
@@ -2672,13 +2664,8 @@ AS
 					END
 				ELSE
 					BEGIN
-						INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha,Motivo)
-						VALUES (GETDATE(),@motivo)
-			
-						SET @idCancelacion = SCOPE_IDENTITY()
-			
 						INSERT INTO NORMALIZADOS.Encomiendas_Canceladas (Encomienda,Cancelacion)
-						VALUES (@encomienda,@idCancelacion)
+						VALUES (@encomienda,@motivo)
 
 						SET @retorno = @@ROWCOUNT
 					END
@@ -2686,6 +2673,21 @@ AS
 		SELECT @retorno
 	END
 GO
+--------------------------------------------------------------------
+--        Crear motivo en detalle cancelacion
+--------------------------------------------------------------------
+CREATE PROCEDURE NORMALIZADOS.Crear_Detalle_Cancelacion (@motivo nvarchar(255), @idCancelacion int output)
+AS
+	BEGIN
+		
+		INSERT INTO NORMALIZADOS.Detalle_Cancelacion (Fecha, Motivo)
+		VALUES(GETDATE(),@motivo)
+
+		SET @idCancelacion = SCOPE_IDENTITY()
+		
+		RETURN @idcancelacion
+	END
+GO	
 --------------------------------------------------------------------
 --        SP devuelve las butacas disponibles para compra 
 --			y que se encuentran	habilitadas
@@ -2828,3 +2830,4 @@ BEGIN
 						FROM [NORMALIZADOS].[Encomiendas_Canceladas]
 						)
 END
+GO
