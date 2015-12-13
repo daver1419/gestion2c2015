@@ -1434,17 +1434,27 @@ BEGIN
 END
 GO
 --------------------------------------------------------------------------------
---				SP da de baja definitiva una aeronave
+--				SP actualiza estado de baja y registra la fecha de baja
 --------------------------------------------------------------------------------
-CREATE PROCEDURE [NORMALIZADOS].[SP_Baja_Def_Aeronave_Cancelar](@nroAeronave int)
+CREATE PROCEDURE NORMALIZADOS.DarDeBajaAeronave @nroAeronave int,@fechaBaja datetime
 AS
 BEGIN
-	BEGIN TRAN BajaDefinitiva
 	UPDATE [NORMALIZADOS].[Aeronave]
-	SET Fecha_Baja_Definitiva=GETDATE(),
+	SET Fecha_Baja_Definitiva=@fechaBaja,
 			Estado=3
 	WHERE Numero=@nroAeronave
 
+	SELECT @@ROWCOUNT
+END
+GO
+--------------------------------------------------------------------------------
+--				SP da de baja definitiva una aeronave
+--------------------------------------------------------------------------------
+CREATE PROCEDURE [NORMALIZADOS].[SP_Baja_Def_Aeronave_Cancelar](@nroAeronave int,@fechaBaja datetime)
+AS
+BEGIN
+	BEGIN TRAN BajaDefinitiva
+		EXEC NORMALIZADOS.DarDeBajaAeronave @nroAeronave,@fechaBaja
 	DECLARE @var datetime
 	SET @var=GETDATE()
 	EXEC [NORMALIZADOS].[CancelarPasajesEncomiendasAeronaves] @nroAeronave,@var,NULL
