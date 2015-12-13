@@ -169,7 +169,7 @@ namespace AerolineaFrba.Compra
 
         private void textBoxDni_Leave(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(textBoxDni.Text))
+            if (textBoxDni.Text == "")
                 return;
             ClienteDTO cliente = new ClienteDTO();
             cliente.Dni =Convert.ToInt32( textBoxDni.Text);
