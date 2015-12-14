@@ -91,6 +91,8 @@ namespace AerolineaFrba.Login
 
                     UsuarioActual = usuario;
 
+                    Sesion.Rol = usuario.Roles.FirstOrDefault();
+
                     logued = true;
 
                 }
@@ -107,7 +109,7 @@ namespace AerolineaFrba.Login
         public static void Logout()
         {
             logued = false;
-            UsuarioActual = DefaultUser();
+            StartAsClient();
         }
         /*
         public static bool FuncionalidadHabilitada(ClaseFuncionalidad funcionalidad)
