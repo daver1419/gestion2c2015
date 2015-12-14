@@ -33,6 +33,20 @@ namespace AerolineaFrba.Compra
             this.butaca = unaButaca;
         }
 
+        private bool validarPasajero()
+        {
+            bool retValue = true;
+            ClienteDTO cliente = new ClienteDTO();
+            cliente.Dni =Convert.ToInt32( textBoxDni.Text);
+            cliente = ClienteDAO.GetByDNI(cliente);
+
+            if (ClienteDAO.ViajaAMasDeUnDestino(cliente, this.gridViaje.FechaSalida,this.gridViaje.FechaLlegadaEstimada))
+            {
+                retValue = false;
+            }
+            return retValue;
+        }
+
         private bool validar()
         {
             errorProvider1.Clear();
@@ -61,6 +75,11 @@ namespace AerolineaFrba.Compra
             {
                 errorProvider1.SetError(this.textBoxTel, "Ingrese un telefono");
                 ret = false;
+            }
+            if (!validarPasajero())
+            {
+                ret = false;
+                MessageBox.Show("El pasajero ya compro un viaje entre las fechas ingresadas", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return ret;
         }
@@ -100,25 +119,34 @@ namespace AerolineaFrba.Compra
                         MessageBox.Show("Se guardo el cliente con exito");
                     }
                 }
-
                 if (!this.compraEncomienda)
                 {
                     SeleccionButaca ventana = new SeleccionButaca(this.gridViaje);
                     ventana.ShowDialog(this);
-                    Tuple<ClienteDTO, ButacaDTO> tuple = new Tuple<ClienteDTO, ButacaDTO>(cliente, this.butaca);
-                    ((CompraPasajeEncomienda)this.Owner).listaPasajerosButacas.Add(tuple);
+                    if(ventana.DialogResult == DialogResult.OK)
+                    {
+                        Tuple<ClienteDTO, ButacaDTO> tuple = new Tuple<ClienteDTO, ButacaDTO>(cliente, this.butaca);
+                        ((CompraPasajeEncomienda)this.Owner).listaPasajerosButacas.Add(tuple);
+                    }
                 }
                 else
                 {
                     ((CompraPasajeEncomienda)this.Owner).clienteEncomienda = cliente;
                 }
+                this.DialogResult = DialogResult.OK;
                 this.Close();
             }
         }
 
         private void buttonLimpiar_Click(object sender, EventArgs e)
         {
-
+            this.textBoxNom.Text = "";
+            this.textBoxApe.Text = "";
+            this.textBoxDir.Text = "";
+            this.textBoxMail.Text = "";
+            this.textBoxTel.Text = "";
+            this.textBoxDni.Text = "";
+            this.dateTimePicker1.Value = DateTime.Now;
         }
 
         private void textBoxDni_Leave(object sender, EventArgs e)

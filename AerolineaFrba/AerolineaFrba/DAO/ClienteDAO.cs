@@ -107,5 +107,18 @@ namespace AerolineaFrba.DAO
             }
             return retValue > 0;
         }
+        public static bool ViajaAMasDeUnDestino(ClienteDTO unCliente, DateTime FechaSalida, DateTime FechaLlegada)
+        {
+            using (SqlConnection conn = Conexion.Conexion.obtenerConexion())
+            {
+                SqlCommand comm = new SqlCommand("[NORMALIZADOS].[Validar_PasajesEnCompra]", conn);
+                comm.CommandType = CommandType.StoredProcedure;
+                comm.Parameters.AddWithValue("@dniPasajero", unCliente.Dni);
+                comm.Parameters.AddWithValue("@fecha_salida", FechaSalida);
+                comm.Parameters.AddWithValue("@fecha_llegada_estimada", FechaLlegada);
+
+                return Convert.ToInt32( comm.ExecuteScalar()) == 0;
+            }
+        }
     }
 }

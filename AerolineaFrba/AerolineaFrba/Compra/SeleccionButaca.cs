@@ -29,6 +29,7 @@ namespace AerolineaFrba.Compra
                 return;
             ButacaDTO unaButaca = (ButacaDTO)dataGridView1.Rows[e.RowIndex].DataBoundItem;
             ((IngresoDatos)this.Owner).butaca = unaButaca;
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
 

@@ -104,7 +104,7 @@ namespace AerolineaFrba.Compra
             compra.Comprador = ClienteDAO.GetByDNI(cliente);
             compra.MedioPago = (TipoPagoDTO)comboBoxMedioPago.SelectedItem;
             TarjetaCreditoDTO tarjeta = new TarjetaCreditoDTO();
-            tarjeta.Numero =Convert.ToInt32( textBoxNro.Text);
+            tarjeta.Numero =Convert.ToInt64( textBoxNro.Text);
             tarjeta.Codigo = Convert.ToInt32(textBoxCodSeg.Text);
             tarjeta.FechaVencimiento = Convert.ToInt32(textBoxFechVenc.Text);
             tarjeta.TipoTarjeta = (TipoTarjetaDTO)comboBoxTipoTarj.SelectedItem;
@@ -148,6 +148,7 @@ namespace AerolineaFrba.Compra
 
                 this.monto = EncomiendaDAO.Save(encomienda).Precio + this.monto;
             }
+            this.DialogResult = DialogResult.OK;
             return retValue;
         }
 
@@ -209,8 +210,6 @@ namespace AerolineaFrba.Compra
         {
             if (validarCampos())
             { 
-                if(true)//VALIDAR PASAJEROS NO VIAJEN A MAS DE UNA DESTINO A LA VEZ
-                {
                     if (!FinalizarTransaccion())
                     {
                         MessageBox.Show("Se ha producido un error. La transaccion no pudo ser finalizada");
@@ -222,7 +221,6 @@ namespace AerolineaFrba.Compra
                     }
                 }
             }
-        }
 
         private void buttonAtras_Click(object sender, EventArgs e)
         {
