@@ -217,7 +217,7 @@ namespace AerolineaFrba.Compra
                     }
                     else
                     {
-                        MessageBox.Show(String.Format("La transaccion de la compra ha finalizado con exito. Monto a abonar: {0}. PNR: {1}", this.monto, this.compra.PNR));
+                        MessageBox.Show(String.Format("La transaccion de la compra ha finalizado con exito. Monto a abonar: {0:f2}. PNR: {1}", this.monto, this.compra.PNR));
                         this.Close();
                     }
                 }

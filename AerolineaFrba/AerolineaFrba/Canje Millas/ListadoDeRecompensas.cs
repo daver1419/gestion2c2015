@@ -26,7 +26,6 @@ namespace AerolineaFrba.Canje_Millas
             this.textBox2.Text = MillasDAO.getMillas(this.textDNI.Text);
             UpdateDataGridViewRowColors();
             dataGridView1.Enabled = true;
-
         }
 
         private bool validar()
@@ -106,6 +105,7 @@ namespace AerolineaFrba.Canje_Millas
                     if (MillasDAO.doCanje(Convert.ToInt32(this.textDNI.Text), Recompensa.Id, Cantidad))
                     {
                         MessageBox.Show("Canje exitoso, imprima el comprobante y pase a retirar su recompensa por cualquiera de nuestras sucursales.");
+                        Reload();
                     }
                     else
                     {
@@ -144,6 +144,14 @@ namespace AerolineaFrba.Canje_Millas
             {
                 e.Handled = true;
             }
+        }
+
+        private void Reload()
+        {
+            dataGridView1.DataSource = MillasDAO.getRecompensas();
+            this.textBox2.Text = MillasDAO.getMillas(this.textDNI.Text);
+            UpdateDataGridViewRowColors();
+            dataGridView1.Enabled = true;
         }
     }
 }

@@ -1561,7 +1561,7 @@ AS
 		ON A.Numero = V.Aeronave
 		WHERE V.Id = @viaje
 
-		SELECT @KGusados = SUM(E.Kg)
+		SELECT @KGusados = ISNULL(SUM(E.Kg),0)
 		FROM NORMALIZADOS.Encomienda E
 		JOIN NORMALIZADOS.Compra C ON E.Compra = C.Id
 		WHERE C.Viaje = @viaje AND E.id NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
@@ -2007,17 +2007,37 @@ AS
 	BEGIN
 		IF EXISTS (SELECT 1 FROM NORMALIZADOS.Cliente C WHERE C.Dni = @Dni)
 			BEGIN
-				SELECT (isnull(NORMALIZADOS.Puntos_Generados(SUM(P.Precio)),0)+isnull(NORMALIZADOS.Puntos_Generados(SUM(E.Precio)),0)
-				- isnull(NORMALIZADOS.Canjes_Puntos_By_Dni(C.Dni, C.Nombre, C.Apellido),0)) AS Millas 
-				FROM NORMALIZADOS.Cliente C
-				JOIN NORMALIZADOS.Pasaje P ON P.Pasajero = C.Id
-				JOIN NORMALIZADOS.Encomienda E ON C.Id = E.Cliente
-				JOIN NORMALIZADOS.Compra Com ON P.Compra = Com.Id
-				JOIN NORMALIZADOS.Viaje V ON V.Id = Com.Viaje
-				JOIN NORMALIZADOS.Registro_De_Llegada_Destino R ON V.Id = R.Viaje
-				WHERE C.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), Com.Fecha) < 365 AND V.Id IN (SELECT Viaje FROM NORMALIZADOS.Registro_De_Llegada_Destino) AND Com.Fecha < GETDATE()
-				AND P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados) AND E.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Encomiendas_Canceladas)
-				GROUP BY C.Dni, C.Nombre, C.Apellido
+				SELECT SUM(S.Millas) AS Millas
+				FROM (
+					SELECT (isnull(SUM(NORMALIZADOS.Puntos_Generados(P.Precio)),0)) AS Millas 
+									FROM NORMALIZADOS.Cliente C
+									JOIN NORMALIZADOS.Pasaje P ON P.Pasajero = C.Id
+									JOIN NORMALIZADOS.Compra Com ON P.Compra = Com.Id
+									JOIN NORMALIZADOS.Viaje V ON V.Id = Com.Viaje
+									JOIN NORMALIZADOS.Registro_De_Llegada_Destino R ON V.Id = R.Viaje
+									WHERE C.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), Com.Fecha) < 365 AND V.Id IN (SELECT Viaje FROM NORMALIZADOS.Registro_De_Llegada_Destino) AND Com.Fecha < GETDATE()
+									AND P.Codigo NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
+									GROUP BY C.Dni, C.Nombre, C.Apellido
+					UNION ALL
+					SELECT (isnull(SUM(NORMALIZADOS.Puntos_Generados(E.Precio)),0)
+									) AS Millas 
+									FROM NORMALIZADOS.Cliente C
+									JOIN NORMALIZADOS.Encomienda E ON C.Id = E.Cliente
+									JOIN NORMALIZADOS.Compra Com ON E.Compra = Com.Id
+									JOIN NORMALIZADOS.Viaje V ON V.Id = Com.Viaje
+									JOIN NORMALIZADOS.Registro_De_Llegada_Destino R ON V.Id = R.Viaje
+									WHERE C.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), Com.Fecha) < 365 AND V.Id IN (SELECT Viaje FROM NORMALIZADOS.Registro_De_Llegada_Destino) AND Com.Fecha < GETDATE()
+									AND E.Codigo NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
+									GROUP BY C.Dni, C.Nombre, C.Apellido
+					UNION ALL
+					SELECT (isnull(SUM(-Can.Cantidad * R.Puntos),0)
+									) AS Millas 
+									FROM NORMALIZADOS.Cliente C
+									JOIN NORMALIZADOS.Canje Can ON Can.Cliente = C.Id
+									JOIN NORMALIZADOS.Recompensa R ON R.Id = Can.Recompensa
+									WHERE C.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), Can.Fecha) < 365 AND Can.Fecha < GETDATE()
+									GROUP BY C.Dni, C.Nombre, C.Apellido
+				) AS S
 			END
 		ELSE
 			RAISERROR ('No existe un cliente con el Dni especificado', 16, 1)
@@ -2064,7 +2084,7 @@ AS
 			ON Cli.Id = P.Pasajero
 			JOIN NORMALIZADOS.Registro_De_Llegada_Destino RD
 			ON RD.Viaje = V.Id
-			WHERE P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados) AND Cli.Dni = @Dni
+			WHERE P.Codigo NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados) AND Cli.Dni = @Dni
 			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND C.Fecha < GETDATE() AND V.Id IN (SELECT Viaje FROM NORMALIZADOS.Registro_De_Llegada_Destino)
 			
 			UNION ALL
@@ -2085,7 +2105,7 @@ AS
 			ON Cli.Id = E.Cliente
 			JOIN NORMALIZADOS.Registro_De_Llegada_Destino RD
 			ON RD.Viaje = V.Id
-			WHERE E.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Encomiendas_Canceladas) AND Cli.Dni = @Dni
+			WHERE E.Codigo NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas) AND Cli.Dni = @Dni
 			AND DATEDIFF(DAY,GETDATE(),C.Fecha) < 365 AND C.Fecha < GETDATE() AND V.Id IN (SELECT Viaje FROM NORMALIZADOS.Registro_De_Llegada_Destino)
 		) S
 		ORDER BY Fecha_De_Compra
@@ -2098,29 +2118,51 @@ AS
 	BEGIN
 		DECLARE @millas int
 
-		SELECT @millas= (isnull(NORMALIZADOS.Puntos_Generados(SUM(P.Precio)),0)+isnull(NORMALIZADOS.Puntos_Generados(SUM(E.Precio)),0)
-		- isnull(NORMALIZADOS.Canjes_Puntos_By_Dni(C.Dni, C.Nombre, C.Apellido),0))
-		FROM NORMALIZADOS.Cliente C
-		JOIN NORMALIZADOS.Pasaje P ON P.Pasajero = C.Id
-		JOIN NORMALIZADOS.Encomienda E ON C.Id = E.Cliente
-		JOIN NORMALIZADOS.Compra Com ON P.Compra = Com.Id
-		JOIN NORMALIZADOS.Viaje V ON V.Id = Com.Viaje
-		JOIN NORMALIZADOS.Registro_De_Llegada_Destino R ON V.Id = R.Viaje
-		WHERE C.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), Com.Fecha) < 365 AND V.Id IN (SELECT Viaje FROM NORMALIZADOS.Registro_De_Llegada_Destino) AND Com.Fecha < GETDATE()
-		AND P.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Pasajes_Cancelados) AND E.Codigo NOT IN (SELECT ID FROM NORMALIZADOS.Encomiendas_Canceladas)
-		GROUP BY C.Dni, C.Nombre, C.Apellido
+			IF EXISTS (SELECT 1 FROM NORMALIZADOS.Cliente C WHERE C.Dni = @Dni)
+			BEGIN
+				SELECT @millas = SUM(S.Millas)
+				FROM (
+					SELECT (isnull(SUM(NORMALIZADOS.Puntos_Generados(P.Precio)),0)) AS Millas 
+									FROM NORMALIZADOS.Cliente C
+									JOIN NORMALIZADOS.Pasaje P ON P.Pasajero = C.Id
+									JOIN NORMALIZADOS.Compra Com ON P.Compra = Com.Id
+									JOIN NORMALIZADOS.Viaje V ON V.Id = Com.Viaje
+									JOIN NORMALIZADOS.Registro_De_Llegada_Destino R ON V.Id = R.Viaje
+									WHERE C.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), Com.Fecha) < 365 AND V.Id IN (SELECT Viaje FROM NORMALIZADOS.Registro_De_Llegada_Destino) AND Com.Fecha < GETDATE()
+									AND P.Codigo NOT IN (SELECT Pasaje FROM NORMALIZADOS.Pasajes_Cancelados)
+									GROUP BY C.Dni, C.Nombre, C.Apellido
+					UNION ALL
+					SELECT (isnull(SUM(NORMALIZADOS.Puntos_Generados(E.Precio)),0)
+									) AS Millas 
+									FROM NORMALIZADOS.Cliente C
+									JOIN NORMALIZADOS.Encomienda E ON C.Id = E.Cliente
+									JOIN NORMALIZADOS.Compra Com ON E.Compra = Com.Id
+									JOIN NORMALIZADOS.Viaje V ON V.Id = Com.Viaje
+									JOIN NORMALIZADOS.Registro_De_Llegada_Destino R ON V.Id = R.Viaje
+									WHERE C.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), Com.Fecha) < 365 AND V.Id IN (SELECT Viaje FROM NORMALIZADOS.Registro_De_Llegada_Destino) AND Com.Fecha < GETDATE()
+									AND E.Codigo NOT IN (SELECT Encomienda FROM NORMALIZADOS.Encomiendas_Canceladas)
+									GROUP BY C.Dni, C.Nombre, C.Apellido
+					UNION ALL
+					SELECT (isnull(SUM(-Can.Cantidad * R.Puntos),0)
+									) AS Millas 
+									FROM NORMALIZADOS.Cliente C
+									JOIN NORMALIZADOS.Canje Can ON Can.Cliente = C.Id
+									JOIN NORMALIZADOS.Recompensa R ON R.Id = Can.Recompensa
+									WHERE C.Dni = @Dni AND DATEDIFF(DAY,GETDATE(), Can.Fecha) < 365 AND Can.Fecha < GETDATE()
+									GROUP BY C.Dni, C.Nombre, C.Apellido
+				) AS S
+			END
 
 		RETURN @millas
 	END
 GO
 
-CREATE PROCEDURE NORMALIZADOS.SP_Canje_Millas(@dni numeric(18,0), @producto nvarchar(255), @cantidad int)
+CREATE PROCEDURE NORMALIZADOS.SP_Canje_Millas(@dni numeric(18,0), @producto int, @cantidad int)
 AS
 	BEGIN
 
 		DECLARE @cliID numeric(18,0)
 
-		DECLARE @recID int
 		DECLARE @puntosP int
 
 		DECLARE @puntosCambio int
@@ -2133,9 +2175,9 @@ AS
 		FROM NORMALIZADOS.Cliente C
 		WHERE C.Dni = @dni
 
-		SELECT @recID = R.Id, @puntosP = R.Puntos
+		SELECT @puntosP = R.Puntos
 		FROM NORMALIZADOS.Recompensa R
-		WHERE R.Descripcion LIKE @producto
+		WHERE R.Id = @producto
 
 		SET @puntosCambio = @puntosP * @cantidad
 
@@ -2145,13 +2187,13 @@ AS
 			BEGIN
 				BEGIN TRAN T1
 					INSERT INTO NORMALIZADOS.Canje (Cliente, Recompensa, Cantidad, Fecha)
-					VALUES (@cliID, @recID, @cantidad, GETDATE());	
+					VALUES (@cliID, @producto, @cantidad, GETDATE());	
 
-					SELECT @stock = Stock FROM NORMALIZADOS.Recompensa WHERE Id = @recID
+					SELECT @stock = Stock FROM NORMALIZADOS.Recompensa WHERE Id = @producto
 
 					UPDATE NORMALIZADOS.Recompensa
 					SET Stock = @stock - @cantidad
-					WHERE Id = @recID
+					WHERE Id = @producto
 				COMMIT TRAN T1
 			END
 
